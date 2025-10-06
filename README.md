@@ -2,6 +2,9 @@
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## Coding standards
+['coding-standards-google-doc'](https://docs.google.com/document/d/1psbjJ8Wzcc0KunnJJ4_29UrckoTadBdgxvALGakdnzQ/edit?tab=t.0)
+
 ## Get started
 
 1. Install dependencies

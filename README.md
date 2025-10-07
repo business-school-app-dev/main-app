@@ -19,6 +19,12 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    npx expo start
    ```
 
+   Use the following command if you are facing issues with expo bundling/cache (in addition to restarting the app, your simulator, laptop, etc)
+   
+   ```bash
+   npx expo start -c
+   ```
+
 In the output, you'll find options to open the app in a
 
 - [development build](https://docs.expo.dev/develop/development-builds/introduction/)

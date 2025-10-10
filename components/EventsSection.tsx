@@ -1,3 +1,4 @@
+import { View, Text, ScrollView } from "react-native";
 import { EventCard } from "./EventCard";
 
 export function EventsSection() {
@@ -25,15 +26,19 @@ export function EventsSection() {
   ];
 
   return (
-    <div className="w-full py-6">
-      <div className="px-6 mb-4">
-        <h2 className="text-xl font-semibold text-black">
+    <View className="w-full py-6">
+      <View className="px-6 mb-4">
+        <Text className="text-xl font-semibold text-black">
           Upcoming Campus Events
-        </h2>
-      </div>
-      
-      <div className="overflow-x-auto">
-        <div className="flex space-x-4 px-6 pb-2">
+        </Text>
+      </View>
+
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        className="px-6 pb-2"
+      >
+        <View className="flex-row space-x-4">
           {events.map((event, index) => (
             <EventCard
               key={index}
@@ -43,8 +48,8 @@ export function EventsSection() {
               onPress={() => console.log(`${event.title} pressed`)}
             />
           ))}
-        </div>
-      </div>
-    </div>
+        </View>
+      </ScrollView>
+    </View>
   );
 }

@@ -1,3 +1,4 @@
+import { ScrollView, View } from "react-native";
 import { Header } from "../components/Header";
 import { HeroSection } from "../components/HeroSection";
 import { QuickAccessGrid } from "../components/QuickAccessGrid";
@@ -7,24 +8,16 @@ import { Footer } from "../components/Footer";
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-gray-50 pb-20">
-      {/* Header */}
-      <Header />
-      
-      {/* Hero Section */}
-      <HeroSection />
-      
-      {/* Quick Access Feature Cards */}
-      <QuickAccessGrid />
-      
-      {/* Meeting & Office Hours */}
-      <MeetingSection />
-      
-      {/* Upcoming Campus Events */}
-      <EventsSection />
-      
-      {/* iOS-style Footer Navigation */}
-      <Footer />
-    </div>
+    <ScrollView className="flex-1 bg-gray-50">
+      {/* You can still group content with Views */}
+      <View className="pb-20">
+        <Header />
+        <HeroSection />
+        <QuickAccessGrid />
+        <MeetingSection />
+        <EventsSection />
+        <Footer />
+      </View>
+    </ScrollView>
   );
 }

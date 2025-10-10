@@ -1,10 +1,11 @@
+import { View } from "react-native";
 import { Calendar, Clock } from "lucide-react-native";
 import { ActionCard } from "./ActionCard";
 
 export function MeetingSection() {
   return (
-    <div className="w-full px-6 py-6">
-      <div className="space-y-4">
+    <View className="w-full px-6 py-6">
+      <View className="space-y-4">
         <ActionCard
           title="Schedule a Meeting with a Financial Advisor"
           icon={Calendar}
@@ -16,7 +17,7 @@ export function MeetingSection() {
           icon={Clock}
           onPress={() => console.log("Office Hours pressed")}
         />
-      </div>
-    </div>
+      </View>
+    </View>
   );
 }

@@ -1,3 +1,5 @@
+import { View, Text, TouchableOpacity } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 import { Home, Calculator, BookOpen, User } from "lucide-react-native";
 
 export function Footer() {
@@ -9,24 +11,26 @@ export function Footer() {
   ];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 safe-area-pb">
-      <div className="flex items-center justify-around px-2 py-2">
+    <SafeAreaView className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-200">
+      <View className="flex-row items-center justify-around px-2 py-2">
         {tabs.map((tab, index) => (
-          <button
+          <TouchableOpacity
             key={index}
-            className="flex flex-col items-center justify-center py-2 px-4 min-w-0 flex-1"
+            className="flex flex-col items-center justify-center py-2 px-4 flex-1"
           >
-            <div className={`p-1 ${tab.active ? 'text-[#E11932]' : 'text-gray-500'}`}>
+            <View className={`p-1 ${tab.active ? "text-[#E11932]" : "text-gray-500"}`}>
               <tab.icon className="w-6 h-6" />
-            </div>
-            <span 
-              className={`text-xs mt-1 ${tab.active ? 'text-[#E11932] font-medium' : 'text-gray-500'}`}
+            </View>
+            <Text
+              className={`text-xs mt-1 ${
+                tab.active ? "text-[#E11932] font-medium" : "text-gray-500"
+              }`}
             >
               {tab.label}
-            </span>
-          </button>
+            </Text>
+          </TouchableOpacity>
         ))}
-      </div>
-    </div>
+      </View>
+    </SafeAreaView>
   );
 }

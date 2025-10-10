@@ -8,11 +8,11 @@ export function HeroSection() {
       resizeMode="cover"
     >
       {/* Content */}
-      <View className="text-center space-y-4">
-        <Text className="text-3xl font-semibold text-white">
+      <View className="items-center space-y-4">
+        <Text className="text-3xl font-semibold text-white text-center">
           Finance at Your Fingertips
         </Text>
-        <Text className="text-xl text-white">
+        <Text className="text-xl text-white text-center">
           Welcome Terp!
         </Text>
       </View>

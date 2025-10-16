@@ -20,6 +20,7 @@ module.exports = {
     extend: {
       colors: {
         primary: {
+          DEFAULT: "rgb(var(--color-primary-500)/<alpha-value>)",
           0: "rgb(var(--color-primary-0)/<alpha-value>)",
           50: "rgb(var(--color-primary-50)/<alpha-value>)",
           100: "rgb(var(--color-primary-100)/<alpha-value>)",
@@ -34,6 +35,7 @@ module.exports = {
           950: "rgb(var(--color-primary-950)/<alpha-value>)",
         },
         secondary: {
+          DEFAULT: "rgb(var(--color-secondary-0)/<alpha-value>)",
           0: "rgb(var(--color-secondary-0)/<alpha-value>)",
           50: "rgb(var(--color-secondary-50)/<alpha-value>)",
           100: "rgb(var(--color-secondary-100)/<alpha-value>)",
@@ -48,6 +50,8 @@ module.exports = {
           950: "rgb(var(--color-secondary-950)/<alpha-value>)",
         },
         tertiary: {
+          DEFAULT: "rgb(var(--color-tertiary-500)/<alpha-value>)",
+          0: "rgb(var(--color-tertiary-0)/<alpha-value>)",
           50: "rgb(var(--color-tertiary-50)/<alpha-value>)",
           100: "rgb(var(--color-tertiary-100)/<alpha-value>)",
           200: "rgb(var(--color-tertiary-200)/<alpha-value>)",
@@ -148,6 +152,7 @@ module.exports = {
           950: "rgb(var(--color-outline-950)/<alpha-value>)",
         },
         background: {
+          DEFAULT: "rgb(var(--color-background-500)/<alpha-value>)",
           0: "rgb(var(--color-background-0)/<alpha-value>)",
           50: "rgb(var(--color-background-50)/<alpha-value>)",
           100: "rgb(var(--color-background-100)/<alpha-value>)",

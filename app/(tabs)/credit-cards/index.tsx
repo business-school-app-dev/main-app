@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/modal';
 import { Button, ButtonIcon, ButtonText } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
+import PageLayout from "@/components/layouts/page-layout";
 
 // Icon components for the cards
 const CreditCardIcon = () => (
@@ -156,15 +157,7 @@ export default function CreditCardsScreen() {
     };
 
     return (
-        <SafeAreaView className="flex-1 bg-gray-50">
-            {/* Header */}
-            <View className="flex-row items-center px-4 py-3 bg-white border-b border-gray-100">
-                <Button onPress={handleGoBack} className="mr-4 p-1">
-                    <ButtonIcon as={ChevronLeftIcon} className="w-5 h-5" />
-                </Button>
-                <Text className="text-xl font-semibold text-gray-900">Credit Cards</Text>
-            </View>
-
+        <PageLayout title="Credit Cards" backButtonHidden className="flex-1 bg-gray-50">
             <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
                 <View className="p-4">
                     {/* Section Title */}
@@ -225,7 +218,7 @@ export default function CreditCardsScreen() {
                     </ModalFooter>
                 </ModalContent>
             </Modal>
-        </SafeAreaView>
+        </PageLayout>
     );
 }
 

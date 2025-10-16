@@ -1,5 +1,9 @@
+import "@/global.css";
 import React, { useState } from 'react';
-import { ScrollView, Pressable, View, Text, SafeAreaView, TouchableOpacity, StyleSheet } from 'react-native';
+import { ScrollView, View } from "react-native";
+import { VStack } from "@/components/ui/vstack";
+import { Text } from "@/components/ui/text";
+import { SafeAreaView } from "@/components/ui/safe-area-view";
 import { router } from 'expo-router';
 import { ChevronLeftIcon } from '@/components/ui/icon';
 import {
@@ -11,42 +15,42 @@ import {
     ModalBody,
     ModalFooter
 } from '@/components/ui/modal';
-import { Button, ButtonText } from '@/components/ui/button';
+import { Button, ButtonIcon, ButtonText } from '@/components/ui/button';
 import { Heading } from '@/components/ui/heading';
 
 // Icon components for the cards
 const CreditCardIcon = () => (
-    <View style={styles.iconContainer}>
-        <View style={[styles.creditCardBase, { backgroundColor: '#3B82F6' }]}>
-            <View style={styles.creditCardLine} />
+    <View className="w-12 h-12 rounded-xl justify-center items-center bg-blue-100">
+        <View className="w-8 h-6 rounded border-2 border-blue-800 bg-blue-500 justify-end pb-1 pl-1">
+            <View className="w-6 h-1 bg-blue-300 rounded" />
         </View>
     </View>
 );
 
 const TrendingUpIcon = () => (
-    <View style={[styles.iconContainer, { backgroundColor: '#DCFCE7' }]}>
-        <View style={styles.chartContainer}>
-            <View style={[styles.chartBar, { height: 12, backgroundColor: '#16A34A' }]} />
-            <View style={[styles.chartBar, { height: 20, backgroundColor: '#16A34A', marginLeft: 4 }]} />
-            <View style={[styles.chartBar, { height: 28, backgroundColor: '#16A34A', marginLeft: 4 }]} />
-            <View style={[styles.chartBar, { height: 32, backgroundColor: '#16A34A', marginLeft: 4 }]} />
+    <View className="w-12 h-12 rounded-xl justify-center items-center bg-green-100">
+        <View className="flex-row items-end h-8">
+            <View className="w-1.5 h-3 bg-green-600 rounded-t" />
+            <View className="w-1.5 h-5 bg-green-600 rounded-t ml-1" />
+            <View className="w-1.5 h-7 bg-green-600 rounded-t ml-1" />
+            <View className="w-1.5 h-8 bg-green-600 rounded-t ml-1" />
         </View>
     </View>
 );
 
 const ShieldIcon = () => (
-    <View style={[styles.iconContainer, { backgroundColor: '#F3E8FF' }]}>
-        <View style={styles.shield} />
+    <View className="w-12 h-12 rounded-xl justify-center items-center bg-purple-100">
+        <View className="w-6 h-8 bg-purple-600 rounded-xl" />
     </View>
 );
 
 const BookIcon = () => (
-    <View style={[styles.iconContainer, { backgroundColor: '#FED7AA' }]}>
-        <View style={styles.book}>
-            <View style={styles.bookLine} />
-            <View style={[styles.bookLine, { top: 10 }]} />
-            <View style={[styles.bookLine, { top: 16 }]} />
-            <View style={[styles.bookLine, { top: 22 }]} />
+    <View className="w-12 h-12 rounded-xl justify-center items-center bg-orange-200">
+        <View className="w-6 h-8 bg-orange-600 rounded relative">
+            <View className="absolute left-1 right-1 h-0.5 bg-orange-200 top-1" />
+            <View className="absolute left-1 right-1 h-0.5 bg-orange-200 top-2.5" />
+            <View className="absolute left-1 right-1 h-0.5 bg-orange-200 top-4" />
+            <View className="absolute left-1 right-1 h-0.5 bg-orange-200 top-5.5" />
         </View>
     </View>
 );
@@ -59,13 +63,13 @@ interface GuideCardProps {
 }
 
 const GuideCard: React.FC<GuideCardProps> = ({ icon, title, description, onPress }) => (
-    <View style={styles.card}>
+    <View className="bg-white p-4 flex-1 rounded-xl shadow-md shadow-black/10 elevation-5">
         {icon}
-        <Text style={styles.cardTitle}>{title}</Text>
-        <Text style={styles.cardDescription}>{description}</Text>
-        <TouchableOpacity style={styles.button} onPress={onPress}>
-            <Text style={styles.buttonText}>Read More</Text>
-        </TouchableOpacity>
+        <Text className="text-base font-semibold text-gray-900 mt-3 mb-1.5">{title}</Text>
+        <Text className="text-sm text-gray-500 leading-5 mb-4">{description}</Text>
+        <Button className="bg-red-600 px-5 py-2.5 rounded-2xl self-start" onPress={onPress}>
+            <ButtonText className="text-white text-sm font-medium">Read More</ButtonText>
+        </Button>
     </View>
 );
 
@@ -152,23 +156,23 @@ export default function CreditCardsScreen() {
     };
 
     return (
-        <SafeAreaView style={styles.container}>
+        <SafeAreaView className="flex-1 bg-gray-50">
             {/* Header */}
-            <View style={styles.header}>
-                <Pressable onPress={handleGoBack} style={styles.backButton}>
-                    <ChevronLeftIcon style={styles.backIcon} />
-                </Pressable>
-                <Text style={styles.headerTitle}>Credit Cards</Text>
+            <View className="flex-row items-center px-4 py-3 bg-white border-b border-gray-100">
+                <Button onPress={handleGoBack} className="mr-4 p-1">
+                    <ButtonIcon as={ChevronLeftIcon} className="w-5 h-5" />
+                </Button>
+                <Text className="text-xl font-semibold text-gray-900">Credit Cards</Text>
             </View>
 
-            <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
-                <View style={styles.content}>
+            <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+                <View className="p-4">
                     {/* Section Title */}
-                    <Text style={styles.sectionTitle}>Quick Guides & Resources</Text>
+                    <Text className="text-2xl font-medium text-gray-900 mb-6">Quick Guides & Resources</Text>
 
                     {/* Guide Cards Grid */}
-                    <View style={styles.gridContainer}>
-                        <View style={styles.gridRow}>
+                    <View className="gap-4">
+                        <View className="flex-row gap-4 mb-4">
                             <GuideCard
                                 icon={<CreditCardIcon />}
                                 title="Credit Card Basics"
@@ -183,7 +187,7 @@ export default function CreditCardsScreen() {
                             />
                         </View>
 
-                        <View style={styles.gridRow}>
+                        <View className="flex-row gap-4 mb-4">
                             <GuideCard
                                 icon={<ShieldIcon />}
                                 title="Security Tips"
@@ -211,7 +215,7 @@ export default function CreditCardsScreen() {
                     </ModalHeader>
                     <ModalBody>
                         <ScrollView showsVerticalScrollIndicator={false}>
-                            <Text style={styles.modalText}>{selectedContent.content}</Text>
+                            <Text className="text-base text-gray-700 leading-6 text-left">{selectedContent.content}</Text>
                         </ScrollView>
                     </ModalBody>
                     <ModalFooter>
@@ -225,155 +229,4 @@ export default function CreditCardsScreen() {
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F9FAFB',
-    },
-    header: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-        backgroundColor: '#FFFFFF',
-        borderBottomWidth: 1,
-        borderBottomColor: '#F3F4F6',
-    },
-    backButton: {
-        marginRight: 16,
-        padding: 4,
-    },
-    backIcon: {
-        width: 20,
-        height: 20,
-        color: '#DC2626',
-    },
-    headerTitle: {
-        fontSize: 20,
-        fontWeight: '600',
-        color: '#111827',
-    },
-    scrollView: {
-        flex: 1,
-    },
-    content: {
-        padding: 16,
-    },
-    sectionTitle: {
-        fontSize: 24,
-        fontWeight: '500',
-        color: '#111827',
-        marginBottom: 24,
-    },
-    gridContainer: {
-        gap: 16,
-    },
-    gridRow: {
-        flexDirection: 'row',
-        gap: 16,
-        marginBottom: 16,
-    },
-    card: {
-        backgroundColor: '#FFFFFF',
-        padding: 16,
-        flex: 1,
-        borderRadius: 12,
-        shadowColor: '#000',
-        shadowOffset: {
-            width: 0,
-            height: 2,
-        },
-        shadowOpacity: 0.1,
-        shadowRadius: 3.84,
-        elevation: 5,
-    },
-    cardTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#111827',
-        marginTop: 12,
-        marginBottom: 6,
-    },
-    cardDescription: {
-        fontSize: 14,
-        color: '#6B7280',
-        lineHeight: 20,
-        marginBottom: 16,
-    },
-    button: {
-        backgroundColor: '#DC2626',
-        paddingHorizontal: 20,
-        paddingVertical: 10,
-        borderRadius: 20,
-        alignSelf: 'flex-start',
-    },
-    buttonText: {
-        color: '#FFFFFF',
-        fontSize: 14,
-        fontWeight: '500',
-    },
-    iconContainer: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-        backgroundColor: '#DBEAFE',
-    },
-    creditCardBase: {
-        width: 32,
-        height: 24,
-        borderRadius: 4,
-        borderWidth: 2,
-        borderColor: '#1E40AF',
-        justifyContent: 'flex-end',
-        paddingBottom: 4,
-        paddingLeft: 4,
-    },
-    creditCardLine: {
-        width: 24,
-        height: 4,
-        backgroundColor: '#93C5FD',
-        borderRadius: 2,
-    },
-    chartContainer: {
-        flexDirection: 'row',
-        alignItems: 'flex-end',
-        height: 32,
-    },
-    chartBar: {
-        width: 6,
-        borderTopLeftRadius: 3,
-        borderTopRightRadius: 3,
-    },
-    shield: {
-        width: 24,
-        height: 32,
-        backgroundColor: '#7C3AED',
-        borderTopLeftRadius: 12,
-        borderTopRightRadius: 12,
-        borderBottomLeftRadius: 12,
-        borderBottomRightRadius: 12,
-    },
-    book: {
-        width: 24,
-        height: 32,
-        backgroundColor: '#EA580C',
-        borderRadius: 2,
-        position: 'relative',
-    },
-    bookLine: {
-        position: 'absolute',
-        left: 4,
-        right: 4,
-        height: 2,
-        backgroundColor: '#FED7AA',
-        top: 4,
-    },
-    modalText: {
-        fontSize: 16,
-        color: '#374151',
-        lineHeight: 24,
-        textAlign: 'left',
-    },
-});
+

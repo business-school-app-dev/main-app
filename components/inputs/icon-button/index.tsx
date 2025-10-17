@@ -51,7 +51,7 @@ function IconButton({
       case "link":
         return "text-primary";
       case "transparent":
-        return "text-secondary-900";
+        return "text-gray-400";
       default:
         return "text-background";
     }
@@ -69,7 +69,7 @@ function IconButton({
       case "link":
         return "#DC2626"; // red primary color
       case "transparent":
-        return "#051837"; // secondary-900 color
+        return "#9ca3af"; // light gray for unfocused state
       default:
         return "#FFFFFF"; // white default
     }

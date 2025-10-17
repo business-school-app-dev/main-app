@@ -17,10 +17,12 @@ interface CustomTextInputProps {
   onChangeText?: (text: string) => void;
   onFocus?: () => void;
   onBlur?: () => void;
-  keyboardType?: "default" | "email-address" | "numeric" | "phone-pad";
+  keyboardType?: "default" | "email-address" | "numeric" | "phone-pad" | "number-pad" | "decimal-pad";
   secureTextEntry?: boolean;
   multiline?: boolean;
   variant?: "outline" | "underlined" | "rounded";
+  prefix?: string;
+  suffix?: string;
 }
 
 const CustomTextInput = forwardRef<any, CustomTextInputProps>(
@@ -29,7 +31,7 @@ const CustomTextInput = forwardRef<any, CustomTextInputProps>(
       iconName,
       isInvalid,
       helperText,
-      size = "md",
+      size = "lg",
       color,
       className,
       label,
@@ -43,6 +45,8 @@ const CustomTextInput = forwardRef<any, CustomTextInputProps>(
       secureTextEntry,
       multiline,
       variant = "outline",
+      prefix,
+      suffix,
       ...inputProps
     } = props;
 
@@ -50,7 +54,7 @@ const CustomTextInput = forwardRef<any, CustomTextInputProps>(
       <View className={className}>
         {/* Label */}
         {label && (
-          <Text className="text-typography-900 text-sm mb-1">
+          <Text className="text-typography-900 font-medium text-base mb-2">
             {label}
             {isUnsaved && <Text className="text-blue-600"> (Unsaved)</Text>}
           </Text>
@@ -61,7 +65,22 @@ const CustomTextInput = forwardRef<any, CustomTextInputProps>(
           variant={variant}
           size={size}
           isInvalid={isInvalid}
+          className="bg-background-50 border-0"
         >
+          {iconName && (
+            <View className="pl-3 justify-center">
+              <Ionicons 
+                name={iconName} 
+                size={20} 
+                color={color || "#71717a"} 
+              />
+            </View>
+          )}
+          {prefix && (
+            <Text className="text-typography-500 text-md pl-3">
+              {prefix}
+            </Text>
+          )}
           <InputField
             ref={ref}
             placeholder={placeholder}
@@ -71,9 +90,14 @@ const CustomTextInput = forwardRef<any, CustomTextInputProps>(
             onBlur={onBlur}
             keyboardType={keyboardType}
             secureTextEntry={secureTextEntry}
-            // Note: multiline is not directly supported by gluestack-ui Input
+            className="text-typography-500 text-md"
             {...inputProps}
           />
+          {suffix && (
+            <Text className="text-typography-500 text-md pr-3">
+              {suffix}
+            </Text>
+          )}
         </Input>
 
         {/* Helper Text */}

@@ -1,12 +1,12 @@
 import "@/global.css";
-import { Text, View } from "react-native";
+import { View } from "react-native";
+import LoanCalculator from './LoanCalculator';
+// 1. Import Gluestack provider and default config
 
 export default function Index() {
   return (
-    <View className="flex-1 items-center justify-center bg-white">
-      <Text className="text-xl font-bold text-primary-500">
-        Welcome to Nativewind!!!
-      </Text>
-    </View>
+      <View className="flex-1 bg-white">
+        <LoanCalculator />
+      </View>
   );
 }

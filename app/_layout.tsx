@@ -6,7 +6,11 @@ import '@/global.css';
 export default function App() {
   return (
     <GluestackUIProvider>
-      <Stack />
+      <Stack
+        screenOptions={{
+          headerShown: false,
+        }}
+      />
     </GluestackUIProvider>
   );
 }

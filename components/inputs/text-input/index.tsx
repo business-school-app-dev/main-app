@@ -90,6 +90,7 @@ const CustomTextInput = forwardRef<any, CustomTextInputProps>(
             onBlur={onBlur}
             keyboardType={keyboardType}
             secureTextEntry={secureTextEntry}
+            selectionColor="rgb(225, 25, 50)"
             className="text-typography-500 text-md"
             {...inputProps}
           />

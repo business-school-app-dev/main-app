@@ -1,10 +1,6 @@
-import "../global.css";
-import { Leaderboard } from "./screens/Leaderboard";
+import { Redirect } from "expo-router";
+import "../global.css"
 
 export default function Index() {
-  return (
-    <Leaderboard></Leaderboard>
-  );
-
-
+  return <Redirect href="/(tabs)/ui-demo" />
 }

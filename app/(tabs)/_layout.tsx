@@ -1,6 +1,6 @@
-import { Tabs, useRouter } from "expo-router";
 import TabBar from "@/components/navigation/tabbar";
-import React, { useContext, useEffect } from "react";
+import { Tabs, useRouter } from "expo-router";
+import React from "react";
 
 export default function TabLayout() {
   const router = useRouter();
@@ -13,4 +13,3 @@ export default function TabLayout() {
     </Tabs>
   );
 }
-

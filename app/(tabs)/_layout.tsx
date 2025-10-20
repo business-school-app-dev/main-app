@@ -9,6 +9,7 @@ export default function TabLayout() {
     <Tabs screenOptions={{ headerShown: false, lazy: false }} tabBar={(props) => <TabBar {...props} />}>
       <Tabs.Screen name="credit-cards" options={{ title: "Credit Cards" }} />
       <Tabs.Screen name="ui-demo" options={{ title: "UI Demo" }} />
+      <Tabs.Screen name="leaderboard" options={{ title: "Leaderboard" }} />
     </Tabs>
   );
 }

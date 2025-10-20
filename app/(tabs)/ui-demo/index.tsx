@@ -279,13 +279,15 @@ export default function UIDemo() {
                       routes: [
                         { key: 1, name: "Home" },
                         { key: 2, name: "Messages" },
-                        { key: 3, name: "Profile" }
+                        { key: 3, name: "Profile" },
+                        { key: 4, name: "Demo" }
                       ]
                     }}
                     descriptors={{
                       1: { options: { title: "Home" } },
                       2: { options: { title: "Messages" } },
-                      3: { options: { title: "Profile" } }
+                      3: { options: { title: "Profile" } },
+                      4: { options: { title: "Demo" } }
                     }}
                     navigation={{
                       navigate: (name: string) => console.log(`Navigate to ${name}`)

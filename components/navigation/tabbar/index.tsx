@@ -1,6 +1,6 @@
-import { View } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
 import IconButton from "@/components/inputs/icon-button";
+import { Ionicons } from "@expo/vector-icons";
+import { View } from "react-native";
 
 const icon = function (i: string): keyof typeof Ionicons.glyphMap {
   if (i === "Home") {
@@ -24,7 +24,7 @@ const CustomTabBar = ({ state, descriptors, navigation }: { state: any, descript
         const { options } = descriptors[key];
 
         return (
-          <View key={key} className="h-fit items-center w-[33%] flex-col">
+          <View key={key} className="h-fit items-center flex-1 flex-col">
             <IconButton
               iconName={icon(options.title || name)}
               variant={isFocused ? "link" : "transparent"}

@@ -12,7 +12,7 @@ export function HeroSection() {
         <Text className="text-3xl font-semibold text-white text-center">
           Finance at Your Fingertips
         </Text>
-        <Text className="text-xl taext-white text-center">
+        <Text className="text-xl text-white text-center">
           Welcome Terp!
         </Text>
       </View>

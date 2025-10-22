@@ -1,5 +1,5 @@
 import { ScrollView } from "react-native";
-import { Box } from "../components/ui/box";
+import { Box } from "../../../components/ui/box";
 import { Header } from "./components/Header";
 import { HeroSection } from "./components/HeroSection";
 import { QuickAccessGrid } from "./components/QuickAccessGrid";

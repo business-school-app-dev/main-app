@@ -8,7 +8,7 @@ export function Header() {
         {/* Left: UMD Logo */}
         <View className="w-10 h-10">
           <Image
-            source={require("../assets/images/umd-logo.png")}
+            source={require("../../../../assets/images/umd-logo.png")}
             className="w-full h-full"
             resizeMode="contain"
           />
@@ -26,7 +26,7 @@ export function Header() {
           </TouchableOpacity>
           <View className="w-8 h-8 rounded-full overflow-hidden">
             <Image
-              source={require("../assets/images/profile-picture.jpg")}
+              source={require("../../../../assets/images/profile-picture.jpg")}
               className="w-full h-full"
               resizeMode="cover"
             />

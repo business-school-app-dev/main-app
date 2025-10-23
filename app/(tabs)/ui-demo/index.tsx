@@ -1,39 +1,36 @@
-import "@/global.css";
-import { router } from "expo-router";
-import { View } from "react-native";
-import { VStack } from "@/components/ui/vstack";
-import { HStack } from "@/components/ui/hstack";
-import { Heading } from "@/components/ui/heading";
-import { Text } from "@/components/ui/text";
-import { Button, ButtonText, ButtonIcon } from "@/components/ui/button";
-import { Input, InputField, InputSlot, InputIcon } from "@/components/ui/input";
-import { SafeAreaView } from "@/components/ui/safe-area-view";
-import { ScrollView } from "@/components/ui/scroll-view";
+import { Button, ButtonIcon, ButtonText } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Heading } from "@/components/ui/heading";
+import { HStack } from "@/components/ui/hstack";
 import {
   AddIcon,
   AlertCircleIcon,
+  AtSignIcon,
   BellIcon,
   CheckIcon,
   ChevronRightIcon,
-  SearchIcon,
   EyeIcon,
-  EyeOffIcon,
-  AtSignIcon,
+  FavouriteIcon,
   LockIcon,
   MailIcon,
-  FavouriteIcon,
-  StarIcon,
-  ShareIcon
+  SearchIcon,
+  ShareIcon,
+  StarIcon
 } from "@/components/ui/icon";
+import { Input, InputField, InputIcon, InputSlot } from "@/components/ui/input";
+import { ScrollView } from "@/components/ui/scroll-view";
+import { Text } from "@/components/ui/text";
+import { VStack } from "@/components/ui/vstack";
+import "@/global.css";
+import { View } from "react-native";
 
 // Custom Components
-import TextButton from "@/components/inputs/text-button";
 import IconButton from "@/components/inputs/icon-button";
+import TextButton from "@/components/inputs/text-button";
 import CustomTextInput from "@/components/inputs/text-input";
+import PageLayout from "@/components/layouts/page-layout";
 import Navbar from "@/components/navigation/navbar";
 import CustomTabBar from "@/components/navigation/tabbar";
-import PageLayout from "@/components/layouts/page-layout";
 
 export default function UIDemo() {
   return (
@@ -282,13 +279,15 @@ export default function UIDemo() {
                       routes: [
                         { key: 1, name: "Home" },
                         { key: 2, name: "Messages" },
-                        { key: 3, name: "Profile" }
+                        { key: 3, name: "Profile" },
+                        { key: 4, name: "Demo" }
                       ]
                     }}
                     descriptors={{
                       1: { options: { title: "Home" } },
                       2: { options: { title: "Messages" } },
-                      3: { options: { title: "Profile" } }
+                      3: { options: { title: "Profile" } },
+                      4: { options: { title: "Demo" } }
                     }}
                     navigation={{
                       navigate: (name: string) => console.log(`Navigate to ${name}`)

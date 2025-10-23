@@ -1,6 +1,7 @@
 import Slider from '@react-native-community/slider';
 import React, { useState } from 'react';
-import { StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import PageLayout from '@/components/layouts/page-layout';
 
 
 const CourseRecommenderScreen = () => {
@@ -11,125 +12,87 @@ const CourseRecommenderScreen = () => {
   const [timeCommitment, setTimeCommitment] = useState(0.2);
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Financial Literacy Course Recommender</Text>
-      <Text style={styles.subtitle}>
-        Tell us about yourself and we'll recommend the perfect courses for your financial literacy journey
-      </Text>
+    <PageLayout title="Course Recommender" backButtonHidden className="flex-1 bg-gray-50">
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+        <View className="px-6 py-8">
+          <Text className="text-center text-lg font-semibold mb-2">
+            Financial Literacy Course Recommender
+          </Text>
+          <Text className="text-center text-gray-600 mb-6">
+            Tell us about yourself and we'll recommend the perfect courses for your financial literacy journey
+          </Text>
 
-      {/* Academic Year */}
-      <Text style={styles.label}>Academic Year</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Select your year"
-        value={academicYear}
-        onChangeText={setAcademicYear}
-      />
+          {/* Academic Year */}
+          <Text className="font-medium mt-4 mb-1">Academic Year</Text>
+          <TextInput
+            className="bg-gray-100 rounded-lg px-3 py-2.5"
+            placeholder="Select your year"
+            value={academicYear}
+            onChangeText={setAcademicYear}
+          />
 
-      {/* Degree Program */}
-      <Text style={styles.label}>Degree Program</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="Select your degree"
-        value={degreeProgram}
-        onChangeText={setDegreeProgram}
-      />
+          {/* Degree Program */}
+          <Text className="font-medium mt-4 mb-1">Degree Program</Text>
+          <TextInput
+            className="bg-gray-100 rounded-lg px-3 py-2.5"
+            placeholder="Select your degree"
+            value={degreeProgram}
+            onChangeText={setDegreeProgram}
+          />
 
-      {/* Major */}
-      <Text style={styles.label}>Major</Text>
-      <TextInput
-        style={styles.input}
-        placeholder="e.g., Computer Science, Business..."
-        value={major}
-        onChangeText={setMajor}
-      />
+          {/* Major */}
+          <Text className="font-medium mt-4 mb-1">Major</Text>
+          <TextInput
+            className="bg-gray-100 rounded-lg px-3 py-2.5"
+            placeholder="e.g., Computer Science, Business..."
+            value={major}
+            onChangeText={setMajor}
+          />
 
-      {/* Comfort Level */}
-      <Text style={styles.label}>Financial Literacy Comfort Level</Text>
-      <View style={styles.sliderRow}>
-        <Text>Beginner</Text>
-        <Text>Intermediate</Text>
-        <Text>Expert</Text>
-      </View>
-      <Slider
-        style={{ width: '100%', height: 40 }}
-        minimumValue={0}
-        maximumValue={1}
-        minimumTrackTintColor="#C93C3C"
-        maximumTrackTintColor="#E5E5E5"
-        value={comfortLevel}
-        onValueChange={setComfortLevel}
-      />
+          {/* Comfort Level */}
+          <Text className="font-medium mt-4 mb-1">Financial Literacy Comfort Level</Text>
+          <View className="flex-row justify-between my-2">
+            <Text>Beginner</Text>
+            <Text>Intermediate</Text>
+            <Text>Expert</Text>
+          </View>
+          <Slider
+            style={{ width: '100%', height: 40 }}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="#C93C3C"
+            maximumTrackTintColor="#E5E5E5"
+            value={comfortLevel}
+            onValueChange={setComfortLevel}
+          />
 
-      {/* Weekly Commitment */}
-      <Text style={styles.label}>Weekly Time Commitment</Text>
-      <View style={styles.sliderRow}>
-        <Text>1 hour</Text>
-        {/*need to add space to show user how much time commitment they have selected*/}
-        <Text>20 hours</Text>
-      </View>
-      <Slider
-        style={{ width: '100%', height: 40 }}
-        minimumValue={0}
-        maximumValue={1}
-        minimumTrackTintColor="#C93C3C"
-        maximumTrackTintColor="#E5E5E5"
-        value={timeCommitment}
-        onValueChange={setTimeCommitment}
-      />
+          {/* Weekly Commitment */}
+          <Text className="font-medium mt-4 mb-1">Weekly Time Commitment</Text>
+          <View className="flex-row justify-between my-2">
+            <Text>1 hour</Text>
+            {/*need to add space to show user how much time commitment they have selected*/}
+            <Text>20 hours</Text>
+          </View>
+          <Slider
+            style={{ width: '100%', height: 40 }}
+            minimumValue={0}
+            maximumValue={1}
+            minimumTrackTintColor="#C93C3C"
+            maximumTrackTintColor="#E5E5E5"
+            value={timeCommitment}
+            onValueChange={setTimeCommitment}
+          />
 
-      {/* Submit Button */}
-      <TouchableOpacity style={styles.button}>
-        <Text style={styles.buttonText}>Get Course Recommendations</Text>
-      </TouchableOpacity>
-    </View>
+          {/* Submit Button */}
+          <TouchableOpacity className="bg-primary rounded-lg py-3.5 mt-8">
+            <Text className="text-center text-white font-semibold">
+              Get Course Recommendations
+            </Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+    </PageLayout>
   );
 };
 
 export default CourseRecommenderScreen;
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 24,
-    backgroundColor: '#fff',
-  },
-  title: {
-    textAlign: 'center',
-    fontSize: 18,
-    fontWeight: '600',
-    marginBottom: 8,
-  },
-  subtitle: {
-    textAlign: 'center',
-    color: '#666',
-    marginBottom: 24,
-  },
-  label: {
-    fontWeight: '500',
-    marginTop: 16,
-    marginBottom: 4,
-  },
-  input: {
-    backgroundColor: '#F3F3F5',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  sliderRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 8,
-  },
-  button: {
-    backgroundColor: '#C93C3C',
-    borderRadius: 8,
-    paddingVertical: 14,
-    marginTop: 32,
-  },
-  buttonText: {
-    textAlign: 'center',
-    color: '#fff',
-    fontWeight: '600',
-  },
-});

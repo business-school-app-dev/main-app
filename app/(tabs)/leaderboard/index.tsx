@@ -75,7 +75,7 @@ export default function Leaderboard() {
                     <Text className="text-lg font-semibold text-gray-900 mb-4">Top Players</Text>
                     <View className="space-y-3">
                         {leaderboardData.map((user) => (
-                            <Card key={user.rank} className={`rounded-xl p-4 border border-gray-200 flex-row justify-between items-center shadow-sm ${user.bgColor}`}>
+                            <Card key={user.rank} className={`rounded-xl p-4 m-1 border border-gray-200 flex-row justify-between items-center ${user.bgColor}`}>
                                 <View className="flex-row items-center space-x-3">
                                     <View className="relative">
                                         <View className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">

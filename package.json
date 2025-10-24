@@ -27,6 +27,7 @@
     "@react-aria/interactions": "^3.25.6",
     "@react-aria/overlays": "^3.30.0",
     "@react-aria/utils": "^3.31.0",
+    "@react-aria/visually-hidden": "^3.8.28",
     "@react-navigation/bottom-tabs": "^7.4.0",
     "@react-navigation/elements": "^2.6.3",
     "@react-navigation/native": "^7.1.8",

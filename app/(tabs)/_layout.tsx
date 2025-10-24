@@ -1,6 +1,6 @@
-import { Tabs, useRouter } from "expo-router";
 import TabBar from "@/components/navigation/tabbar";
-import React, { useContext, useEffect } from "react";
+import { Tabs, useRouter } from "expo-router";
+import React from "react";
 
 export default function TabLayout() {
   const router = useRouter();
@@ -10,7 +10,7 @@ export default function TabLayout() {
       <Tabs.Screen name="credit-cards" options={{ title: "Credit Cards" }} />
       <Tabs.Screen name="ui-demo" options={{ title: "UI Demo" }} />
       <Tabs.Screen name="leaderboard" options={{ title: "Leaderboard" }} />
+      <Tabs.Screen name="student-loans" options={{ title: "Student Loans" }} />
     </Tabs>
   );
 }
-

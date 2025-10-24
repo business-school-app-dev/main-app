@@ -1,15 +1,11 @@
 import React from 'react';
-import { ScrollView, StatusBar } from "react-native";
-
-import { Box } from "@/components/ui/box";
+import { ScrollView, View, StatusBar } from "react-native";
 import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
-
+import { Card } from "@/components/ui/card";
 import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage} from '@/components/ui/avatar';
-
 import { CalendarDaysIcon, StarIcon} from '@/components/ui/icon';
-
 import PageLayout from '@/components/layouts/page-layout';
 
 const leaderboardData = [
@@ -44,11 +40,10 @@ export default function Leaderboard() {
 
             <ScrollView className="flex-1" contentContainerClassName="pb-[100px]">
                 {/* Your Rank Card */}
-                <Box className="px-4 pt-4 pb-2">
-                    <Box className="bg-red-600 rounded-xl p-4 shadow-xl">
-                        <Box className="flex-row justify-between mb-3">
-                            <Box className="flex-row items-center space-x-3">
-                                <Box className="w-12 h-12 rounded-full bg-white/20 items-center justify-center m-4">
+                    <Card className="bg-red-600 rounded-xl p-4 m-3">
+                        <View className="flex-row justify-between mb-3">
+                            <View className="flex-row items-center space-x-3">
+                                <View className="w-12 h-12 rounded-full items-center justify-center m-4">
                                     <Avatar size="lg">
                                         <AvatarFallbackText>{currentUser.name}</AvatarFallbackText>
                                         <AvatarImage
@@ -58,56 +53,51 @@ export default function Leaderboard() {
                                         />
                                         <AvatarBadge />
                                     </Avatar>
-                                </Box>
-                                <Box>
+                                </View>
+                                <View className="w-20 items-start">
                                     <Text className="text-sm text-white/90 mb-0.5">Your Rank</Text>
                                     <Text className="text-2xl font-bold text-white">#{currentUser.rank}</Text>
-                                </Box>
-                            </Box>
-                            <Box className="items-end">
+                                </View>
+                            </View>
+                            <View className="items-end p-3">
                                 <Text className="text-sm text-white/90 mb-0.5">Total Score</Text>
                                 <Text className="text-2xl font-bold text-white">{currentUser.score}</Text>
-                            </Box>
-                        </Box>
-                        <Box className="flex-row items-center space-x-2 mt-3 pt-3 border-t border-white/20">
+                            </View>
+                        </View>
+                        <View className="flex-row items-center space-x-2 mt-3 pt-3 border-t border-white/20">
                             <Icon as={CalendarDaysIcon} size="sm" color="white" className="p-1" />
                             <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
-                        </Box>
-                    </Box>
-                </Box>
+                        </View>
+                    </Card>
 
                 {/* Top Performers */}
-                <Box className="px-4 pt-6">
+                <View className="px-4 pt-4">
                     <Text className="text-lg font-semibold text-gray-900 mb-4">Top Players</Text>
-                    <Box className="space-y-3">
+                    <View className="space-y-3">
                         {leaderboardData.map((user) => (
-                            <Box key={user.rank} className={`rounded-xl mt-1 p-4 border border-gray-200 flex-row justify-between items-center shadow-sm ${user.bgColor}`}>
-                                <Box className="flex-row items-center space-x-3">
-                                    <Box className="relative">
-                                        <Box className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">
+                            <Card key={user.rank} className={`rounded-xl p-4 border border-gray-200 flex-row justify-between items-center shadow-sm ${user.bgColor}`}>
+                                <View className="flex-row items-center space-x-3">
+                                    <View className="relative">
+                                        <View className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">
                                             <Text className="text-base font-semibold text-white">{user.avatar}</Text>
-                                        </Box>
-                                        {user.rank <= 3 && <Box className="absolute -top-1 -right-1">{getRankIcon(user.rank)}</Box>}
-                                    </Box>
-                                    <Box className="p-1">
-                                        <Text className="text-base font-medium text-gray-900 mb-1 p-1">{user.name}</Text>
-                                        <Box className="bg-gray-100 px-2 py-0.5 rounded self-start">
+                                        </View>
+                                        {user.rank <= 3 && <View className="absolute -top-1 -right-1">{getRankIcon(user.rank)}</View>}
+                                    </View>
+                                    <View className="p-2">
+                                        <Text className="text-base font-medium text-gray-900 mb-1">{user.name}</Text>
+                                        <View className="bg-gray-100 px-2 py-0.5 rounded self-start">
                                             <Text className="text-xs text-gray-600">{user.streak} day streak</Text>
-                                        </Box>
-                                    </Box>
-                                </Box>
-                                <Box className="items-end">
+                                        </View>
+                                    </View>
+                                </View>
+                                <View className="items-end">
                                     <Text className="text-2xl font-bold text-gray-900">#{user.rank}</Text>
                                     <Text className="text-sm text-gray-500 mt-0.5">{user.score} pts</Text>
-                                </Box>
-                            </Box>
+                                </View>
+                            </Card>
                         ))}
-                    </Box>
-                </Box>
-
-            
-
-                
+                    </View>
+                </View>
             </ScrollView>
         </PageLayout>
         

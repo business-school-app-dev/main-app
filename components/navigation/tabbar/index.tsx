@@ -3,14 +3,23 @@ import { Ionicons } from "@expo/vector-icons";
 import { View } from "react-native";
 
 const icon = function (i: string): keyof typeof Ionicons.glyphMap {
-  if (i === "Home") {
+  if (i === "Cards") {
+    return "card-outline";
+  }
+  if (i === "UI Demo") {
+    return "apps-outline";
+  }
+  if (i === "Quiz") {
+    return "trophy-outline";
+  }
+  if (i === "Loans") {
+    return "cash-outline";
+  }
+  if (i === "Courses") {
+    return "school-outline";
+  }
+  if (i === "Wellness") {
     return "home-outline";
-  }
-  if (i === "Messages") {
-    return "chatbubble-ellipses-outline";
-  }
-  if (i === "Profile") {
-    return "person-outline";
   }
   return "home-outline"; // default fallback
 };

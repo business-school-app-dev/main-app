@@ -2,7 +2,7 @@ import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
 import { ScrollView } from "@/components/ui/scroll-view";
-import { Slider } from "@/components/ui/slider";
+import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@/components/ui/slider";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import "@/global.css";
@@ -27,34 +27,6 @@ const formatCurrency = (amount: number) => {
 const formatPercentage = (value: number) => value.toFixed(0) + "%";
 
 // --- Reusable Components ---
-interface ValueDisplayProps {
-  label: string;
-  value: string;
-  color?: string;
-  isBold?: boolean;
-}
-
-const ValueDisplay: React.FC<ValueDisplayProps> = ({
-  label,
-  value,
-  color,
-  isBold,
-}) => (
-  <HStack className="justify-between items-center">
-    <Text size="sm" className="text-gray-600">
-      {label}
-    </Text>
-    <Text
-      size="sm"
-      className={`${isBold ? "font-semibold" : ""} ${
-        color ? `text-[${color}]` : "text-gray-900"
-      }`}
-    >
-      {value}
-    </Text>
-  </HStack>
-);
-
 interface InputSliderProps {
   label: string;
   min: number;
@@ -87,8 +59,15 @@ const InputSlider: React.FC<InputSliderProps> = ({
     unit === "%" ? `${formatter(value)}${unit}` : `${formatter(value)} ${unit}`;
 
   return (
-    <VStack space="xs">
-      <ValueDisplay label={label} value={displayValue} />
+    <VStack space="xs" className="mb-4">
+      <HStack className="justify-between items-center mb-2">
+        <Text size="sm" className="text-gray-900 font-medium">
+          {label}
+        </Text>
+        <Text size="md" className="text-primary-500 font-semibold">
+          {displayValue}
+        </Text>
+      </HStack>
       <Slider
         defaultValue={initialValue}
         minValue={min}
@@ -96,7 +75,20 @@ const InputSlider: React.FC<InputSliderProps> = ({
         step={step}
         onChange={handleChange}
         size="md"
-      />
+      >
+        <SliderTrack>
+          <SliderFilledTrack className="bg-primary-500" />
+        </SliderTrack>
+        <SliderThumb className="bg-primary-500" />
+      </Slider>
+      <HStack className="justify-between items-center mt-1">
+        <Text size="xs" className="text-gray-500">
+          {unit === "%" ? `${min}%` : formatter(min)}
+        </Text>
+        <Text size="xs" className="text-gray-500">
+          {unit === "%" ? `${max}%` : formatter(max)}
+        </Text>
+      </HStack>
     </VStack>
   );
 };
@@ -150,231 +142,245 @@ const LoanCalculatorContent = () => {
     effectiveDiscretionaryIncome - extraLoanPayment;
 
   return (
-    <PageLayout title="Student Loan Calculator" backButtonHidden className="flex-1 bg-gray-50">
+    <PageLayout title="Student Loan Guide" backButtonHidden className="flex-1 bg-white">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="px-6 py-8">
-          <VStack space="2xl" className="items-center mb-8">
-            <Heading size="2xl" className="text-gray-900 text-center">
-              Path to Financial Freedom
+        <View className="px-4 py-6">
+          {/* Header Section */}
+          <VStack space="md" className="mb-6">
+            <Heading size="xl" className="text-gray-900">
+              Calculate Your Path to Financial Freedom
             </Heading>
-            <Text size="lg" className="text-gray-600 text-center">
-              Enter your current loan details to determine your optimal repayment
-              schedule, balanced upon other important long-term retirement
-              savings.
+            <Text size="sm" className="text-gray-600">
+              Enter your student loan details to receive personalized advice on
+              balancing loan repayment with retirement savings.
             </Text>
           </VStack>
 
           {/* Loan Inputs Section */}
-          <VStack space="lg" className="mb-12">
-            <Heading size="xl" className="text-gray-900 mb-4">Loan Details</Heading>
-            
-            <Card className="p-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-4">Loan Parameters</Text>
-              <VStack space="md">
-                <InputSlider
-                  label="Total Loan Amount"
-                  min={1000}
-                  max={100000}
-                  step={1000}
-                  initialValue={totalLoan}
-                  unit=""
-                  formatter={formatCurrency}
-                  onValueChange={setTotalLoan}
-                />
-                <InputSlider
-                  label="Interest Rate"
-                  min={1.0}
-                  max={15.0}
-                  step={0.1}
-                  initialValue={interestRate}
-                  unit="%"
-                  formatter={(val) => val.toFixed(2)}
-                  onValueChange={setInterestRate}
-                />
-                <InputSlider
-                  label="Loan Term"
-                  min={5}
-                  max={30}
-                  step={1}
-                  initialValue={loanTerm}
-                  unit="years"
-                  formatter={(val) => val.toFixed(0)}
-                  onValueChange={setLoanTerm}
-                />
-              </VStack>
-            </Card>
+          <VStack space="md" className="mb-6">
+            <InputSlider
+              label="Total Loan Amount"
+              min={5000}
+              max={150000}
+              step={1000}
+              initialValue={totalLoan}
+              unit=""
+              formatter={formatCurrency}
+              onValueChange={setTotalLoan}
+            />
 
-            <Card className="p-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-4">Income & Savings</Text>
-              <VStack space="md">
-                <InputSlider
-                  label="Monthly Income"
-                  min={1000}
-                  max={15000}
-                  step={500}
-                  initialValue={monthlyIncome}
-                  unit=""
-                  formatter={formatCurrency}
-                  onValueChange={setMonthlyIncome}
-                />
-                <InputSlider
-                  label="Retirement Contribution"
-                  min={0}
-                  max={20}
-                  step={1}
-                  initialValue={retirementContribution}
-                  unit="%"
-                  formatter={(val) => val.toFixed(0)}
-                  onValueChange={setRetirementContribution}
-                />
-              </VStack>
-            </Card>
+            <InputSlider
+              label="Interest Rate"
+              min={2}
+              max={12}
+              step={0.5}
+              initialValue={interestRate}
+              unit="%"
+              formatter={(val) => val.toFixed(1)}
+              onValueChange={setInterestRate}
+            />
+
+            <InputSlider
+              label="Loan Term"
+              min={5}
+              max={30}
+              step={1}
+              initialValue={loanTerm}
+              unit=" years"
+              formatter={(val) => val.toFixed(0)}
+              onValueChange={setLoanTerm}
+            />
+
+            <InputSlider
+              label="Monthly Income"
+              min={2000}
+              max={15000}
+              step={500}
+              initialValue={monthlyIncome}
+              unit=""
+              formatter={formatCurrency}
+              onValueChange={setMonthlyIncome}
+            />
+
+            <InputSlider
+              label="Retirement Contribution"
+              min={0}
+              max={25}
+              step={1}
+              initialValue={retirementContribution}
+              unit="%"
+              formatter={(val) => val.toFixed(0)}
+              onValueChange={setRetirementContribution}
+            />
           </VStack>
 
           {/* Loan Summary Section */}
-          <VStack space="lg" className="mb-12">
-            <Heading size="xl" className="text-gray-900 mb-4">Loan Summary</Heading>
-            
-            <Card className="p-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-4">Payment Details</Text>
-              <VStack space="md">
-                <ValueDisplay
-                  label="Monthly Payment"
-                  value={formatCurrency(monthlyPayment)}
-                  isBold
-                />
-                <ValueDisplay 
-                  label="Total Interest" 
-                  value={formatCurrency(totalInterest)} 
-                />
-                <ValueDisplay
-                  label="Debt-to-Income Ratio"
-                  value={formatPercentage(debtToIncome)}
-                  color={debtToIncome > 36 ? "text-red-600" : "text-green-600"}
-                  isBold
-                />
-                <Slider
-                  defaultValue={debtToIncome}
-                  minValue={0}
-                  maxValue={50}
-                  step={1}
-                  isDisabled
-                  size="sm"
-                />
-              </VStack>
-            </Card>
-          </VStack>
+          <Card className="mb-6 bg-white border border-gray-200">
+            <VStack space="md" className="p-4">
+              <Text className="text-base font-semibold text-gray-900">
+                Your Loan Summary
+              </Text>
+
+              <HStack className="justify-between items-center">
+                <Text size="sm" className="text-gray-600">
+                  Monthly Payment
+                </Text>
+                <Text size="sm" className="text-primary-500 font-semibold">
+                  {formatCurrency(monthlyPayment)}
+                </Text>
+              </HStack>
+
+              <HStack className="justify-between items-center">
+                <Text size="sm" className="text-gray-600">
+                  Total Interest
+                </Text>
+                <Text size="sm" className="text-gray-900 font-medium">
+                  {formatCurrency(totalInterest)}
+                </Text>
+              </HStack>
+
+              <HStack className="justify-between items-center">
+                <Text size="sm" className="text-gray-600">
+                  Debt-to-Income Ratio
+                </Text>
+                <Text size="sm" className={`font-semibold ${debtToIncome > 36 ? "text-red-600" : "text-gray-900"}`}>
+                  {formatPercentage(debtToIncome)}
+                </Text>
+              </HStack>
+            </VStack>
+          </Card>
 
           {/* AI Recommendation Section */}
-          <VStack space="lg" className="mb-12">
-            <Heading size="xl" className="text-gray-900 mb-4">AI Recommendations</Heading>
-            
-            <Card className="p-6 bg-blue-50 border-blue-200">
-              <HStack space="xs" className="mb-3">
-                <Text size="lg">🧠</Text>
-                <Heading size="md" className="text-blue-900">AI Summarized Recommendation</Heading>
-              </HStack>
-              <Text size="sm" className="text-blue-800">
-                Based on the current settings, a longer term of{" "}
-                <Text size="sm" className="font-semibold text-blue-900">
-                  15 years
-                </Text>{" "}
-                at a slightly lower{" "}
-                <Text size="sm" className="font-semibold text-blue-900">
-                  4.5%
-                </Text>{" "}
-                interest rate would free up{" "}
-                <Text size="sm" className="font-semibold text-blue-900">
-                  $150/month
+          <Card className="mb-6 bg-red-50 border border-red-100">
+            <VStack space="sm" className="p-4">
+              <HStack space="xs" className="items-center">
+                <Text size="lg">📈</Text>
+                <Text className="text-sm font-bold text-gray-900">
+                  AI Generated Recommendation: Balance Both
                 </Text>
-                , allowing for more retirement contributions.
+              </HStack>
+              <Text size="sm" className="text-gray-700 leading-5">
+                Your debt-to-income ratio of {formatPercentage(debtToIncome)} is{" "}
+                {debtToIncome > 36 ? "high" : "manageable"}. Consider balancing loan
+                payments with retirement contributions to take advantage of compound
+                interest and employer matching (if available).
               </Text>
-            </Card>
-          </VStack>
+            </VStack>
+          </Card>
+
+          {/* Why This Matters Section */}
+          <Card className="mb-6 bg-white border border-gray-200">
+            <VStack space="sm" className="p-4">
+              <HStack space="xs" className="items-center">
+                <Text size="lg">💰</Text>
+                <Text className="text-sm font-bold text-gray-900">
+                  Why This Matters
+                </Text>
+              </HStack>
+              <Text size="sm" className="text-gray-700 leading-5">
+                Paying off high-interest student loans early can save you thousands
+                in interest. However, don&apos;t completely neglect retirement savings,
+                especially if your employer offers matching contributions. Use the
+                slider below to find the right balance for your situation.
+              </Text>
+            </VStack>
+          </Card>
 
           {/* Allocation Section */}
-          <VStack space="lg" className="mb-12">
-            <Heading size="xl" className="text-gray-900 mb-4">Budget Allocation</Heading>
-            
-            <Card className="p-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-4">Adjust Your Allocation</Text>
-              {effectiveDiscretionaryIncome <= 0 ? (
-                <View className="p-4 bg-red-50 border border-red-200 rounded-lg">
-                  <Text size="sm" className="text-red-800">
-                    Warning: Your expenses ({formatCurrency(monthlyPayment)}/mo) are
-                    higher than your income. No discretionary income available.
+          <VStack space="md" className="mb-6">
+            <Text className="text-base font-semibold text-gray-900">
+              Adjust Your Allocation
+            </Text>
+
+            {effectiveDiscretionaryIncome <= 0 ? (
+              <Card className="p-4 bg-red-50 border border-red-200">
+                <Text size="sm" className="text-red-800">
+                  Warning: Your expenses ({formatCurrency(monthlyPayment)}/mo) exceed
+                  your income. No discretionary income available.
+                </Text>
+              </Card>
+            ) : (
+              <VStack space="md">
+                <Text size="sm" className="text-gray-700">
+                  Based on your available discretionary income of{" "}
+                  {formatCurrency(effectiveDiscretionaryIncome)}/month, decide how to
+                  split between extra loan payments and retirement savings.
+                </Text>
+
+                <VStack space="xs" className="mb-4">
+                  <Text size="sm" className="font-medium text-gray-900 mb-2">
+                    Loan vs Retirement Split
                   </Text>
-                </View>
-              ) : (
-                <VStack space="md">
-                  <Text size="sm" className="text-gray-700">
-                    You have {formatCurrency(effectiveDiscretionaryIncome)} per
-                    month to split between extra loan payments and retirement
-                    savings.
-                  </Text>
-                  
-                  <VStack space="xs">
-                    <Text size="sm" className="font-medium text-gray-700">Loan vs Retirement Split</Text>
-                    <Slider
-                      defaultValue={loanAllocationPercentage}
-                      minValue={0}
-                      maxValue={100}
-                      step={1}
-                      onChange={setLoanAllocationPercentage}
-                      size="md"
-                    />
+                  <Slider
+                    defaultValue={loanAllocationPercentage}
+                    minValue={0}
+                    maxValue={100}
+                    step={1}
+                    onChange={setLoanAllocationPercentage}
+                    size="md"
+                  >
+                    <SliderTrack>
+                      <SliderFilledTrack className="bg-primary-500" />
+                    </SliderTrack>
+                    <SliderThumb className="bg-primary-500" />
+                  </Slider>
+                </VStack>
+
+                <HStack space="md" className="justify-between">
+                  <VStack space="xs" className="flex-1 items-center">
+                    <Text size="xs" className="text-gray-600">
+                      Extra Loan Payment
+                    </Text>
+                    <Text size="xl" className="text-primary-500 font-bold">
+                      {formatPercentage(loanAllocationPercentage)}
+                    </Text>
+                    <Text size="sm" className="text-gray-900 font-semibold">
+                      {formatCurrency(extraLoanPayment)}/mo
+                    </Text>
                   </VStack>
 
-                  <HStack space="lg" className="justify-between">
-                    <Card className="flex-1 p-4 bg-green-50 border-green-200">
-                      <VStack space="xs" className="items-center">
-                        <Text size="sm" className="text-green-800 font-medium">Extra Loan Payment</Text>
-                        <Text size="lg" className="text-green-900 font-bold">
-                          {formatPercentage(loanAllocationPercentage)}
-                        </Text>
-                        <Text size="md" className="text-green-800 font-semibold">
-                          {formatCurrency(extraLoanPayment)}/mo
-                        </Text>
-                      </VStack>
-                    </Card>
-                    
-                    <Card className="flex-1 p-4 bg-blue-50 border-blue-200">
-                      <VStack space="xs" className="items-center">
-                        <Text size="sm" className="text-blue-800 font-medium">Retirement Savings</Text>
-                        <Text size="lg" className="text-blue-900 font-bold">
-                          {formatPercentage(100 - loanAllocationPercentage)}
-                        </Text>
-                        <Text size="md" className="text-blue-800 font-semibold">
-                          {formatCurrency(retirementSavingsAllocation)}/mo
-                        </Text>
-                      </VStack>
-                    </Card>
-                  </HStack>
-                </VStack>
-              )}
-            </Card>
+                  <VStack space="xs" className="flex-1 items-center">
+                    <Text size="xs" className="text-gray-600">
+                      Retirement Savings
+                    </Text>
+                    <Text size="xl" className="text-primary-500 font-bold">
+                      {formatPercentage(100 - loanAllocationPercentage)}
+                    </Text>
+                    <Text size="sm" className="text-gray-900 font-semibold">
+                      {formatCurrency(retirementSavingsAllocation)}/mo
+                    </Text>
+                  </VStack>
+                </HStack>
+              </VStack>
+            )}
           </VStack>
 
           {/* Impact Projections Section */}
-          <VStack space="lg" className="mb-12">
-            <Heading size="xl" className="text-gray-900 mb-4">Impact Projections</Heading>
-            
-            <Card className="p-6">
-              <Text className="text-lg font-semibold text-gray-800 mb-4">Long-term Impact</Text>
-              <VStack space="md">
-                <ValueDisplay
-                  label={`Loan payoff with extra ${formatCurrency(extraLoanPayment)}/mo:`}
-                  value="~2–4 years faster"
-                />
-                <ValueDisplay
-                  label={`Retirement in 30 years at ${formatCurrency(
-                    retirementSavingsAllocation
-                  )}/mo:`}
-                  value="~$328K"
-                />
-              </VStack>
-            </Card>
-          </VStack>
+          <Card className="mb-6 bg-white border border-gray-200">
+            <VStack space="md" className="p-4">
+              <Text className="text-base font-semibold text-gray-900">
+                Impact Projections
+              </Text>
+
+              <HStack className="justify-between items-center">
+                <Text size="sm" className="text-gray-600 flex-1">
+                  Loan payoff with extra {formatCurrency(extraLoanPayment)}/mo:
+                </Text>
+                <Text size="sm" className="text-gray-900 font-medium">
+                  ~2-4 years faster
+                </Text>
+              </HStack>
+
+              <HStack className="justify-between items-center">
+                <Text size="sm" className="text-gray-600 flex-1">
+                  Retirement in 30 years at {formatCurrency(retirementSavingsAllocation)}/mo:
+                </Text>
+                <Text size="sm" className="text-gray-900 font-medium">
+                  ~$328K
+                </Text>
+              </HStack>
+            </VStack>
+          </Card>
 
           {/* Action Buttons Section */}
           <VStack space="md" className="mb-8">
@@ -384,19 +390,25 @@ const LoanCalculatorContent = () => {
               size="lg"
               onPress={() => console.log("Save plan pressed")}
             />
-            <HStack space="md">
-              <TextButton
-                label="Export Report"
-                variant="outline"
-                size="md"
-                onPress={() => console.log("Export pressed")}
-              />
-              <TextButton
-                label="Share Plan"
-                variant="secondary"
-                size="md"
-                onPress={() => console.log("Share pressed")}
-              />
+            <HStack space="md" className="w-full">
+              <View className="flex-1">
+                <TextButton
+                  label="Export Report"
+                  variant="outline"
+                  size="md"
+                  onPress={() => console.log("Export pressed")}
+                  className="w-full"
+                />
+              </View>
+              <View className="flex-1">
+                <TextButton
+                  label="Share Plan"
+                  variant="secondary"
+                  size="md"
+                  onPress={() => console.log("Share pressed")}
+                  className="w-full"
+                />
+              </View>
             </HStack>
           </VStack>
         </View>

@@ -131,7 +131,7 @@ export default function CreditCardsScreen() {
     };
 
     return (
-        <PageLayout title="Credit Cards" backButtonHidden className="flex-1 bg-gray-50">
+        <PageLayout title="Credit Cards" backButtonHidden profileButtonHidden className="flex-1 bg-gray-50">
             <ScrollView 
                 className="flex-1" 
                 showsVerticalScrollIndicator={false}

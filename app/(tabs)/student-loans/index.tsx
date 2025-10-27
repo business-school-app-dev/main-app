@@ -150,7 +150,7 @@ const LoanCalculatorContent = () => {
     effectiveDiscretionaryIncome - extraLoanPayment;
 
   return (
-    <PageLayout title="Student Loan Calculator" backButtonHidden className="flex-1 bg-gray-50">
+    <PageLayout title="Student Loan Calculator" backButtonHidden profileButtonHidden className="flex-1 bg-gray-50">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="px-6 py-8">
           <VStack space="2xl" className="items-center mb-8">

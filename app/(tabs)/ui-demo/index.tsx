@@ -34,7 +34,7 @@ import CustomTabBar from "@/components/navigation/tabbar";
 
 export default function UIDemo() {
   return (
-    <PageLayout title="Component Demo" backButtonHidden className="flex-1 bg-gray-50">
+    <PageLayout title="Component Demo" backButtonHidden profileButtonHidden className="flex-1 bg-gray-50">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="px-6 py-8">
           <VStack space="2xl" className="items-center mb-8">

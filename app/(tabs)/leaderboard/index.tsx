@@ -6,9 +6,9 @@ import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 
-import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage} from '@/components/ui/avatar';
+import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 
-import { CalendarDaysIcon, StarIcon} from '@/components/ui/icon';
+import { CalendarDaysIcon, StarIcon } from '@/components/ui/icon';
 
 import PageLayout from '@/components/layouts/page-layout';
 
@@ -30,7 +30,7 @@ const currentUser = {
     profilePic: "https://plus.unsplash.com/premium_photo-1756131939171-728118fbad4a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=774",
 }
 
-export default function Leaderboard() { 
+export default function Leaderboard() {
 
     const getRankIcon = (rank: number) => {
         if (rank === 1) return <Icon as={StarIcon} size="lg" color="gold" />
@@ -41,8 +41,7 @@ export default function Leaderboard() {
 
     return (
         <PageLayout title="Leaderboard" backButtonHidden className="flex-1 bg-white">
-
-            <ScrollView className="flex-1" contentContainerClassName="pb-[100px]">
+            <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerClassName="pb-[100px]">
                 {/* Your Rank Card */}
                 <Box className="px-4 pt-4 pb-2">
                     <Box className="bg-red-600 rounded-xl p-4 shadow-xl">
@@ -53,7 +52,7 @@ export default function Leaderboard() {
                                         <AvatarFallbackText>{currentUser.name}</AvatarFallbackText>
                                         <AvatarImage
                                             source={{
-                                            uri: currentUser.profilePic,
+                                                uri: currentUser.profilePic,
                                             }}
                                         />
                                         <AvatarBadge />
@@ -105,12 +104,12 @@ export default function Leaderboard() {
                     </Box>
                 </Box>
 
-            
 
-                
+
+
             </ScrollView>
         </PageLayout>
-        
+
     );
 }
 

@@ -40,9 +40,8 @@ const GuideCard: React.FC<GuideCardProps> = ({ icon, iconBgColor, title, descrip
                 onPress={onPress}
                 variant="primary"
                 size="md"
-                rounded="full"
-                className="bg-red-600 px-6 py-3"
-                textClassName="text-white text-base font-medium"
+            // rounded="full"
+            // textClassName="text-white text-base font-medium"
             />
         </View>
     </View>
@@ -131,16 +130,13 @@ export default function CreditCardsScreen() {
     };
 
     return (
-        <PageLayout title="Credit Cards" backButtonHidden className="flex-1 bg-gray-50">
+        <PageLayout title="Credit Cards" backButtonHidden>
             <ScrollView
                 className="flex-1"
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ flexGrow: 1 }}
             >
-                <View className="p-4 flex-1">
-                    {/* Section Title */}
-                    <Text className="text-2xl font-medium text-gray-900 mb-6">Quick Guides & Resources</Text>
-
+                <View className="py-6 flex-1">
                     {/* Guide Cards Grid */}
                     <View className="gap-4 flex-1">
                         <GuideCard

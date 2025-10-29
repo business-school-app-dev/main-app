@@ -1,9 +1,12 @@
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { View, Text, Image, Pressable, Linking } from "react-native";
 import { useRouter } from "expo-router";
 import IconButton from "@/components/inputs/icon-button";
 import { StatusBar } from "expo-status-bar";
 import { Avatar, AvatarFallbackText, AvatarImage} from '@/components/ui/avatar';
+import { WebView } from "react-native-webview";
+import { Modal, ModalContent, ModalBackdrop } from '@/components/ui/modal';
+
 
 export interface NavbarProps {
   title: string;
@@ -32,13 +35,10 @@ const Navbar: React.FC<NavbarProps> = ({
     />
   );
 
-  const handleProfileClick = async () => {
-      const supported = await Linking.canOpenURL("https://www.google.com");
-      if (supported) {
-        await Linking.openURL("https://www.google.com");
-      } else {
-        console.log(`Don't know how to open this URL: "https://www.google.com"`);
-      }
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleProfileClick = () => {
+    setModalVisible(true);
   };
 
   const profileButton = (
@@ -80,7 +80,36 @@ const Navbar: React.FC<NavbarProps> = ({
         <View className="w-12 h-12">{profileButton}</View>
       )}
 
+
+      <Modal isOpen={modalVisible} onClose={() => setModalVisible(false)}>
+        <ModalBackdrop />
+        <ModalContent style={{ height: '100%', width: '100%', padding: 0 }}>
+          <View style={{ flex: 1, backgroundColor: 'white' }} className="pt-safe pb-safe">
+            <View style={{ 
+              flexDirection: 'row', 
+              borderBottomWidth: 1, 
+              alignItems: 'center',
+            }}>
+              <IconButton
+                iconName="close"
+                variant="link"
+                color="black"
+                onPress={() => setModalVisible(false)}
+              />
+              <Text style={{ marginLeft: 15, fontSize: 16, fontWeight: '500', color: "black" }}>
+                Close
+              </Text>
+            </View>
+            <WebView 
+              source={{ uri: "https://www.google.com/" }} 
+              style={{ flex: 1 }} 
+            />
+          </View>
+        </ModalContent>
+      </Modal>
     </View>
+
+    
   );
 };
 

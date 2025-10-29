@@ -103,43 +103,37 @@ export default function Leaderboard() {
         
     );
 }
-
-
-
-
-
-// const quizCategories = [
-//     {
-//       icon: PiggyBank,
-//       title: "Budgeting Basics",
-//       questions: 15,
-//       difficulty: "Beginner",
-//       bgColor: "bg-red-50",
-//       iconColor: "$red500", // Gluestack token format
-//       completed: true,
-//     },
-//     {
-//       icon: TrendingUp,
-//       title: "Investment Fundamentals",
-//       questions: 20,
-//       difficulty: "Intermediate",
-//       bgColor: "bg-pink-50",
-//       iconColor: "$rose700", // Gluestack token format
-//       completed: true,
-//     },
-//     {
-//       icon: CreditCard,
-//       title: "Credit & Loans",
-//       questions: 18,
-//       difficulty: "Intermediate",
-//       bgColor: "bg-red-100",
-//       iconColor: "$red600", // Gluestack token format
-//       completed: false,
-//     },
-//     // ... (rest of quizCategories)
-// ]
-
 /*
+const quizCategories = [
+    {
+      icon: PiggyBank,
+      title: "Budgeting Basics",
+      questions: 15,
+      difficulty: "Beginner",
+      bgColor: "bg-red-50",
+      iconColor: "$red500", // Gluestack token format
+      completed: true,
+    },
+    {
+      icon: TrendingUp,
+      title: "Investment Fundamentals",
+      questions: 20,
+      difficulty: "Intermediate",
+      bgColor: "bg-pink-50",
+      iconColor: "$rose700", // Gluestack token format
+      completed: true,
+    },
+    {
+      icon: CreditCard,
+      title: "Credit & Loans",
+      questions: 18,
+      difficulty: "Intermediate",
+      bgColor: "bg-red-100",
+      iconColor: "$red600", // Gluestack token format
+      completed: false,
+    },
+    // ... (rest of quizCategories)
+]
 
 Quiz Categories
                 <Box className="px-4 pt-6">
@@ -171,6 +165,4 @@ Quiz Categories
                         })}
                     </Box>
                 </Box>
-
-
 */

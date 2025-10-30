@@ -65,7 +65,7 @@ const TextInputField: React.FC<TextInputFieldProps> = ({
       <Input
         variant="outline"
         size="lg"
-        className="bg-background-50 border-gray-300"
+        className="bg-white border-gray-300"
       >
         {prefix && (
           <Text className="text-typography-500 text-base pl-3">
@@ -430,8 +430,8 @@ const LoanCalculatorContent = () => {
                   {yearsSaved > 0
                     ? `~${yearsSaved.toFixed(1)} years faster`
                     : extraLoanPayment === 0
-                    ? "No extra payment"
-                    : "Same timeframe"}
+                      ? "No extra payment"
+                      : "Same timeframe"}
                 </Text>
               </HStack>
 

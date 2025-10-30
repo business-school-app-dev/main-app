@@ -28,21 +28,20 @@ interface GuideCardProps {
 }
 
 const GuideCard: React.FC<GuideCardProps> = ({ icon, iconBgColor, title, description, onPress }) => (
-    <View className="bg-white p-6 w-full rounded-xl shadow-md shadow-black/10 elevation-5 flex-1 min-h-0">
+    <View className="bg-white p-6 w-full rounded-xl border border-gray-200 shadow-black/10 elevation-5 flex-1 min-h-0">
         <View className={`w-20 h-20 rounded-xl justify-center items-center ${iconBgColor}`}>
             {icon}
         </View>
         <Text className="text-2xl font-semibold text-gray-900 mt-5 mb-2">{title}</Text>
         <View className="flex-row items-center justify-between mt-auto">
             <Text className="text-lg text-gray-500 leading-6 flex-1 mr-4">{description}</Text>
-            <TextButton 
+            <TextButton
                 label="Read More"
                 onPress={onPress}
                 variant="primary"
                 size="md"
-                rounded="full"
-                className="bg-red-600 px-6 py-3"
-                textClassName="text-white text-base font-medium"
+            // rounded="full"
+            // textClassName="text-white text-base font-medium"
             />
         </View>
     </View>
@@ -131,16 +130,13 @@ export default function CreditCardsScreen() {
     };
 
     return (
-        <PageLayout title="Credit Cards" backButtonHidden className="flex-1 bg-gray-50">
-            <ScrollView 
-                className="flex-1" 
+        <PageLayout title="Credit Cards" backButtonHidden>
+            <ScrollView
+                className="flex-1"
                 showsVerticalScrollIndicator={false}
                 contentContainerStyle={{ flexGrow: 1 }}
             >
-                <View className="p-4 flex-1">
-                    {/* Section Title */}
-                    <Text className="text-2xl font-medium text-gray-900 mb-6">Quick Guides & Resources</Text>
-
+                <View className="py-6 flex-1">
                     {/* Guide Cards Grid */}
                     <View className="gap-4 flex-1">
                         <GuideCard
@@ -182,7 +178,7 @@ export default function CreditCardsScreen() {
                         </ScrollView>
                     </ModalBody>
                     <ModalFooter>
-                        <TextButton 
+                        <TextButton
                             label="Close"
                             onPress={closeModal}
                             variant="primary"

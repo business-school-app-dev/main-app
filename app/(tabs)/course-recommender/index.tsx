@@ -12,7 +12,7 @@ const CourseRecommenderScreen = () => {
   const [timeCommitment, setTimeCommitment] = useState(0.2);
 
   return (
-    <PageLayout title="Course Recommender" backButtonHidden className="flex-1 bg-gray-50">
+    <PageLayout title="Course Recommender" backButtonHidden>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="px-6 py-8">
           <Text className="text-center text-lg font-semibold mb-2">

@@ -6,16 +6,17 @@ import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 
-import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage} from '@/components/ui/avatar';
+import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 
-import { CalendarDaysIcon, StarIcon} from '@/components/ui/icon';
+import { CalendarDaysIcon, StarIcon } from '@/components/ui/icon';
+import { Flame } from 'lucide-react-native';
 
 import PageLayout from '@/components/layouts/page-layout';
 
 const leaderboardData = [
-    { rank: 1, name: "Sarah Chen", score: 2850, avatar: "SC", streak: 12, bgColor: "bg-amber-100" },
-    { rank: 2, name: "Marcus Johnson", score: 2720, avatar: "MJ", streak: 10, bgColor: "bg-gray-100" },
-    { rank: 3, name: "Emma Rodriguez", score: 2680, avatar: "ER", streak: 9, bgColor: "bg-orange-200" },
+    { rank: 1, name: "Sarah Chen", score: 2850, avatar: "SC", streak: 12, bgColor: "bg-white" },
+    { rank: 2, name: "Marcus Johnson", score: 2720, avatar: "MJ", streak: 10, bgColor: "bg-white" },
+    { rank: 3, name: "Emma Rodriguez", score: 2680, avatar: "ER", streak: 9, bgColor: "bg-white" },
     { rank: 4, name: "Alex Kumar", score: 2540, avatar: "AK", streak: 8, bgColor: "bg-white" },
     { rank: 5, name: "Jordan Lee", score: 2480, avatar: "JL", streak: 7, bgColor: "bg-white" },
     { rank: 6, name: "Taylor Smith", score: 2320, avatar: "TS", streak: 6, bgColor: "bg-white" },
@@ -30,7 +31,7 @@ const currentUser = {
     profilePic: "https://plus.unsplash.com/premium_photo-1756131939171-728118fbad4a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=774",
 }
 
-export default function Leaderboard() { 
+export default function Leaderboard() {
 
     const getRankIcon = (rank: number) => {
         if (rank === 1) return <Icon as={StarIcon} size="lg" color="gold" />
@@ -40,12 +41,11 @@ export default function Leaderboard() {
     }
 
     return (
-        <PageLayout title="Leaderboard" backButtonHidden className="flex-1 bg-white">
-
-            <ScrollView className="flex-1" contentContainerClassName="pb-[100px]">
+        <PageLayout title="Quiz" backButtonHidden>
+            <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerClassName="pb-10">
                 {/* Your Rank Card */}
-                <Box className="px-4 pt-4 pb-2">
-                    <Box className="bg-red-600 rounded-xl p-4 shadow-xl">
+                <Box className="pt-4 pb-2">
+                    <Box className="bg-primary-500 rounded-xl p-4 border border-gray-200">
                         <Box className="flex-row justify-between mb-3">
                             <Box className="flex-row items-center space-x-3">
                                 <Box className="w-12 h-12 rounded-full bg-white/20 items-center justify-center m-4">
@@ -53,7 +53,7 @@ export default function Leaderboard() {
                                         <AvatarFallbackText>{currentUser.name}</AvatarFallbackText>
                                         <AvatarImage
                                             source={{
-                                            uri: currentUser.profilePic,
+                                                uri: currentUser.profilePic,
                                             }}
                                         />
                                         <AvatarBadge />
@@ -70,24 +70,23 @@ export default function Leaderboard() {
                             </Box>
                         </Box>
                         <Box className="flex-row items-center space-x-2 mt-3 pt-3 border-t border-white/20">
-                            <Icon as={CalendarDaysIcon} size="sm" color="white" className="p-1" />
+                            <Icon as={Flame} size="sm" color="white" className="p-1" />
                             <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
                         </Box>
                     </Box>
                 </Box>
 
                 {/* Top Performers */}
-                <Box className="px-4 pt-6">
+                <Box className="pt-6">
                     <Text className="text-lg font-semibold text-gray-900 mb-4">Top Players</Text>
                     <Box className="space-y-3">
                         {leaderboardData.map((user) => (
-                            <Box key={user.rank} className={`rounded-xl mt-1 p-4 border border-gray-200 flex-row justify-between items-center shadow-sm ${user.bgColor}`}>
+                            <Box key={user.rank} className={`rounded-xl mb-3 p-4 border border-gray-200 flex-row justify-between items-center ${user.bgColor}`}>
                                 <Box className="flex-row items-center space-x-3">
                                     <Box className="relative">
                                         <Box className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">
                                             <Text className="text-base font-semibold text-white">{user.avatar}</Text>
                                         </Box>
-                                        {user.rank <= 3 && <Box className="absolute -top-1 -right-1">{getRankIcon(user.rank)}</Box>}
                                     </Box>
                                     <Box className="p-1">
                                         <Text className="text-base font-medium text-gray-900 mb-1 p-1">{user.name}</Text>
@@ -105,12 +104,12 @@ export default function Leaderboard() {
                     </Box>
                 </Box>
 
-            
 
-                
+
+
             </ScrollView>
         </PageLayout>
-        
+
     );
 }
 

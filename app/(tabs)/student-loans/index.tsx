@@ -213,9 +213,9 @@ const LoanCalculatorContent = () => {
   }, [retirementSavingsAllocation]);
 
   return (
-    <PageLayout title="Student Loan Guide" backButtonHidden className="flex-1 bg-white">
+    <PageLayout title="Student Loan Guide" backButtonHidden>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="px-4 py-6">
+        <View className="py-6">
           {/* Header Section */}
           <VStack space="md" className="mb-6">
             <Heading size="xl" className="text-gray-900">

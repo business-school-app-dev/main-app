@@ -1,16 +1,19 @@
 {
   "expo": {
-    "name": "UMDSmithBusinessApp",
-    "slug": "UMDSmithBusinessApp",
+    "name": "Main App",
+    "slug": "main-app",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "umdsmithbusinessapp",
+    "scheme": "mainapp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.anonymous.UMDSmithBusinessApp"
+      "bundleIdentifier": "com.umdsmithbusinessschoolappteam.mainapp",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -20,7 +23,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.umdsmithbusinessschoolappteam.mainapp"
     },
     "web": {
       "bundler": "metro",
@@ -45,6 +49,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1b797db0-b576-4b95-9ef7-910d0121a005"
+      }
+    },
+    "owner": "umd-smith-business-school-app-team"
   }
 }

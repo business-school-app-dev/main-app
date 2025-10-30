@@ -5,6 +5,7 @@ import { ScrollView } from "@/components/ui/scroll-view";
 import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@/components/ui/slider";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { Input, InputField } from "@/components/ui/input";
 import "@/global.css";
 import React, { useMemo, useState } from "react";
 import { View } from "react-native";
@@ -24,83 +25,105 @@ const formatCurrency = (amount: number) => {
   }).format(value);
 };
 
+const formatLargeCurrency = (amount: number) => {
+  const value = Math.max(0, amount);
+  if (value >= 1000000) {
+    return `$${(value / 1000000).toFixed(1)}M`;
+  } else if (value >= 1000) {
+    return `$${(value / 1000).toFixed(0)}K`;
+  }
+  return formatCurrency(value);
+};
+
 const formatPercentage = (value: number) => value.toFixed(0) + "%";
 
 // --- Reusable Components ---
-interface InputSliderProps {
+interface TextInputFieldProps {
   label: string;
-  min: number;
-  max: number;
-  step: number;
-  initialValue: number;
-  unit: string;
-  formatter: (value: number) => string;
-  onValueChange: (value: number) => void;
+  value: string;
+  onChangeText: (text: string) => void;
+  placeholder: string;
+  keyboardType?: "default" | "numeric" | "decimal-pad";
+  suffix?: string;
+  prefix?: string;
 }
 
-const InputSlider: React.FC<InputSliderProps> = ({
+const TextInputField: React.FC<TextInputFieldProps> = ({
   label,
-  min,
-  max,
-  step,
-  initialValue,
-  unit,
-  formatter,
-  onValueChange,
+  value,
+  onChangeText,
+  placeholder,
+  keyboardType = "default",
+  suffix,
+  prefix,
 }) => {
-  const [value, setValue] = useState(initialValue);
-
-  const handleChange = (newValue: number) => {
-    setValue(newValue);
-    onValueChange(newValue);
-  };
-
-  const displayValue =
-    unit === "%" ? `${formatter(value)}${unit}` : `${formatter(value)} ${unit}`;
-
   return (
     <VStack space="xs" className="mb-4">
-      <HStack className="justify-between items-center mb-2">
-        <Text size="sm" className="text-gray-900 font-medium">
-          {label}
-        </Text>
-        <Text size="md" className="text-primary-500 font-semibold">
-          {displayValue}
-        </Text>
-      </HStack>
-      <Slider
-        defaultValue={initialValue}
-        minValue={min}
-        maxValue={max}
-        step={step}
-        onChange={handleChange}
-        size="md"
+      <Text size="sm" className="text-gray-900 font-medium mb-1">
+        {label}
+      </Text>
+      <Input
+        variant="outline"
+        size="lg"
+        className="bg-background-50 border-gray-300"
       >
-        <SliderTrack>
-          <SliderFilledTrack className="bg-primary-500" />
-        </SliderTrack>
-        <SliderThumb className="bg-primary-500" />
-      </Slider>
-      <HStack className="justify-between items-center mt-1">
-        <Text size="xs" className="text-gray-500">
-          {unit === "%" ? `${min}%` : formatter(min)}
-        </Text>
-        <Text size="xs" className="text-gray-500">
-          {unit === "%" ? `${max}%` : formatter(max)}
-        </Text>
-      </HStack>
+        {prefix && (
+          <Text className="text-typography-500 text-base pl-3">
+            {prefix}
+          </Text>
+        )}
+        <InputField
+          placeholder={placeholder}
+          value={value}
+          onChangeText={onChangeText}
+          keyboardType={keyboardType}
+          className="text-typography-900 text-base"
+        />
+        {suffix && (
+          <Text className="text-typography-500 text-base pr-3">
+            {suffix}
+          </Text>
+        )}
+      </Input>
     </VStack>
   );
 };
 
 // --- Main Calculator Content ---
 const LoanCalculatorContent = () => {
-  const [totalLoan, setTotalLoan] = useState(35000);
-  const [interestRate, setInterestRate] = useState(5.5);
-  const [loanTerm, setLoanTerm] = useState(10);
-  const [monthlyIncome, setMonthlyIncome] = useState(4500);
-  const [retirementContribution, setRetirementContribution] = useState(8);
+  // State for text inputs (as strings)
+  const [totalLoanText, setTotalLoanText] = useState("50000");
+  const [interestRateText, setInterestRateText] = useState("5.5");
+  const [loanTermText, setLoanTermText] = useState("10");
+  const [monthlyIncomeText, setMonthlyIncomeText] = useState("4000");
+  const [retirementContributionText, setRetirementContributionText] = useState("5");
   const [loanAllocationPercentage, setLoanAllocationPercentage] = useState(60);
+
+  // Parse string values to numbers for calculations
+  const totalLoan = useMemo(() => {
+    const parsed = parseFloat(totalLoanText);
+    return isNaN(parsed) ? 0 : parsed;
+  }, [totalLoanText]);
+
+  const interestRate = useMemo(() => {
+    const parsed = parseFloat(interestRateText);
+    return isNaN(parsed) ? 0 : parsed;
+  }, [interestRateText]);
+
+  const loanTerm = useMemo(() => {
+    const parsed = parseFloat(loanTermText);
+    return isNaN(parsed) ? 0 : parsed;
+  }, [loanTermText]);
+
+  const monthlyIncome = useMemo(() => {
+    const parsed = parseFloat(monthlyIncomeText);
+    return isNaN(parsed) ? 0 : parsed;
+  }, [monthlyIncomeText]);
+
+  const retirementContribution = useMemo(() => {
+    const parsed = parseFloat(retirementContributionText);
+    return isNaN(parsed) ? 0 : parsed;
+  }, [retirementContributionText]);
 
   const {
     monthlyPayment,
@@ -113,20 +136,20 @@ const LoanCalculatorContent = () => {
     const termMonths = loanTerm * 12;
 
     let calculatedPayment = 0;
-    if (rate > 0 && termMonths > 0) {
+    if (rate > 0 && termMonths > 0 && principal > 0) {
       calculatedPayment =
         (principal * rate) / (1 - Math.pow(1 + rate, -termMonths));
-    } else if (termMonths > 0) {
+    } else if (termMonths > 0 && principal > 0) {
       calculatedPayment = principal / termMonths;
     }
 
-    const totalInterest = calculatedPayment * termMonths - principal;
-    const dti = (calculatedPayment / monthlyIncome) * 100;
+    const totalInterestPaid = calculatedPayment * termMonths - principal;
+    const dti = monthlyIncome > 0 ? (calculatedPayment / monthlyIncome) * 100 : 0;
     const discretionary = monthlyIncome - calculatedPayment;
 
     return {
       monthlyPayment: calculatedPayment,
-      totalInterest,
+      totalInterest: Math.max(0, totalInterestPaid),
       debtToIncome: dti,
       availableDiscretionaryIncome: discretionary,
     };
@@ -141,10 +164,58 @@ const LoanCalculatorContent = () => {
   const retirementSavingsAllocation =
     effectiveDiscretionaryIncome - extraLoanPayment;
 
+  // Calculate loan payoff time with extra payments
+  const { monthsToPayoff, yearsSaved } = useMemo(() => {
+    if (totalLoan <= 0 || monthlyPayment <= 0) {
+      return { monthsToPayoff: 0, yearsSaved: 0 };
+    }
+
+    const rate = interestRate / 100 / 12;
+    const totalPayment = monthlyPayment + extraLoanPayment;
+
+    if (totalPayment <= 0) {
+      return { monthsToPayoff: 0, yearsSaved: 0 };
+    }
+
+    let balance = totalLoan;
+    let months = 0;
+
+    // Calculate months to pay off with extra payment
+    while (balance > 0 && months < 360) { // Max 30 years
+      const interestCharge = balance * rate;
+      const principalPayment = totalPayment - interestCharge;
+      balance -= principalPayment;
+      months++;
+    }
+
+    const originalTermMonths = loanTerm * 12;
+    const monthsSaved = originalTermMonths - months;
+    const yearsSaved = monthsSaved / 12;
+
+    return { monthsToPayoff: months, yearsSaved: Math.max(0, yearsSaved) };
+  }, [totalLoan, monthlyPayment, extraLoanPayment, interestRate, loanTerm]);
+
+  // Calculate retirement savings projection (30 years with 7% average return)
+  const retirementProjection = useMemo(() => {
+    if (retirementSavingsAllocation <= 0) return 0;
+
+    const monthlyContribution = retirementSavingsAllocation;
+    const annualReturn = 0.07; // 7% average annual return
+    const monthlyReturn = annualReturn / 12;
+    const months = 30 * 12; // 30 years
+
+    // Future value of annuity formula: FV = PMT × [(1 + r)^n - 1] / r
+    const futureValue =
+      monthlyContribution *
+      ((Math.pow(1 + monthlyReturn, months) - 1) / monthlyReturn);
+
+    return futureValue;
+  }, [retirementSavingsAllocation]);
+
   return (
-    <PageLayout title="Student Loan Guide" backButtonHidden className="flex-1 bg-white">
+    <PageLayout title="Student Loan Guide" backButtonHidden>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="px-4 py-6">
+        <View className="py-6">
           {/* Header Section */}
           <VStack space="md" className="mb-6">
             <Heading size="xl" className="text-gray-900">
@@ -158,59 +229,48 @@ const LoanCalculatorContent = () => {
 
           {/* Loan Inputs Section */}
           <VStack space="md" className="mb-6">
-            <InputSlider
+            <TextInputField
               label="Total Loan Amount"
-              min={5000}
-              max={150000}
-              step={1000}
-              initialValue={totalLoan}
-              unit=""
-              formatter={formatCurrency}
-              onValueChange={setTotalLoan}
+              value={totalLoanText}
+              onChangeText={setTotalLoanText}
+              placeholder="50000"
+              keyboardType="numeric"
+              prefix="$"
             />
 
-            <InputSlider
+            <TextInputField
               label="Interest Rate"
-              min={2}
-              max={12}
-              step={0.5}
-              initialValue={interestRate}
-              unit="%"
-              formatter={(val) => val.toFixed(1)}
-              onValueChange={setInterestRate}
+              value={interestRateText}
+              onChangeText={setInterestRateText}
+              placeholder="5.5"
+              keyboardType="decimal-pad"
+              suffix="%"
             />
 
-            <InputSlider
-              label="Loan Term"
-              min={5}
-              max={30}
-              step={1}
-              initialValue={loanTerm}
-              unit=" years"
-              formatter={(val) => val.toFixed(0)}
-              onValueChange={setLoanTerm}
+            <TextInputField
+              label="Loan Term (Years)"
+              value={loanTermText}
+              onChangeText={setLoanTermText}
+              placeholder="10"
+              keyboardType="numeric"
             />
 
-            <InputSlider
+            <TextInputField
               label="Monthly Income"
-              min={2000}
-              max={15000}
-              step={500}
-              initialValue={monthlyIncome}
-              unit=""
-              formatter={formatCurrency}
-              onValueChange={setMonthlyIncome}
+              value={monthlyIncomeText}
+              onChangeText={setMonthlyIncomeText}
+              placeholder="4000"
+              keyboardType="numeric"
+              prefix="$"
             />
 
-            <InputSlider
-              label="Retirement Contribution"
-              min={0}
-              max={25}
-              step={1}
-              initialValue={retirementContribution}
-              unit="%"
-              formatter={(val) => val.toFixed(0)}
-              onValueChange={setRetirementContribution}
+            <TextInputField
+              label="Current Retirement Contribution (%)"
+              value={retirementContributionText}
+              onChangeText={setRetirementContributionText}
+              placeholder="5"
+              keyboardType="decimal-pad"
+              suffix="%"
             />
           </VStack>
 
@@ -279,7 +339,7 @@ const LoanCalculatorContent = () => {
               </HStack>
               <Text size="sm" className="text-gray-700 leading-5">
                 Paying off high-interest student loans early can save you thousands
-                in interest. However, don&apos;t completely neglect retirement savings,
+                in interest. However, don't completely neglect retirement savings,
                 especially if your employer offers matching contributions. Use the
                 slider below to find the right balance for your situation.
               </Text>
@@ -367,7 +427,11 @@ const LoanCalculatorContent = () => {
                   Loan payoff with extra {formatCurrency(extraLoanPayment)}/mo:
                 </Text>
                 <Text size="sm" className="text-gray-900 font-medium">
-                  ~2-4 years faster
+                  {yearsSaved > 0
+                    ? `~${yearsSaved.toFixed(1)} years faster`
+                    : extraLoanPayment === 0
+                    ? "No extra payment"
+                    : "Same timeframe"}
                 </Text>
               </HStack>
 
@@ -376,41 +440,33 @@ const LoanCalculatorContent = () => {
                   Retirement in 30 years at {formatCurrency(retirementSavingsAllocation)}/mo:
                 </Text>
                 <Text size="sm" className="text-gray-900 font-medium">
-                  ~$328K
+                  {retirementProjection > 0
+                    ? `~${formatLargeCurrency(retirementProjection)}`
+                    : "$0"}
                 </Text>
               </HStack>
             </VStack>
           </Card>
 
           {/* Action Buttons Section */}
-          <VStack space="md" className="mb-8">
-            <TextButton
-              label="Save This Plan"
-              variant="primary"
-              size="lg"
-              onPress={() => console.log("Save plan pressed")}
-            />
-            <HStack space="md" className="w-full">
-              <View className="flex-1">
-                <TextButton
-                  label="Export Report"
-                  variant="outline"
-                  size="md"
-                  onPress={() => console.log("Export pressed")}
-                  className="w-full"
-                />
-              </View>
-              <View className="flex-1">
-                <TextButton
-                  label="Share Plan"
-                  variant="secondary"
-                  size="md"
-                  onPress={() => console.log("Share pressed")}
-                  className="w-full"
-                />
-              </View>
-            </HStack>
-          </VStack>
+          <HStack space="md" className="w-full mb-8">
+            <View className="flex-1">
+              <TextButton
+                label="Export"
+                variant="primary"
+                size="md"
+                onPress={() => console.log("Export pressed")}
+              />
+            </View>
+            <View className="flex-1">
+              <TextButton
+                label="Share"
+                variant="primary"
+                size="md"
+                onPress={() => console.log("Share pressed")}
+              />
+            </View>
+          </HStack>
         </View>
       </ScrollView>
     </PageLayout>

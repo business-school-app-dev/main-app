@@ -8,7 +8,7 @@ function PageLayout(props: NavbarProps & { children: ReactNode } & { className?:
   return (
     <SafeAreaView edges={["left", "right"]} className={"h-full w-full bg-background"}>
       <Navbar {...props} />
-      <View className={`flex-1 ${props.className || ""} px-3`}>
+      <View className={`flex-1 bg-gray-50 ${props.className || ""} px-5`}>
         {props.children}
       </View>
     </SafeAreaView>

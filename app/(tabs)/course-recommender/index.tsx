@@ -62,7 +62,7 @@ const CourseRecommenderScreen = () => {
   const graduationYears = ["2025","2026","2027","2028","2029"];
 
   return (
-    <PageLayout title="Course Recommender" backButtonHidden className="flex-1 bg-white">
+    <PageLayout title="Course Recommender" backButtonHidden>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
       <View className="px-4 py-6">
         <VStack space = "md">

@@ -42,11 +42,7 @@ export default function App() {
     <Box className="flex-1 bg-[#E11932]">
       <StatusBar style="light" />
 
-      <PageLayout
-        title="Wellness Hub"
-        backButtonHidden
-        className="flex-1 bg-gray-50"
-      >
+      <PageLayout title="Wellness Hub" backButtonHidden>
         <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerClassName="pb-5">
           {/* Hero Section */}
           <Box className="w-full">

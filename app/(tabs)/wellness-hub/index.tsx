@@ -12,11 +12,13 @@ import {
   Briefcase,
   Calendar,
   Clock,
+  CreditCard,
 } from "lucide-react-native";
 import { useState } from "react";
 import { WebView } from "react-native-webview";
 import { Modal, ModalContent, ModalBackdrop } from "@/components/ui/modal";
 import IconButton from "@/components/inputs/icon-button";
+import { router } from "expo-router";
 
 export default function App() {
   const events = [
@@ -84,11 +86,17 @@ export default function App() {
                 { title: "Budgeting Tools", icon: Calculator },
                 { title: "Financial Literacy", icon: BookOpen },
                 { title: "Scholarship Help", icon: Award },
-                { title: "Internship Help", icon: Briefcase },
+                { title: "Credit Card Guide", icon: CreditCard },
               ].map((item, index) => (
                 <Box key={index} className="w-[48%] mb-4">
                   <Pressable
-                    onPress={() => console.log(`${item.title} pressed`)}
+                    onPress={() => {
+                      if (item.title === "Credit Card Guide") {
+                        router.push("/(tabs)/wellness-hub/credit-cards");
+                      } else {
+                        console.log(`${item.title} pressed`);
+                      }
+                    }}
                     className="bg-white rounded-lg border border-gray-200 h-32 items-center justify-center space-y-2"
                   >
                     <Icon as={item.icon} size="xl" className="text-red-600" />

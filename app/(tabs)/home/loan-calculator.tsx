@@ -5,13 +5,13 @@ import { ScrollView } from "@/components/ui/scroll-view";
 import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@/components/ui/slider";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
-import { Input, InputField } from "@/components/ui/input";
 import "@/global.css";
 import React, { useMemo, useState } from "react";
 import { View } from "react-native";
 
 // Custom Components
 import TextButton from "@/components/inputs/text-button";
+import TextInputField from "@/components/inputs/text-input-field";
 import PageLayout from "@/components/layouts/page-layout";
 
 // --- Helper Functions ---
@@ -36,58 +36,6 @@ const formatLargeCurrency = (amount: number) => {
 };
 
 const formatPercentage = (value: number) => value.toFixed(0) + "%";
-
-// --- Reusable Components ---
-interface TextInputFieldProps {
-  label: string;
-  value: string;
-  onChangeText: (text: string) => void;
-  placeholder: string;
-  keyboardType?: "default" | "numeric" | "decimal-pad";
-  suffix?: string;
-  prefix?: string;
-}
-
-const TextInputField: React.FC<TextInputFieldProps> = ({
-  label,
-  value,
-  onChangeText,
-  placeholder,
-  keyboardType = "default",
-  suffix,
-  prefix,
-}) => {
-  return (
-    <VStack space="xs" className="mb-4">
-      <Text size="sm" className="text-gray-900 font-medium mb-1">
-        {label}
-      </Text>
-      <Input
-        variant="outline"
-        size="lg"
-        className="bg-background-50 border-gray-300"
-      >
-        {prefix && (
-          <Text className="text-typography-500 text-base pl-3">
-            {prefix}
-          </Text>
-        )}
-        <InputField
-          placeholder={placeholder}
-          value={value}
-          onChangeText={onChangeText}
-          keyboardType={keyboardType}
-          className="text-typography-900 text-base"
-        />
-        {suffix && (
-          <Text className="text-typography-500 text-base pr-3">
-            {suffix}
-          </Text>
-        )}
-      </Input>
-    </VStack>
-  );
-};
 
 // --- Main Calculator Content ---
 const LoanCalculatorContent = () => {
@@ -213,7 +161,7 @@ const LoanCalculatorContent = () => {
   }, [retirementSavingsAllocation]);
 
   return (
-    <PageLayout title="Student Loan Guide" backButtonHidden>
+    <PageLayout title="Student Loan Guide">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="py-6">
           {/* Header Section */}
@@ -430,8 +378,8 @@ const LoanCalculatorContent = () => {
                   {yearsSaved > 0
                     ? `~${yearsSaved.toFixed(1)} years faster`
                     : extraLoanPayment === 0
-                    ? "No extra payment"
-                    : "Same timeframe"}
+                      ? "No extra payment"
+                      : "Same timeframe"}
                 </Text>
               </HStack>
 

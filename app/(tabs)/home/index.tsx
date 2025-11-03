@@ -14,6 +14,7 @@ import {
   Clock,
   CreditCard,
   GraduationCap,
+  Banknote,
 } from "lucide-react-native";
 import { useState } from "react";
 import { WebView } from "react-native-webview";
@@ -55,7 +56,7 @@ export default function App() {
     <Box className="flex-1 bg-[#E11932]">
       <StatusBar style="light" />
 
-      <PageLayout title="Wellness Hub" backButtonHidden>
+      <PageLayout title="Home" backButtonHidden>
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="flex-1"
@@ -84,20 +85,22 @@ export default function App() {
           <Box className="w-full pt-4 pb-2">
             <Box className="flex-row flex-wrap justify-between">
               {[
-                { title: "Budgeting Tools", icon: Calculator },
-                { title: "Financial Literacy", icon: BookOpen },
-                { title: "Financial Courses Guide", icon: GraduationCap },
-                { title: "Credit Card Guide", icon: CreditCard },
+                { title: "Loan Calculator", icon: Banknote },
+                { title: "Investing", icon: BookOpen },
+                { title: "Financial Courses", icon: GraduationCap },
+                { title: "Credit Cards", icon: CreditCard },
               ].map((item, index) => (
                 <Box key={index} className="w-[48%] mb-4">
                   <Pressable
                     onPress={() => {
-                      if (item.title === "Credit Card Guide") {
-                        router.push("/(tabs)/wellness-hub/credit-cards");
-                      } else if (item.title === "Financial Courses Guide") {
-                        router.push("/(tabs)/wellness-hub/course-recommender");
-                      } else {
-                        console.log(`${item.title} pressed`);
+                      if (item.title === "Credit Cards") {
+                        router.push("/(tabs)/home/credit-cards");
+                      } else if (item.title === "Financial Courses") {
+                        router.push("/(tabs)/home/financial-courses");
+                      } else if (item.title === "Loan Calculator") {
+                        router.push("/(tabs)/home/loan-calculator");
+                      } else if (item.title === "Investing") {
+                        router.push("/(tabs)/home/investing");
                       }
                     }}
                     className="bg-white rounded-lg border border-gray-200 h-32 items-center justify-center space-y-2"

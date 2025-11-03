@@ -161,7 +161,7 @@ const LoanCalculatorContent = () => {
   }, [retirementSavingsAllocation]);
 
   return (
-    <PageLayout title="Student Loan Guide" backButtonHidden>
+    <PageLayout title="Student Loan Guide">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="py-6">
           {/* Header Section */}

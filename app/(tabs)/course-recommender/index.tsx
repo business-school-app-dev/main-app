@@ -75,7 +75,7 @@ const CourseRecommenderScreen = () => {
           {/* Graduation Year */}
           <FormControl>
             <FormControlLabel>
-              <FormControlLabelText>Graduation Year</FormControlLabelText>
+              <FormControlLabelText>Credits</FormControlLabelText>
             </FormControlLabel>
             <Select>
               <SelectTrigger>
@@ -88,10 +88,11 @@ const CourseRecommenderScreen = () => {
                   <SelectDragIndicatorWrapper>
                     <SelectDragIndicator />
                   </SelectDragIndicatorWrapper>
-                  <SelectItem label="2026" value="2026" />
-                  <SelectItem label="2027" value="2027" />
-                  <SelectItem label="2028" value="2028" />
-                  <SelectItem label="2029" value="2029" />
+                  <SelectItem label="0-29" value="0-29" />
+                  <SelectItem label="30-59" value="30-59" />
+                  <SelectItem label="60-89" value="60-89" />
+                  <SelectItem label="90-119" value="90-119" />
+                  <SelectItem label="120+" value="120+" />
                 </SelectContent>
               </SelectPortal>
             </Select>
@@ -138,6 +139,38 @@ const CourseRecommenderScreen = () => {
           </FormControl>
 
 
+          {/* second major */}
+          <FormControl>
+            <FormControlLabel>
+              <FormControlLabelText>2nd Major</FormControlLabelText>
+            </FormControlLabel>
+
+            <Select>
+              <SelectTrigger>
+                <SelectInput placeholder="Select option" className="flex-1" />
+                <SelectIcon className="mr-3" as={ChevronDownIcon}/>
+              </SelectTrigger>
+
+              <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent>
+                  <SelectDragIndicatorWrapper>
+                    <SelectDragIndicator />
+                  </SelectDragIndicatorWrapper>
+
+                  {/* Use ScrollView for scrolling */}
+                  <ScrollView style={{ maxHeight: 300 }}>
+                    {majors.map((major) => (
+                      <SelectItem key={major} label={major} value={major} />
+                    ))}
+                  </ScrollView>
+
+                </SelectContent>
+              </SelectPortal>
+            </Select>
+          </FormControl>
+
+
           {/* Minor */}
           <FormControl>
             <FormControlLabel>
@@ -174,6 +207,37 @@ const CourseRecommenderScreen = () => {
             </FormControlError>
           </FormControl>
 
+          {/* 2nd minor */}
+          <FormControl>
+            <FormControlLabel>
+              <FormControlLabelText>2nd Minor</FormControlLabelText>
+            </FormControlLabel>
+
+            <Select>
+              <SelectTrigger>
+                <SelectInput placeholder="Select option" className="flex-1" />
+                <SelectIcon className="mr-3" as={ChevronDownIcon} />
+              </SelectTrigger>
+
+              <SelectPortal>
+                <SelectBackdrop />
+                <SelectContent>
+                  <SelectDragIndicatorWrapper>
+                    <SelectDragIndicator />
+                  </SelectDragIndicatorWrapper>
+
+                  {/* Use ScrollView for scrolling */}
+                  <ScrollView style={{ maxHeight: 300 }}>
+                    {minors.map((minor) => (
+                      <SelectItem key={minor} label={minor} value={minor} />
+                    ))}
+                  </ScrollView>
+
+                </SelectContent>
+              </SelectPortal>
+            </Select>
+          </FormControl>
+
           {/* Comfort Level */}
           <FormControl>
             <FormControlLabel>
@@ -206,6 +270,12 @@ const CourseRecommenderScreen = () => {
           <Box style={styles.buttonBox}>
             <Button>
               <ButtonText>Get Course Recommendations</ButtonText>
+            </Button>
+          </Box>
+
+          <Box style={styles.buttonBox}>
+            <Button>
+              <ButtonText>View All Courses</ButtonText>
             </Button>
           </Box>
         </VStack>

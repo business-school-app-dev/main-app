@@ -13,6 +13,7 @@ import {
   Calendar,
   Clock,
   CreditCard,
+  GraduationCap,
 } from "lucide-react-native";
 import { useState } from "react";
 import { WebView } from "react-native-webview";
@@ -85,7 +86,7 @@ export default function App() {
               {[
                 { title: "Budgeting Tools", icon: Calculator },
                 { title: "Financial Literacy", icon: BookOpen },
-                { title: "Scholarship Help", icon: Award },
+                { title: "Financial Courses Guide", icon: GraduationCap },
                 { title: "Credit Card Guide", icon: CreditCard },
               ].map((item, index) => (
                 <Box key={index} className="w-[48%] mb-4">
@@ -93,6 +94,8 @@ export default function App() {
                     onPress={() => {
                       if (item.title === "Credit Card Guide") {
                         router.push("/(tabs)/wellness-hub/credit-cards");
+                      } else if (item.title === "Financial Courses Guide") {
+                        router.push("/(tabs)/wellness-hub/course-recommender");
                       } else {
                         console.log(`${item.title} pressed`);
                       }

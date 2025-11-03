@@ -165,7 +165,7 @@ const LoanCalculatorContent = () => {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="py-6">
           {/* Header Section */}
-          <VStack space="md" className="mb-6">
+          <VStack space="md" className="mb-8">
             <Heading size="xl" className="text-gray-900">
               Calculate Your Path to Financial Freedom
             </Heading>
@@ -176,7 +176,7 @@ const LoanCalculatorContent = () => {
           </VStack>
 
           {/* Loan Inputs Section */}
-          <VStack space="md" className="mb-6">
+          <VStack space="lg" className="mb-8">
             <TextInputField
               label="Total Loan Amount"
               value={totalLoanText}
@@ -224,7 +224,7 @@ const LoanCalculatorContent = () => {
 
           {/* Loan Summary Section */}
           <Card className="mb-6 bg-white border border-gray-200">
-            <VStack space="md" className="p-4">
+            <VStack space="lg" className="p-5">
               <Text className="text-base font-semibold text-gray-900">
                 Your Loan Summary
               </Text>
@@ -260,7 +260,7 @@ const LoanCalculatorContent = () => {
 
           {/* AI Recommendation Section */}
           <Card className="mb-6 bg-red-50 border border-red-100">
-            <VStack space="sm" className="p-4">
+            <VStack space="md" className="p-5">
               <HStack space="xs" className="items-center">
                 <Text size="lg">📈</Text>
                 <Text className="text-sm font-bold text-gray-900">
@@ -278,7 +278,7 @@ const LoanCalculatorContent = () => {
 
           {/* Why This Matters Section */}
           <Card className="mb-6 bg-white border border-gray-200">
-            <VStack space="sm" className="p-4">
+            <VStack space="md" className="p-5">
               <HStack space="xs" className="items-center">
                 <Text size="lg">💰</Text>
                 <Text className="text-sm font-bold text-gray-900">
@@ -295,47 +295,49 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* Allocation Section */}
-          <VStack space="md" className="mb-6">
+          <VStack space="lg" className="mb-8">
             <Text className="text-base font-semibold text-gray-900">
               Adjust Your Allocation
             </Text>
 
             {effectiveDiscretionaryIncome <= 0 ? (
-              <Card className="p-4 bg-red-50 border border-red-200">
+              <Card className="p-5 bg-red-50 border border-red-200">
                 <Text size="sm" className="text-red-800">
                   Warning: Your expenses ({formatCurrency(monthlyPayment)}/mo) exceed
                   your income. No discretionary income available.
                 </Text>
               </Card>
             ) : (
-              <VStack space="md">
+              <VStack space="lg">
                 <Text size="sm" className="text-gray-700">
                   Based on your available discretionary income of{" "}
                   {formatCurrency(effectiveDiscretionaryIncome)}/month, decide how to
                   split between extra loan payments and retirement savings.
                 </Text>
 
-                <VStack space="xs" className="mb-4">
-                  <Text size="sm" className="font-medium text-gray-900 mb-2">
+                <VStack space="md">
+                  <Text size="sm" className="font-medium text-gray-900 mb-4">
                     Loan vs Retirement Split
                   </Text>
-                  <Slider
-                    defaultValue={loanAllocationPercentage}
-                    minValue={0}
-                    maxValue={100}
-                    step={1}
-                    onChange={setLoanAllocationPercentage}
-                    size="md"
-                  >
-                    <SliderTrack>
-                      <SliderFilledTrack className="bg-primary-500" />
-                    </SliderTrack>
-                    <SliderThumb className="bg-primary-500" />
-                  </Slider>
+                  <View className="px-4">
+                    <Slider
+                      defaultValue={loanAllocationPercentage}
+                      minValue={0}
+                      maxValue={100}
+                      step={1}
+                      onChange={setLoanAllocationPercentage}
+                      size="md"
+                    >
+                      <SliderTrack>
+                        <SliderFilledTrack className="bg-primary-500" />
+                      </SliderTrack>
+                      <SliderThumb className="bg-primary-500" />
+                    </Slider>
+                  </View>
                 </VStack>
 
-                <HStack space="md" className="justify-between">
-                  <VStack space="xs" className="flex-1 items-center">
+                <HStack space="md" className="justify-between mt-4">
+                  <VStack space="sm" className="flex-1 items-center">
                     <Text size="xs" className="text-gray-600">
                       Extra Loan Payment
                     </Text>
@@ -347,7 +349,7 @@ const LoanCalculatorContent = () => {
                     </Text>
                   </VStack>
 
-                  <VStack space="xs" className="flex-1 items-center">
+                  <VStack space="sm" className="flex-1 items-center">
                     <Text size="xs" className="text-gray-600">
                       Retirement Savings
                     </Text>
@@ -365,7 +367,7 @@ const LoanCalculatorContent = () => {
 
           {/* Impact Projections Section */}
           <Card className="mb-6 bg-white border border-gray-200">
-            <VStack space="md" className="p-4">
+            <VStack space="lg" className="p-5">
               <Text className="text-base font-semibold text-gray-900">
                 Impact Projections
               </Text>
@@ -397,7 +399,7 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* Action Buttons Section */}
-          <HStack space="md" className="w-full mb-8">
+          <HStack space="md" className="w-full mb-8 mt-2">
             <View className="flex-1">
               <TextButton
                 label="Export"

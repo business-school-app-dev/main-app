@@ -21,6 +21,12 @@ const icon = function (i: string): keyof typeof Ionicons.glyphMap {
   if (i === "Wellness") {
     return "home-outline";
   }
+  if (i === "Home") {
+    return "home-outline";
+  }
+  if (i === "Simulation") {
+    return "analytics-outline";
+  }
   return "home-outline"; // default fallback
 };
 

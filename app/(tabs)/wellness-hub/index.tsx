@@ -1,4 +1,4 @@
-import { ScrollView, ImageBackground } from "react-native";
+import { ScrollView, ImageBackground, View } from "react-native";
 import { Box } from "@/components/ui/box";
 import { Text } from "@/components/ui/text";
 import { Pressable } from "@/components/ui/pressable";
@@ -13,6 +13,10 @@ import {
   Calendar,
   Clock,
 } from "lucide-react-native";
+import { useState } from "react";
+import { WebView } from "react-native-webview";
+import { Modal, ModalContent, ModalBackdrop } from "@/components/ui/modal";
+import IconButton from "@/components/inputs/icon-button";
 
 export default function App() {
   const events = [
@@ -38,12 +42,22 @@ export default function App() {
     },
   ];
 
+  const [modalVisible, setModalVisible] = useState(false);
+
+  const handleMeetClick = () => {
+    setModalVisible(true);
+  };
+
   return (
     <Box className="flex-1 bg-[#E11932]">
       <StatusBar style="light" />
 
       <PageLayout title="Wellness Hub" backButtonHidden>
-        <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerClassName="pb-5">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="flex-1"
+          contentContainerClassName="pb-5"
+        >
           {/* Hero Section */}
           <Box className="w-full">
             <ImageBackground
@@ -91,7 +105,7 @@ export default function App() {
           <Box className="w-full pt-3 pb-6">
             <Box className="mb-4">
               <Pressable
-                onPress={() => console.log("Schedule Meeting pressed")}
+                onPress={handleMeetClick}
                 className="bg-white rounded-lg border border-gray-200 flex-row items-center p-5 h-24"
               >
                 <Icon as={Calendar} size="xl" className="text-red-600 mr-5" />
@@ -100,6 +114,54 @@ export default function App() {
                 </Text>
               </Pressable>
             </Box>
+
+            <View>
+              <Modal
+                isOpen={modalVisible}
+                onClose={() => setModalVisible(false)}
+              >
+                <ModalBackdrop />
+                <ModalContent
+                  style={{ height: "100%", width: "100%", padding: 0 }}
+                >
+                  <View
+                    style={{ flex: 1, backgroundColor: "white" }}
+                    className="pt-safe pb-safe"
+                  >
+                    <View
+                      style={{
+                        flexDirection: "row",
+                        borderBottomWidth: 1,
+                        alignItems: "center",
+                      }}
+                    >
+                      <IconButton
+                        iconName="close"
+                        variant="link"
+                        color="black"
+                        onPress={() => setModalVisible(false)}
+                      />
+                      <Text
+                        style={{
+                          marginLeft: 15,
+                          fontSize: 16,
+                          fontWeight: "500",
+                          color: "black",
+                        }}
+                      >
+                        Close
+                      </Text>
+                    </View>
+                    <WebView
+                      source={{
+                        uri: "https://calendar.app.google/f4qiFCshxAFLEtyD6",
+                      }}
+                      style={{ flex: 1 }}
+                    />
+                  </View>
+                </ModalContent>
+              </Modal>
+            </View>
 
             <Box>
               <Pressable
@@ -139,7 +201,11 @@ export default function App() {
                     className="bg-white rounded-lg border border-gray-200 w-64 mr-4 p-4"
                   >
                     <Box className="flex-row items-center mb-2">
-                      <Icon as={Calendar} size="md" className="text-red-600 mr-2" />
+                      <Icon
+                        as={Calendar}
+                        size="md"
+                        className="text-red-600 mr-2"
+                      />
                       <Text className="text-sm font-medium text-red-600">
                         {event.date}
                       </Text>

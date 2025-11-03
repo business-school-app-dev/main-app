@@ -15,6 +15,7 @@ import {
   CreditCard,
   GraduationCap,
   Banknote,
+  TrendingUp,
 } from "lucide-react-native";
 import { useState } from "react";
 import { WebView } from "react-native-webview";
@@ -86,7 +87,7 @@ export default function App() {
             <Box className="flex-row flex-wrap justify-between">
               {[
                 { title: "Loan Calculator", icon: Banknote },
-                { title: "Investing", icon: BookOpen },
+                { title: "Investing", icon: TrendingUp },
                 { title: "Financial Courses", icon: GraduationCap },
                 { title: "Credit Cards", icon: CreditCard },
               ].map((item, index) => (

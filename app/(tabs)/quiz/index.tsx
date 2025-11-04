@@ -12,6 +12,9 @@ import { CalendarDaysIcon, StarIcon } from '@/components/ui/icon';
 import { Flame } from 'lucide-react-native';
 
 import PageLayout from '@/components/layouts/page-layout';
+import TextButton from '@/components/inputs/text-button';
+import { HelpCircle } from 'lucide-react-native';
+import { router } from 'expo-router';
 
 const leaderboardData = [
     { rank: 1, name: "Sarah Chen", score: 2850, avatar: "SC", streak: 12, bgColor: "bg-white" },
@@ -74,6 +77,31 @@ export default function Leaderboard() {
                             <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
                         </Box>
                     </Box>
+                </Box>
+
+                {/* Daily Quiz Button */}
+                <Box className="pt-4 pb-2">
+                    <Pressable
+                        className="bg-secondary-500 rounded-xl p-6 border border-secondary-300 active:bg-secondary-700"
+                        onPress={() => {
+                            router.push("/modals/quiz-modal");
+                        }}
+                    >
+                        <Box className="flex-row items-center justify-between">
+                            <Box className="flex-row items-center space-x-4">
+                                <Box className="w-14 h-14 rounded-full bg-white/30 items-center justify-center">
+                                    <Icon as={HelpCircle} size="xl" color="black" />
+                                </Box>
+                                <Box>
+                                    <Text className="text-xl font-bold text-gray-900 mb-1">Daily Quiz</Text>
+                                    <Text className="text-sm text-gray-700">Test your knowledge today!</Text>
+                                </Box>
+                            </Box>
+                            <Box className="bg-white/30 px-4 py-2 rounded-full">
+                                <Text className="text-sm font-semibold text-gray-900">Start</Text>
+                            </Box>
+                        </Box>
+                    </Pressable>
                 </Box>
 
                 {/* Top Performers */}

@@ -42,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({
       )}
 
       <View className="flex-row items-center">
-        <Text className="text-secondary text-2xl font-bold">
+        <Text className="text-white text-2xl font-bold">
           {title}
         </Text>
       </View>

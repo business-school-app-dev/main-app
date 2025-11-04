@@ -10,7 +10,16 @@ export default function App() {
         screenOptions={{
           headerShown: false,
         }}
-      />
+      >
+        <Stack.Screen
+          name="quiz-modal"
+          options={{
+            presentation: 'modal',
+            headerShown: false,
+            animation: 'slide_from_bottom',
+          }}
+        />
+      </Stack>
     </GluestackUIProvider>
   );
 }

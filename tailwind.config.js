@@ -35,7 +35,7 @@ module.exports = {
           950: "rgb(var(--color-primary-950)/<alpha-value>)",
         },
         secondary: {
-          DEFAULT: "rgb(var(--color-secondary-0)/<alpha-value>)",
+          DEFAULT: "rgb(var(--color-secondary-500)/<alpha-value>)",
           0: "rgb(var(--color-secondary-0)/<alpha-value>)",
           50: "rgb(var(--color-secondary-50)/<alpha-value>)",
           100: "rgb(var(--color-secondary-100)/<alpha-value>)",

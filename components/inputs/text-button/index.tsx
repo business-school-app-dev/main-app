@@ -47,7 +47,7 @@ function TextButton({
   const getTextColorClass = () => {
     switch (variant) {
       case "secondary":
-        return "text-background";
+        return "text-black";
       case "outline":
         return "text-secondary";
       case "link":

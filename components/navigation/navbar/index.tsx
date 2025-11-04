@@ -32,7 +32,7 @@ const Navbar: React.FC<NavbarProps> = ({
   const EmptyView = () => <View className="w-12 h-12" />;
 
   return (
-    <View className="bg-primary pt-safe pb-2.5 px-5 flex-row justify-between items-center border-b border-secondary-300">
+    <View className="bg-primary pt-safe pb-2.5 px-5 flex-row justify-between items-center border-b border-primary-300">
       <StatusBar style="light" />
 
       {hideBackButton ? (

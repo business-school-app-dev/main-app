@@ -38,7 +38,7 @@ const GuideCard: React.FC<GuideCardProps> = ({ icon, iconBgColor, title, descrip
             <TextButton
                 label="Read More"
                 onPress={onPress}
-                variant="primary"
+                variant="secondary"
                 size="md"
             // rounded="full"
             // textClassName="text-white text-base font-medium"

@@ -1,16 +1,16 @@
 {
   "expo": {
-    "name": "Main App",
-    "slug": "main-app",
+    "name": "UMDollar",
+    "slug": "umdollar",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "mainapp",
+    "scheme": "umdollar",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.umdsmithbusinessschoolappteam.mainapp",
+      "bundleIdentifier": "com.umdsmithbusinessschoolappteam.umdollar",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.umdsmithbusinessschoolappteam.mainapp"
+      "package": "com.umdsmithbusinessschoolappteam.umdollar"
     },
     "web": {
       "bundler": "metro",

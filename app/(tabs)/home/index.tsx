@@ -95,13 +95,13 @@ export default function App() {
                   <Pressable
                     onPress={() => {
                       if (item.title === "Credit Cards") {
-                        router.push("/(tabs)/home/credit-cards");
+                        router.navigate("/(tabs)/home/credit-cards");
                       } else if (item.title === "Financial Courses") {
-                        router.push("/(tabs)/home/financial-courses");
+                        router.navigate("/(tabs)/home/financial-courses");
                       } else if (item.title === "Loan Calculator") {
-                        router.push("/(tabs)/home/loan-calculator");
+                        router.navigate("/(tabs)/home/loan-calculator");
                       } else if (item.title === "Investing") {
-                        router.push("/(tabs)/home/investing");
+                        router.navigate("/(tabs)/home/investing");
                       }
                     }}
                     className="bg-white rounded-lg border border-gray-200 h-32 items-center justify-center space-y-2"

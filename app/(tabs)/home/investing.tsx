@@ -6,13 +6,13 @@ import { SafeAreaView } from "@/components/ui/safe-area-view";
 import { router } from 'expo-router';
 import { ChevronLeftIcon } from '@/components/ui/icon';
 import {
-    Modal,
-    ModalBackdrop,
-    ModalContent,
-    ModalHeader,
-    ModalCloseButton,
-    ModalBody,
-    ModalFooter
+  Modal,
+  ModalBackdrop,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter
 } from '@/components/ui/modal';
 import TextButton from '@/components/inputs/text-button';
 import { Heading } from '@/components/ui/heading';
@@ -20,39 +20,39 @@ import PageLayout from "@/components/layouts/page-layout";
 import { PiggyBank, TrendingUp, Wallet, LineChart, Building2, BarChart3, FolderOpen } from 'lucide-react-native';
 
 interface GuideCardProps {
-    icon: React.ReactNode;
-    iconBgColor: string;
-    title: string;
-    description: string;
-    onPress: () => void;
+  icon: React.ReactNode;
+  iconBgColor: string;
+  title: string;
+  description: string;
+  onPress: () => void;
 }
 
 const GuideCard: React.FC<GuideCardProps> = ({ icon, iconBgColor, title, description, onPress }) => (
-    <View className="bg-white p-6 w-full rounded-xl border border-gray-200 shadow-black/10 elevation-5 flex-1 min-h-0">
-        <View className={`w-20 h-20 rounded-xl justify-center items-center ${iconBgColor}`}>
-            {icon}
-        </View>
-        <Text className="text-2xl font-semibold text-gray-900 mt-5 mb-2">{title}</Text>
-        <View className="flex-row items-center justify-between mt-auto">
-            <Text className="text-lg text-gray-500 leading-6 flex-1 mr-4">{description}</Text>
-            <TextButton
-                label="Read More"
-                onPress={onPress}
-                variant="secondary"
-                size="md"
-            // rounded="full"
-            // textClassName="text-white text-base font-medium"
-            />
-        </View>
+  <View className="bg-white p-6 w-full rounded-xl border border-gray-200 shadow-black/10 elevation-5 flex-1 min-h-0">
+    <View className={`w-20 h-20 rounded-xl justify-center items-center ${iconBgColor}`}>
+      {icon}
     </View>
+    <Text className="text-2xl font-semibold text-gray-900 mt-5 mb-2">{title}</Text>
+    <View className="flex-row items-center justify-between mt-auto">
+      <Text className="text-lg text-gray-500 leading-6 flex-1 mr-4">{description}</Text>
+      <TextButton
+        label="Read More"
+        onPress={onPress}
+        variant="secondary"
+        size="md"
+      // rounded="full"
+      // textClassName="text-white text-base font-medium"
+      />
+    </View>
+  </View>
 );
 
 // Expanded content for each account type
 const getExpandedContent = (accountType: string) => {
-    const content = {
-        'Roth IRA': {
-            title: 'Roth IRA - Tax-Free Growth',
-            content: `A Roth IRA (Individual Retirement Account) is a retirement savings account that offers tax-free growth and tax-free withdrawals in retirement. Here's what you need to know:
+  const content = {
+    'Roth IRA': {
+      title: 'Roth IRA - Tax-Free Growth',
+      content: `A Roth IRA (Individual Retirement Account) is a retirement savings account that offers tax-free growth and tax-free withdrawals in retirement. Here's what you need to know:
 
 KEY FEATURES
 
@@ -82,10 +82,10 @@ GETTING STARTED
 4. Let compound growth work its magic over decades
 
 Remember: Time is your greatest asset. Starting early, even with small contributions, can lead to substantial tax-free wealth in retirement.`
-        },
-        'Traditional IRA': {
-            title: 'Traditional IRA - Tax-Deferred Growth',
-            content: `A Traditional IRA is an individual retirement account that offers upfront tax deductions and tax-deferred growth. It's a powerful tool for building retirement savings on your own terms.
+    },
+    'Traditional IRA': {
+      title: 'Traditional IRA - Tax-Deferred Growth',
+      content: `A Traditional IRA is an individual retirement account that offers upfront tax deductions and tax-deferred growth. It's a powerful tool for building retirement savings on your own terms.
 
 KEY FEATURES
 
@@ -147,10 +147,10 @@ CONTRIBUTION DEADLINE
 You can contribute for the previous tax year until Tax Day (April 15). This means you have extra time to maximize contributions and reduce your tax bill.
 
 PRO TIP: If you're eligible for both traditional and Roth IRAs, consider splitting contributions between them for tax diversification in retirement.`
-        },
-        '401(k)': {
-            title: '401(k) - Employer-Sponsored Retirement',
-            content: `A 401(k) is an employer-sponsored retirement plan that offers tax advantages, higher contribution limits, and often includes employer matching contributions. It's one of the most powerful wealth-building tools available.
+    },
+    '401(k)': {
+      title: '401(k) - Employer-Sponsored Retirement',
+      content: `A 401(k) is an employer-sponsored retirement plan that offers tax advantages, higher contribution limits, and often includes employer matching contributions. It's one of the most powerful wealth-building tools available.
 
 KEY FEATURES
 
@@ -246,10 +246,10 @@ MAXIMIZING YOUR 401(K)
 • Consider Roth 401(k) if young and in lower tax bracket
 
 Remember: Your 401(k) is likely your most powerful tool for building wealth. Maximize employer match first, then work toward maxing out contributions as your income grows.`
-        },
-        'Margin Account': {
-            title: 'Margin Account - Advanced Trading',
-            content: `A margin account is a specialized brokerage account that allows you to borrow money from your broker to invest, using leverage to amplify potential gains (and losses). This is an advanced investing tool that requires experience and risk tolerance.
+    },
+    'Margin Account': {
+      title: 'Margin Account - Advanced Trading',
+      content: `A margin account is a specialized brokerage account that allows you to borrow money from your broker to invest, using leverage to amplify potential gains (and losses). This is an advanced investing tool that requires experience and risk tolerance.
 
 WHAT IS A MARGIN ACCOUNT?
 
@@ -398,10 +398,10 @@ Most professional traders avoid margin or use it very sparingly. Warren Buffett 
 Margin trading is not investing - it's speculation with borrowed money. The vast majority of individual investors should never use margin accounts. Stick with cash accounts and build wealth through consistent, long-term investing in diversified, low-cost index funds.
 
 If you must use margin, treat it like a tool that can cut your hand off. Use it rarely, carefully, and always with a healthy respect for what can go wrong.`
-        },
-        'ETFs': {
-            title: 'ETFs - Exchange-Traded Funds',
-            content: `Exchange-Traded Funds (ETFs) are one of the best investment vehicles for building long-term wealth. They combine the diversification of mutual funds with the flexibility of stocks, all while keeping costs low.
+    },
+    'ETFs': {
+      title: 'ETFs - Exchange-Traded Funds',
+      content: `Exchange-Traded Funds (ETFs) are one of the best investment vehicles for building long-term wealth. They combine the diversification of mutual funds with the flexibility of stocks, all while keeping costs low.
 
 WHAT IS AN ETF?
 
@@ -592,10 +592,10 @@ KEY TAKEAWAYS
 • Simple three-fund portfolio beats complex strategies
 
 Remember: The best ETF portfolio is one you can stick with through market ups and downs. Keep it simple, keep costs low, and stay invested for the long term.`
-        },
-        'Mutual Funds': {
-            title: 'Mutual Funds - Professional Management',
-            content: `Mutual funds are professionally managed investment portfolios that pool money from many investors to purchase a diversified mix of stocks, bonds, or other securities. They've been the foundation of retirement investing for decades.
+    },
+    'Mutual Funds': {
+      title: 'Mutual Funds - Professional Management',
+      content: `Mutual funds are professionally managed investment portfolios that pool money from many investors to purchase a diversified mix of stocks, bonds, or other securities. They've been the foundation of retirement investing for decades.
 
 WHAT IS A MUTUAL FUND?
 
@@ -846,10 +846,10 @@ Whether you choose mutual funds or ETFs, the most important factors are:
 5. Ignoring short-term market noise
 
 Most investors will do well with a simple portfolio of low-cost index mutual funds, contributing regularly, and staying invested through market ups and downs. It's not exciting, but it works.`
-        },
-        'Investment Strategies': {
-            title: 'Investment Strategies for Success',
-            content: `Building wealth through investing requires understanding key strategies and principles. Here's your guide to smart investing across all account types.
+    },
+    'Investment Strategies': {
+      title: 'Investment Strategies for Success',
+      content: `Building wealth through investing requires understanding key strategies and principles. Here's your guide to smart investing across all account types.
 
 FUNDAMENTAL PRINCIPLES
 
@@ -940,118 +940,118 @@ STAYING THE COURSE
 • Stay invested through downturns (they're buying opportunities)
 
 Remember: Investing is a marathon, not a sprint. Consistency, discipline, and patience are more important than trying to find the "perfect" investment or timing.`
-        }
-    };
-    return content[accountType as keyof typeof content] || { title: accountType, content: 'Information not available.' };
+    }
+  };
+  return content[accountType as keyof typeof content] || { title: accountType, content: 'Information not available.' };
 };
 
 export default function InvestingLiteracyScreen() {
-    const [isModalVisible, setIsModalVisible] = useState(false);
-    const [selectedContent, setSelectedContent] = useState({ title: '', content: '' });
+  const [isModalVisible, setIsModalVisible] = useState(false);
+  const [selectedContent, setSelectedContent] = useState({ title: '', content: '' });
 
-    const handleGoBack = () => {
-        router.back();
-    };
+  const handleGoBack = () => {
+    router.back();
+  };
 
-    const handleReadMore = (accountType: string) => {
-        const content = getExpandedContent(accountType);
-        setSelectedContent(content);
-        setIsModalVisible(true);
-    };
+  const handleReadMore = (accountType: string) => {
+    const content = getExpandedContent(accountType);
+    setSelectedContent(content);
+    setIsModalVisible(true);
+  };
 
-    const closeModal = () => {
-        setIsModalVisible(false);
-    };
+  const closeModal = () => {
+    setIsModalVisible(false);
+  };
 
-    return (
-        <PageLayout title="Investing Accounts">
-            <ScrollView
-                className="flex-1"
-                showsVerticalScrollIndicator={false}
-                contentContainerStyle={{ flexGrow: 1 }}
-            >
-                <View className="py-6 flex-1">
-                    {/* Guide Cards Grid */}
-                    <View className="gap-4 flex-1">
-                        <GuideCard
-                            icon={<PiggyBank size={40} color="#dc2626" />}
-                            iconBgColor="bg-red-100"
-                            title="Roth IRA"
-                            description="Tax-free growth and withdrawals"
-                            onPress={() => handleReadMore('Roth IRA')}
-                        />
-                        <GuideCard
-                            icon={<TrendingUp size={40} color="#db2777" />}
-                            iconBgColor="bg-pink-100"
-                            title="Traditional IRA"
-                            description="Tax-deferred individual retirement"
-                            onPress={() => handleReadMore('Traditional IRA')}
-                        />
-                        <GuideCard
-                            icon={<Building2 size={40} color="#ea580c" />}
-                            iconBgColor="bg-orange-100"
-                            title="401(k)"
-                            description="Employer-sponsored retirement plan"
-                            onPress={() => handleReadMore('401(k)')}
-                        />
-                        <GuideCard
-                            icon={<BarChart3 size={40} color="#0891b2" />}
-                            iconBgColor="bg-cyan-100"
-                            title="ETFs"
-                            description="Low-cost diversified investing"
-                            onPress={() => handleReadMore('ETFs')}
-                        />
-                        <GuideCard
-                            icon={<FolderOpen size={40} color="#8b5cf6" />}
-                            iconBgColor="bg-violet-100"
-                            title="Mutual Funds"
-                            description="Professional portfolio management"
-                            onPress={() => handleReadMore('Mutual Funds')}
-                        />
-                        <GuideCard
-                            icon={<Wallet size={40} color="#1e40af" />}
-                            iconBgColor="bg-blue-100"
-                            title="Margin Account"
-                            description="Advanced trading with leverage"
-                            onPress={() => handleReadMore('Margin Account')}
-                        />
-                        <GuideCard
-                            icon={<LineChart size={40} color="#059669" />}
-                            iconBgColor="bg-emerald-100"
-                            title="Investment Strategies"
-                            description="Build wealth over time"
-                            onPress={() => handleReadMore('Investment Strategies')}
-                        />
-                    </View>
-                </View>
+  return (
+    <PageLayout title="Investing Accounts">
+      <ScrollView
+        className="flex-1"
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={{ flexGrow: 1 }}
+      >
+        <View className="py-6 flex-1">
+          {/* Guide Cards Grid */}
+          <View className="gap-4 flex-1">
+            <GuideCard
+              icon={<PiggyBank size={40} color="#dc2626" />}
+              iconBgColor="bg-red-100"
+              title="Roth IRA"
+              description="Tax-free growth and withdrawals"
+              onPress={() => handleReadMore('Roth IRA')}
+            />
+            <GuideCard
+              icon={<TrendingUp size={40} color="#db2777" />}
+              iconBgColor="bg-pink-100"
+              title="Traditional IRA"
+              description="Tax-deferred individual retirement"
+              onPress={() => handleReadMore('Traditional IRA')}
+            />
+            <GuideCard
+              icon={<Building2 size={40} color="#ea580c" />}
+              iconBgColor="bg-orange-100"
+              title="401(k)"
+              description="Employer-sponsored retirement plan"
+              onPress={() => handleReadMore('401(k)')}
+            />
+            <GuideCard
+              icon={<BarChart3 size={40} color="#0891b2" />}
+              iconBgColor="bg-cyan-100"
+              title="ETFs"
+              description="Low-cost diversified investing"
+              onPress={() => handleReadMore('ETFs')}
+            />
+            <GuideCard
+              icon={<FolderOpen size={40} color="#8b5cf6" />}
+              iconBgColor="bg-violet-100"
+              title="Mutual Funds"
+              description="Professional portfolio management"
+              onPress={() => handleReadMore('Mutual Funds')}
+            />
+            <GuideCard
+              icon={<Wallet size={40} color="#1e40af" />}
+              iconBgColor="bg-blue-100"
+              title="Margin Account"
+              description="Advanced trading with leverage"
+              onPress={() => handleReadMore('Margin Account')}
+            />
+            <GuideCard
+              icon={<LineChart size={40} color="#059669" />}
+              iconBgColor="bg-emerald-100"
+              title="Investment Strategies"
+              description="Build wealth over time"
+              onPress={() => handleReadMore('Investment Strategies')}
+            />
+          </View>
+        </View>
+      </ScrollView>
+
+      {/* Modal for expanded content */}
+      <Modal isOpen={isModalVisible} onClose={closeModal}>
+        <ModalBackdrop />
+        <ModalContent className="max-w-[90%] max-h-[80%] rounded-xl">
+          <ModalHeader>
+            <Heading size="lg">{selectedContent.title}</Heading>
+            <ModalCloseButton />
+          </ModalHeader>
+          <ModalBody>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Text className="text-base text-gray-700 leading-6 text-left">{selectedContent.content}</Text>
             </ScrollView>
-
-            {/* Modal for expanded content */}
-            <Modal isOpen={isModalVisible} onClose={closeModal}>
-                <ModalBackdrop />
-                <ModalContent className="max-w-[90%] max-h-[80%] rounded-xl">
-                    <ModalHeader>
-                        <Heading size="lg">{selectedContent.title}</Heading>
-                        <ModalCloseButton />
-                    </ModalHeader>
-                    <ModalBody>
-                        <ScrollView showsVerticalScrollIndicator={false}>
-                            <Text className="text-base text-gray-700 leading-6 text-left">{selectedContent.content}</Text>
-                        </ScrollView>
-                    </ModalBody>
-                    <ModalFooter>
-                        <TextButton
-                            label="Close"
-                            onPress={closeModal}
-                            variant="primary"
-                            className="bg-red-600"
-                            textClassName="text-white"
-                        />
-                    </ModalFooter>
-                </ModalContent>
-            </Modal>
-        </PageLayout>
-    );
+          </ModalBody>
+          <ModalFooter>
+            <TextButton
+              label="Close"
+              onPress={closeModal}
+              variant="primary"
+              className="bg-red-600"
+              textClassName="text-white"
+            />
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
+    </PageLayout>
+  );
 }
 
 

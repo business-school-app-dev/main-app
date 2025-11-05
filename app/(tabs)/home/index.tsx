@@ -82,6 +82,7 @@ export default function App() {
             </ImageBackground>
           </Box>
 
+
           {/* Quick Access Section */}
           <Box className="w-full pt-4 pb-2">
             <Box className="flex-row flex-wrap justify-between">

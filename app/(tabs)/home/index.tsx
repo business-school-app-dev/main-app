@@ -121,7 +121,15 @@ export default function App() {
           <Box className="w-full pt-3 pb-6">
             <Box className="mb-4">
               <Pressable
-                onPress={() => { router.navigate("/(tabs)/home"); }}
+                onPress={() => {
+                  router.navigate({
+                    pathname: "/webview-modal",
+                    params: {
+                      url: "https://calendar.app.google/f4qiFCshxAFLEtyD6",
+                      title: "Schedule a Meeting",
+                    },
+                  });
+                }}
                 className="bg-white rounded-lg border border-gray-200 flex-row items-center p-5 h-24"
               >
                 <Icon as={Calendar} size="xl" className="text-red-600 mr-5" />
@@ -130,36 +138,6 @@ export default function App() {
                 </Text>
               </Pressable>
             </Box>
-
-            <View>
-              <Modal
-                isOpen={modalVisible}
-                onClose={() => setModalVisible(false)}
-              >
-                <ModalBackdrop />
-                <ModalContent className="h-full w-full p-0 m-0 max-w-full">
-                  <View className="flex-1 bg-white pt-safe pb-safe">
-                    <View className="flex-row border-b border-gray-200 items-center">
-                      <IconButton
-                        iconName="close"
-                        variant="link"
-                        color="black"
-                        onPress={() => setModalVisible(false)}
-                      />
-                      <Text className="ml-4 text-base font-medium text-black">
-                        Close
-                      </Text>
-                    </View>
-                    <WebView
-                      source={{
-                        uri: "https://calendar.app.google/f4qiFCshxAFLEtyD6",
-                      }}
-                      className="flex-1"
-                    />
-                  </View>
-                </ModalContent>
-              </Modal>
-            </View>
 
             <Box>
               <Pressable
@@ -195,7 +173,15 @@ export default function App() {
                 {events.map((event, idx) => (
                   <Pressable
                     key={idx}
-                    onPress={() => console.log(`${event.title} pressed`)}
+                    onPress={() => {
+                      router.push({
+                        pathname: '/webview-modal',
+                        params: {
+                          url: 'https://www.google.com',
+                          title: "Campus Event"
+                        }
+                      });
+                    }}
                     className="bg-white rounded-lg border border-gray-200 w-64 mr-4 p-4"
                   >
                     <Box className="flex-row items-center mb-2">

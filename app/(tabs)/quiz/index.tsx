@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { ScrollView, StatusBar } from "react-native";
 
 import { Box } from "@/components/ui/box";
@@ -35,6 +35,8 @@ const currentUser = {
 }
 
 export default function Leaderboard() {
+  // TODO: Replace with actual authentication check
+  const [isSignedIn, setIsSignedIn] = useState(false); // Change this to true to test signed-in state
 
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Icon as={StarIcon} size="lg" color="gold" />
@@ -46,63 +48,85 @@ export default function Leaderboard() {
   return (
     <PageLayout title="Quiz" backButtonHidden>
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerClassName="pb-10">
-        {/* Your Rank Card */}
+        {/* Your Rank Card / Sign In Card */}
         <Box className="pt-4 pb-2">
-          <Box className="bg-primary-500 rounded-xl p-4 border border-gray-200">
-            <Box className="flex-row justify-between mb-3">
-              <Box className="flex-row items-center space-x-3">
-                <Box className="w-12 h-12 rounded-full bg-white/20 items-center justify-center m-4">
-                  <Avatar size="lg">
-                    <AvatarFallbackText>{currentUser.name}</AvatarFallbackText>
-                    <AvatarImage
-                      source={{
-                        uri: currentUser.profilePic,
-                      }}
-                    />
-                    <AvatarBadge />
-                  </Avatar>
+          {isSignedIn ? (
+            <Box className="bg-primary-500 rounded-xl p-4 border border-gray-200">
+              <Box className="flex-row justify-between mb-3">
+                <Box className="flex-row items-center space-x-3">
+                  <Box className="w-12 h-12 rounded-full bg-white/20 items-center justify-center m-4">
+                    <Avatar size="lg">
+                      <AvatarFallbackText>{currentUser.name}</AvatarFallbackText>
+                      <AvatarImage
+                        source={{
+                          uri: currentUser.profilePic,
+                        }}
+                      />
+                      <AvatarBadge />
+                    </Avatar>
+                  </Box>
+                  <Box>
+                    <Text className="text-sm text-white/90 mb-0.5">Your Rank</Text>
+                    <Text className="text-2xl font-bold text-white">#{currentUser.rank}</Text>
+                  </Box>
                 </Box>
-                <Box>
-                  <Text className="text-sm text-white/90 mb-0.5">Your Rank</Text>
-                  <Text className="text-2xl font-bold text-white">#{currentUser.rank}</Text>
+                <Box className="items-end">
+                  <Text className="text-sm text-white/90 mb-0.5">Total Score</Text>
+                  <Text className="text-2xl font-bold text-white">{currentUser.score}</Text>
                 </Box>
               </Box>
-              <Box className="items-end">
-                <Text className="text-sm text-white/90 mb-0.5">Total Score</Text>
-                <Text className="text-2xl font-bold text-white">{currentUser.score}</Text>
+              <Box className="flex-row items-center space-x-2 mt-3 pt-3 border-t border-white/20">
+                <Icon as={Flame} size="sm" color="white" className="p-1" />
+                <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
               </Box>
             </Box>
-            <Box className="flex-row items-center space-x-2 mt-3 pt-3 border-t border-white/20">
-              <Icon as={Flame} size="sm" color="white" className="p-1" />
-              <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
-            </Box>
-          </Box>
+          ) : (
+            <Pressable
+              className="bg-primary-500 rounded-xl p-4 border border-gray-200 active:bg-primary-600"
+              onPress={() => {
+                // router.push({
+                //   pathname: '/webview-modal',
+                //   params: {
+                //     url: 'https://www.google.com',
+                //     title: 'Sign In'
+                //   }
+                // });
+                setIsSignedIn(true); // For testing purposes
+              }}
+            >
+              <Box className="flex-row items-center justify-center py-4">
+                <Text className="text-xl font-bold text-white">Sign In</Text>
+              </Box>
+            </Pressable>
+          )}
         </Box>
 
-        {/* Daily Quiz Button */}
-        <Box className="pt-4 pb-2">
-          <Pressable
-            className="bg-secondary-500 rounded-xl p-6 border border-secondary-300 active:bg-secondary-700"
-            onPress={() => {
-              router.push("/quiz-page/quiz-modal");
-            }}
-          >
-            <Box className="flex-row items-center justify-between">
-              <Box className="flex-row items-center space-x-4">
-                <Box className="w-14 h-14 rounded-full bg-white/30 items-center justify-center">
-                  <Icon as={HelpCircle} size="xl" color="black" />
+        {/* Daily Quiz Button - Only show if signed in */}
+        {isSignedIn && (
+          <Box className="pt-4 pb-2">
+            <Pressable
+              className="bg-secondary-500 rounded-xl p-6 border border-secondary-300 active:bg-secondary-700"
+              onPress={() => {
+                router.push("/(tabs)/quiz/quiz-modal");
+              }}
+            >
+              <Box className="flex-row items-center justify-between">
+                <Box className="flex-row items-center space-x-4">
+                  <Box className="w-14 h-14 rounded-full bg-white/30 items-center justify-center">
+                    <Icon as={HelpCircle} size="xl" color="black" />
+                  </Box>
+                  <Box>
+                    <Text className="text-xl font-bold text-gray-900 mb-1">Daily Quiz</Text>
+                    <Text className="text-sm text-gray-700">Test your knowledge today!</Text>
+                  </Box>
                 </Box>
-                <Box>
-                  <Text className="text-xl font-bold text-gray-900 mb-1">Daily Quiz</Text>
-                  <Text className="text-sm text-gray-700">Test your knowledge today!</Text>
+                <Box className="bg-white/30 px-4 py-2 rounded-full">
+                  <Text className="text-sm font-semibold text-gray-900">Start</Text>
                 </Box>
               </Box>
-              <Box className="bg-white/30 px-4 py-2 rounded-full">
-                <Text className="text-sm font-semibold text-gray-900">Start</Text>
-              </Box>
-            </Box>
-          </Pressable>
-        </Box>
+            </Pressable>
+          </Box>
+        )}
 
         {/* Top Performers */}
         <Box className="pt-6">

@@ -12,11 +12,9 @@ export default function App() {
         }}
       >
         <Stack.Screen
-          name="quiz-modal"
+          name="webview-modal"
           options={{
-            presentation: 'modal',
-            headerShown: false,
-            animation: 'slide_from_bottom',
+            presentation: "card",
           }}
         />
       </Stack>

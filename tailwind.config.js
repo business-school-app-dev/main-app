@@ -43,6 +43,7 @@ module.exports = {
           300: "rgb(var(--color-secondary-300)/<alpha-value>)",
           400: "rgb(var(--color-secondary-400)/<alpha-value>)",
           500: "rgb(var(--color-secondary-500)/<alpha-value>)",
+          550: "rgb(var(--color-secondary-550)/<alpha-value>)",
           600: "rgb(var(--color-secondary-600)/<alpha-value>)",
           700: "rgb(var(--color-secondary-700)/<alpha-value>)",
           800: "rgb(var(--color-secondary-800)/<alpha-value>)",

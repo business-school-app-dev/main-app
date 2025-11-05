@@ -84,7 +84,7 @@ export default function Leaderboard() {
           <Pressable
             className="bg-secondary-500 rounded-xl p-6 border border-secondary-300 active:bg-secondary-700"
             onPress={() => {
-              router.push("/modals/quiz-modal");
+              router.push("/quiz-page/quiz-modal");
             }}
           >
             <Box className="flex-row items-center justify-between">

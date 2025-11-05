@@ -121,7 +121,7 @@ export default function App() {
           <Box className="w-full pt-3 pb-6">
             <Box className="mb-4">
               <Pressable
-                onPress={handleMeetClick}
+                onPress={() => { router.navigate("/(tabs)/home"); }}
                 className="bg-white rounded-lg border border-gray-200 flex-row items-center p-5 h-24"
               >
                 <Icon as={Calendar} size="xl" className="text-red-600 mr-5" />

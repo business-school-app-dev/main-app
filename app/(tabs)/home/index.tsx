@@ -96,13 +96,13 @@ export default function App() {
                   <Pressable
                     onPress={() => {
                       if (item.title === "Credit Cards") {
-                        router.navigate("/(tabs)/home/credit-cards");
+                        router.navigate("/(tabs)/home/guides/credit-cards");
                       } else if (item.title === "Financial Courses") {
-                        router.navigate("/(tabs)/home/financial-courses");
+                        router.navigate("/(tabs)/home/guides/financial-courses");
                       } else if (item.title === "Loan Calculator") {
-                        router.navigate("/(tabs)/home/loan-calculator");
+                        router.navigate("/(tabs)/home/guides/loan-calculator");
                       } else if (item.title === "Investing") {
-                        router.navigate("/(tabs)/home/investing");
+                        router.navigate("/(tabs)/home/guides/investing");
                       }
                     }}
                     className="bg-white rounded-lg border border-gray-200 h-32 items-center justify-center space-y-2"
@@ -137,34 +137,16 @@ export default function App() {
                 onClose={() => setModalVisible(false)}
               >
                 <ModalBackdrop />
-                <ModalContent
-                  style={{ height: "100%", width: "100%", padding: 0 }}
-                >
-                  <View
-                    style={{ flex: 1, backgroundColor: "white" }}
-                    className="pt-safe pb-safe"
-                  >
-                    <View
-                      style={{
-                        flexDirection: "row",
-                        borderBottomWidth: 1,
-                        alignItems: "center",
-                      }}
-                    >
+                <ModalContent className="h-full w-full p-0 m-0 max-w-full">
+                  <View className="flex-1 bg-white pt-safe pb-safe">
+                    <View className="flex-row border-b border-gray-200 items-center">
                       <IconButton
                         iconName="close"
                         variant="link"
                         color="black"
                         onPress={() => setModalVisible(false)}
                       />
-                      <Text
-                        style={{
-                          marginLeft: 15,
-                          fontSize: 16,
-                          fontWeight: "500",
-                          color: "black",
-                        }}
-                      >
+                      <Text className="ml-4 text-base font-medium text-black">
                         Close
                       </Text>
                     </View>
@@ -172,7 +154,7 @@ export default function App() {
                       source={{
                         uri: "https://calendar.app.google/f4qiFCshxAFLEtyD6",
                       }}
-                      style={{ flex: 1 }}
+                      className="flex-1"
                     />
                   </View>
                 </ModalContent>

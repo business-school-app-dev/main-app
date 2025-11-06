@@ -42,7 +42,7 @@ const CourseRecommenderScreen = () => {
   const graduationYears = ["2025", "2026", "2027", "2028", "2029"];
 
   return (
-    <PageLayout title="Course Recommender">
+    <PageLayout title="Course Recommender" profileButtonHidden>
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="py-6">
           {/* Header Section */}

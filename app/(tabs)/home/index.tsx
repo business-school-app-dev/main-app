@@ -1,4 +1,4 @@
-import { ScrollView, ImageBackground, View } from "react-native";
+import { ScrollView, ImageBackground, View, TouchableOpacity } from "react-native";
 import { Box } from "@/components/ui/box";
 import { Text } from "@/components/ui/text";
 import { Pressable } from "@/components/ui/pressable";
@@ -16,6 +16,7 @@ import {
   GraduationCap,
   Banknote,
   TrendingUp,
+  X
 } from "lucide-react-native";
 import { useState } from "react";
 import { WebView } from "react-native-webview";
@@ -57,7 +58,7 @@ export default function App() {
     <Box className="flex-1 bg-[#E11932]">
       <StatusBar style="light" />
 
-      <PageLayout title="Home" backButtonHidden>
+      <PageLayout title="Home" backButtonHidden profileButtonHidden>
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="flex-1"
@@ -81,7 +82,6 @@ export default function App() {
               </Box>
             </ImageBackground>
           </Box>
-
 
           {/* Quick Access Section */}
           <Box className="w-full pt-4 pb-2">
@@ -142,7 +142,7 @@ export default function App() {
                 >
                   <View
                     style={{ flex: 1, backgroundColor: "white" }}
-                    className="pt-safe pb-safe"
+                    className="pt-safe pb-safe px-2"
                   >
                     <View
                       style={{
@@ -150,23 +150,15 @@ export default function App() {
                         borderBottomWidth: 1,
                         alignItems: "center",
                       }}
+                      className="pb-2"
                     >
-                      <IconButton
-                        iconName="close"
-                        variant="link"
-                        color="black"
+
+                      <Pressable
                         onPress={() => setModalVisible(false)}
-                      />
-                      <Text
-                        style={{
-                          marginLeft: 15,
-                          fontSize: 16,
-                          fontWeight: "500",
-                          color: "black",
-                        }}
+                        className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center active:bg-gray-200"
                       >
-                        Close
-                      </Text>
+                        <Icon as={X} size="lg" color="black" />
+                      </Pressable>
                     </View>
                     <WebView
                       source={{

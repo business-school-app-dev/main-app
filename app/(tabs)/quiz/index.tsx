@@ -75,9 +75,17 @@ export default function Leaderboard() {
                   <Text className="text-2xl font-bold text-white">{currentUser.score}</Text>
                 </Box>
               </Box>
-              <Box className="flex-row items-center space-x-2 mt-3 pt-3 border-t border-white/20">
-                <Icon as={Flame} size="sm" color="white" className="p-1" />
-                <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
+              <Box className="flex-row items-center justify-between mt-3 pt-3 border-t border-white/20">
+                <Box className="flex-row items-center space-x-2">
+                  <Icon as={Flame} size="sm" color="white" className="p-1" />
+                  <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
+                </Box>
+                <Pressable
+                  onPress={() => setIsSignedIn(false)}
+                  className="bg-white/20 px-4 py-2 rounded-lg active:bg-white/30"
+                >
+                  <Text className="text-sm font-semibold text-white">Sign Out</Text>
+                </Pressable>
               </Box>
             </Box>
           ) : (

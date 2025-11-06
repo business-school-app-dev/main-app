@@ -5,9 +5,11 @@ import { ScrollView } from "@/components/ui/scroll-view";
 import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@/components/ui/slider";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { Icon } from "@/components/ui/icon";
 import "@/global.css";
 import React, { useMemo, useState } from "react";
 import { View } from "react-native";
+import { Sparkles, DollarSign } from "lucide-react-native";
 
 // Custom Components
 import TextButton from "@/components/inputs/text-button";
@@ -223,9 +225,9 @@ const LoanCalculatorContent = () => {
           </VStack>
 
           {/* Loan Summary Section */}
-          <Card className="mb-6 bg-white border border-gray-200">
+          <Card className="rounded-xl mb-8 bg-white border border-gray-200">
             <VStack space="md" className="p-4">
-              <Text className="text-base font-semibold text-gray-900">
+              <Text className="text-lg font-semibold text-gray-900">
                 Your Loan Summary
               </Text>
 
@@ -259,12 +261,12 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* AI Recommendation Section */}
-          <Card className="mb-6 bg-red-50 border border-red-100">
+          <Card className="rounded-xl mb-8 bg-secondary-0 border border-secondary-300">
             <VStack space="sm" className="p-4">
               <HStack space="xs" className="items-center">
-                <Text size="lg">📈</Text>
-                <Text className="text-sm font-bold text-gray-900">
-                  AI Generated Recommendation: Balance Both
+                <Icon as={Sparkles} size="md" className="text-secondary-600" />
+                <Text className="text-lg font-semibold text-gray-900">
+                  AI Generated Recommendation
                 </Text>
               </HStack>
               <Text size="sm" className="text-gray-700 leading-5">
@@ -277,11 +279,11 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* Why This Matters Section */}
-          <Card className="mb-6 bg-white border border-gray-200">
+          <Card className="rounded-xl mb-8 bg-white border border-gray-200">
             <VStack space="sm" className="p-4">
               <HStack space="xs" className="items-center">
-                <Text size="lg">💰</Text>
-                <Text className="text-sm font-bold text-gray-900">
+                <Icon as={DollarSign} size="md" className="text-primary-500" />
+                <Text className="text-lg font-semibold text-gray-900">
                   Why This Matters
                 </Text>
               </HStack>
@@ -295,13 +297,13 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* Allocation Section */}
-          <VStack space="md" className="mb-6">
-            <Text className="text-base font-semibold text-gray-900">
+          <VStack space="md" className="mt-12 mb-8">
+            <Text className="text-xl font-bold text-gray-900">
               Adjust Your Allocation
             </Text>
 
             {effectiveDiscretionaryIncome <= 0 ? (
-              <Card className="p-4 bg-red-50 border border-red-200">
+              <Card className="rounded-xl p-4 bg-red-50 border border-red-200">
                 <Text size="sm" className="text-red-800">
                   Warning: Your expenses ({formatCurrency(monthlyPayment)}/mo) exceed
                   your income. No discretionary income available.
@@ -335,38 +337,42 @@ const LoanCalculatorContent = () => {
                 </VStack>
 
                 <HStack space="md" className="justify-between">
-                  <VStack space="xs" className="flex-1 items-center">
-                    <Text size="xs" className="text-gray-600">
-                      Extra Loan Payment
-                    </Text>
-                    <Text size="xl" className="text-primary-500 font-bold">
-                      {formatPercentage(loanAllocationPercentage)}
-                    </Text>
-                    <Text size="sm" className="text-gray-900 font-semibold">
-                      {formatCurrency(extraLoanPayment)}/mo
-                    </Text>
-                  </VStack>
+                  <Card className="rounded-xl flex-1 bg-white border border-gray-200">
+                    <VStack space="xs" className="p-4 items-center">
+                      <Text size="xs" className="text-gray-600">
+                        Extra Loan Payment
+                      </Text>
+                      <Text size="xl" className="text-primary-500 font-bold">
+                        {formatPercentage(loanAllocationPercentage)}
+                      </Text>
+                      <Text size="sm" className="text-gray-900 font-semibold">
+                        {formatCurrency(extraLoanPayment)}/mo
+                      </Text>
+                    </VStack>
+                  </Card>
 
-                  <VStack space="xs" className="flex-1 items-center">
-                    <Text size="xs" className="text-gray-600">
-                      Retirement Savings
-                    </Text>
-                    <Text size="xl" className="text-primary-500 font-bold">
-                      {formatPercentage(100 - loanAllocationPercentage)}
-                    </Text>
-                    <Text size="sm" className="text-gray-900 font-semibold">
-                      {formatCurrency(retirementSavingsAllocation)}/mo
-                    </Text>
-                  </VStack>
+                  <Card className="rounded-xl flex-1 bg-white border border-gray-200">
+                    <VStack space="xs" className="p-4 items-center">
+                      <Text size="xs" className="text-gray-600">
+                        Retirement Savings
+                      </Text>
+                      <Text size="xl" className="text-primary-500 font-bold">
+                        {formatPercentage(100 - loanAllocationPercentage)}
+                      </Text>
+                      <Text size="sm" className="text-gray-900 font-semibold">
+                        {formatCurrency(retirementSavingsAllocation)}/mo
+                      </Text>
+                    </VStack>
+                  </Card>
                 </HStack>
               </VStack>
             )}
           </VStack>
 
           {/* Impact Projections Section */}
-          <Card className="mb-6 bg-white border border-gray-200">
+          <Card className="rounded-xl mb-8 bg-white border border-gray-200">
             <VStack space="md" className="p-4">
-              <Text className="text-base font-semibold text-gray-900">
+              <Text className="text-lg font-semibold text-gray-900">
                 Impact Projections
               </Text>
 

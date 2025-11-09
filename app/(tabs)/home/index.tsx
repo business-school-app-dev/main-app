@@ -1,4 +1,4 @@
-import { ScrollView, ImageBackground, View } from "react-native";
+import { ScrollView, ImageBackground, View, TouchableOpacity } from "react-native";
 import { Box } from "@/components/ui/box";
 import { Text } from "@/components/ui/text";
 import { Pressable } from "@/components/ui/pressable";
@@ -16,6 +16,7 @@ import {
   GraduationCap,
   Banknote,
   TrendingUp,
+  X
 } from "lucide-react-native";
 import { useState } from "react";
 import { WebView } from "react-native-webview";
@@ -81,7 +82,6 @@ export default function App() {
               </Box>
             </ImageBackground>
           </Box>
-
 
           {/* Quick Access Section */}
           <Box className="w-full pt-4 pb-2">

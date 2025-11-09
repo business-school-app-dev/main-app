@@ -58,7 +58,7 @@ export default function App() {
     <Box className="flex-1 bg-[#E11932]">
       <StatusBar style="light" />
 
-      <PageLayout title="Home" backButtonHidden profileButtonHidden>
+      <PageLayout title="Home" backButtonHidden>
         <ScrollView
           showsVerticalScrollIndicator={false}
           className="flex-1"

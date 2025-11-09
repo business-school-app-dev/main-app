@@ -13,6 +13,8 @@ import { Flame } from 'lucide-react-native';
 import PageLayout from '@/components/layouts/page-layout';
 import { HelpCircle } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { Box } from '@/components/ui/box';
+import { View } from '@/components/ui/view';
 
 const leaderboardData = [
   { rank: 1, name: "Sarah Chen", score: 2850, avatar: "SC", streak: 12, bgColor: "bg-white" },
@@ -91,14 +93,14 @@ export default function Leaderboard() {
             <Pressable
               className="bg-primary-500 rounded-xl p-4 border border-gray-200 active:bg-primary-600"
               onPress={() => {
-                // router.push({
-                //   pathname: '/webview-modal',
-                //   params: {
-                //     url: 'https://www.google.com',
-                //     title: 'Sign In'
-                //   }
-                // });
-                setIsSignedIn(true); // For testing purposes
+                setIsSignedIn(true);
+                router.push({
+                  pathname: '/webview-modal',
+                  params: {
+                    url: 'https://terpengage.umd.edu/community/s/change-major',
+                    title: 'Sign In'
+                  }
+                });
               }}
             >
               <Box className="flex-row items-center justify-center py-4">
@@ -165,6 +167,5 @@ export default function Leaderboard() {
 
       </ScrollView>
     </PageLayout>
-
   );
 }

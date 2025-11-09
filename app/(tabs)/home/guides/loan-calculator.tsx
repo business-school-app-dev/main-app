@@ -5,9 +5,11 @@ import { ScrollView } from "@/components/ui/scroll-view";
 import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@/components/ui/slider";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
+import { Icon } from "@/components/ui/icon";
 import "@/global.css";
 import React, { useMemo, useState } from "react";
 import { View } from "react-native";
+import { Sparkles, DollarSign } from "lucide-react-native";
 
 // Custom Components
 import TextButton from "@/components/inputs/text-button";
@@ -223,9 +225,15 @@ const LoanCalculatorContent = () => {
           </VStack>
 
           {/* Loan Summary Section */}
+<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
           <Card className="mb-6 bg-white border border-gray-200">
             <VStack space="lg" className="p-5">
               <Text className="text-base font-semibold text-gray-900">
+=======
+          <Card className="rounded-xl mb-8 bg-white border border-gray-200">
+            <VStack space="md" className="p-4">
+              <Text className="text-lg font-semibold text-gray-900">
+>>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
                 Your Loan Summary
               </Text>
 
@@ -259,12 +267,17 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* AI Recommendation Section */}
+<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
           <Card className="mb-6 bg-red-50 border border-red-100">
             <VStack space="md" className="p-5">
+=======
+          <Card className="rounded-xl mb-8 bg-secondary-0 border border-secondary-300">
+            <VStack space="sm" className="p-4">
+>>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
               <HStack space="xs" className="items-center">
-                <Text size="lg">📈</Text>
-                <Text className="text-sm font-bold text-gray-900">
-                  AI Generated Recommendation: Balance Both
+                <Icon as={Sparkles} size="md" className="text-secondary-600" />
+                <Text className="text-lg font-semibold text-gray-900">
+                  AI Generated Recommendation
                 </Text>
               </HStack>
               <Text size="sm" className="text-gray-700 leading-5">
@@ -277,11 +290,16 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* Why This Matters Section */}
+<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
           <Card className="mb-6 bg-white border border-gray-200">
             <VStack space="md" className="p-5">
+=======
+          <Card className="rounded-xl mb-8 bg-white border border-gray-200">
+            <VStack space="sm" className="p-4">
+>>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
               <HStack space="xs" className="items-center">
-                <Text size="lg">💰</Text>
-                <Text className="text-sm font-bold text-gray-900">
+                <Icon as={DollarSign} size="md" className="text-primary-500" />
+                <Text className="text-lg font-semibold text-gray-900">
                   Why This Matters
                 </Text>
               </HStack>
@@ -295,13 +313,22 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* Allocation Section */}
+<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
           <VStack space="lg" className="mb-8">
             <Text className="text-base font-semibold text-gray-900">
+=======
+          <VStack space="md" className="mt-12 mb-8">
+            <Text className="text-xl font-bold text-gray-900">
+>>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
               Adjust Your Allocation
             </Text>
 
             {effectiveDiscretionaryIncome <= 0 ? (
+<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
               <Card className="p-5 bg-red-50 border border-red-200">
+=======
+              <Card className="rounded-xl p-4 bg-red-50 border border-red-200">
+>>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
                 <Text size="sm" className="text-red-800">
                   Warning: Your expenses ({formatCurrency(monthlyPayment)}/mo) exceed
                   your income. No discretionary income available.
@@ -336,6 +363,7 @@ const LoanCalculatorContent = () => {
                   </View>
                 </VStack>
 
+<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
                 <HStack space="md" className="justify-between mt-4">
                   <VStack space="sm" className="flex-1 items-center">
                     <Text size="xs" className="text-gray-600">
@@ -360,15 +388,51 @@ const LoanCalculatorContent = () => {
                       {formatCurrency(retirementSavingsAllocation)}/mo
                     </Text>
                   </VStack>
+=======
+                <HStack space="md" className="justify-between">
+                  <Card className="rounded-xl flex-1 bg-white border border-gray-200">
+                    <VStack space="xs" className="p-4 items-center">
+                      <Text size="xs" className="text-gray-600">
+                        Extra Loan Payment
+                      </Text>
+                      <Text size="xl" className="text-primary-500 font-bold">
+                        {formatPercentage(loanAllocationPercentage)}
+                      </Text>
+                      <Text size="sm" className="text-gray-900 font-semibold">
+                        {formatCurrency(extraLoanPayment)}/mo
+                      </Text>
+                    </VStack>
+                  </Card>
+
+                  <Card className="rounded-xl flex-1 bg-white border border-gray-200">
+                    <VStack space="xs" className="p-4 items-center">
+                      <Text size="xs" className="text-gray-600">
+                        Retirement Savings
+                      </Text>
+                      <Text size="xl" className="text-primary-500 font-bold">
+                        {formatPercentage(100 - loanAllocationPercentage)}
+                      </Text>
+                      <Text size="sm" className="text-gray-900 font-semibold">
+                        {formatCurrency(retirementSavingsAllocation)}/mo
+                      </Text>
+                    </VStack>
+                  </Card>
+>>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
                 </HStack>
               </VStack>
             )}
           </VStack>
 
           {/* Impact Projections Section */}
+<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
           <Card className="mb-6 bg-white border border-gray-200">
             <VStack space="lg" className="p-5">
               <Text className="text-base font-semibold text-gray-900">
+=======
+          <Card className="rounded-xl mb-8 bg-white border border-gray-200">
+            <VStack space="md" className="p-4">
+              <Text className="text-lg font-semibold text-gray-900">
+>>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
                 Impact Projections
               </Text>
 
@@ -397,6 +461,7 @@ const LoanCalculatorContent = () => {
               </HStack>
             </VStack>
           </Card>
+<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
 
           {/* Action Buttons Section */}
           <HStack space="md" className="w-full mb-8 mt-2">
@@ -417,6 +482,8 @@ const LoanCalculatorContent = () => {
               />
             </View>
           </HStack>
+=======
+>>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
         </View>
       </ScrollView>
     </PageLayout>

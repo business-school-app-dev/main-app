@@ -10,7 +10,14 @@ export default function App() {
         screenOptions={{
           headerShown: false,
         }}
-      />
+      >
+        <Stack.Screen
+          name="webview-modal"
+          options={{
+            presentation: "card",
+          }}
+        />
+      </Stack>
     </GluestackUIProvider>
   );
 }

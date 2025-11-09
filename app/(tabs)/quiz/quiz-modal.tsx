@@ -8,6 +8,7 @@ import { router } from 'expo-router';
 import { RadioGroup, Radio, RadioIndicator, RadioIcon, RadioLabel } from '@/components/ui/radio';
 import { CircleIcon } from '@/components/ui/icon';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import TextButton from '@/components/inputs/text-button';
 
 export default function QuizModal() {
   const [selectedOption, setSelectedOption] = useState<string>("");
@@ -48,7 +49,7 @@ export default function QuizModal() {
       correctAnswer: 1
     },
   ];
-  
+
   const currentQ = questions[Math.min(currentQuestion - 1, questions.length - 1)];
   const progress = (currentQuestion / questions.length) * 100;
 
@@ -121,7 +122,7 @@ export default function QuizModal() {
             {currentQ.options.map((option, index) => {
               const isSelected = selectedOption === index.toString();
               const isCorrectAnswer = index === currentQ.correctAnswer;
-              
+
               let borderColor = 'border-gray-200';
               let bgColor = 'bg-white';
 
@@ -142,7 +143,7 @@ export default function QuizModal() {
                   key={index}
                   onPress={() => handleAnswerSelect(index)}
                   disabled={showResult}
-                  className={`border-2 rounded-2xl p-4 ${borderColor} ${bgColor}`}
+                  className={`border-2 rounded-2xl my-2 p-4 ${borderColor} ${bgColor}`}
                 >
                   <Radio value={index.toString()} className="flex-row items-center">
                     <RadioIndicator className="mr-3">
@@ -162,12 +163,10 @@ export default function QuizModal() {
 
         {/* Result Message */}
         {showResult && (
-          <View className={`p-4 rounded-xl mt-6 ${
-            isCorrect ? 'bg-green-100' : 'bg-red-100'
-          }`}>
-            <Text className={`text-center text-base ${
-              isCorrect ? 'text-green-800' : 'text-red-800'
+          <View className={`p-4 rounded-xl mt-6 ${isCorrect ? 'bg-green-100' : 'bg-red-100'
             }`}>
+            <Text className={`text-center text-base ${isCorrect ? 'text-green-800' : 'text-red-800'
+              }`}>
               {isCorrect ? "Correct" : "Not quite right. Try again next time"}
             </Text>
           </View>
@@ -177,28 +176,20 @@ export default function QuizModal() {
       {/* Bottom Button */}
       <View className="px-6 pt-4 pb-4">
         {!showResult ? (
-          <Pressable
+          <TextButton
+            label="Check Answer"
             onPress={handleCheckAnswer}
             disabled={selectedOption === ""}
-            className={`rounded-2xl py-4 items-center ${
-              selectedOption !== ""
-                ? 'bg-primary-500 active:bg-primary-600'
-                : 'bg-gray-400'
-            }`}
-          >
-            <Text className="text-white text-lg font-semibold">
-              Check Answer
-            </Text>
-          </Pressable>
+            variant="secondary"
+            size="lg"
+          />
         ) : (
-          <Pressable
+          <TextButton
+            label={currentQuestion < questions.length ? "Continue" : "Complete Quiz"}
             onPress={handleNext}
-            className="rounded-2xl py-4 items-center bg-primary-500 active:bg-primary-600"
-          >
-            <Text className="text-white text-lg font-semibold">
-              {currentQuestion < questions.length ? "Continue" : "Complete Quiz"}
-            </Text>
-          </Pressable>
+            variant="secondary"
+            size="lg"
+          />
         )}
       </View>
     </SafeAreaView>

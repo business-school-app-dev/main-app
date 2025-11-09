@@ -120,7 +120,7 @@ export default function Leaderboard() {
               }}
             >
               <Box className="flex-row items-center justify-between">
-                <Box className="flex-row items-center space-x-4">
+                <Box className="flex-row items-center gap-4">
                   <Box className="w-14 h-14 rounded-full bg-white/30 items-center justify-center">
                     <Icon as={HelpCircle} size="xl" color="black" />
                   </Box>

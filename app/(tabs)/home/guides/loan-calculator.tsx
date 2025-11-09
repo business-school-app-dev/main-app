@@ -401,26 +401,6 @@ const LoanCalculatorContent = () => {
               </HStack>
             </VStack>
           </Card>
-
-          {/* Action Buttons Section */}
-          <HStack space="md" className="w-full mb-8">
-            <View className="flex-1">
-              <TextButton
-                label="Export"
-                variant="primary"
-                size="md"
-                onPress={() => console.log("Export pressed")}
-              />
-            </View>
-            <View className="flex-1">
-              <TextButton
-                label="Share"
-                variant="primary"
-                size="md"
-                onPress={() => console.log("Share pressed")}
-              />
-            </View>
-          </HStack>
         </View>
       </ScrollView>
     </PageLayout>

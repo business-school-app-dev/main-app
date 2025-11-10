@@ -80,7 +80,7 @@ export default function QuizModal() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1">
       <StatusBar barStyle="dark-content" backgroundColor="white" translucent={false} />
 
       {/* Header */}
@@ -143,7 +143,7 @@ export default function QuizModal() {
                   key={index}
                   onPress={() => handleAnswerSelect(index)}
                   disabled={showResult}
-                  className={`border-2 rounded-2xl my-2 p-4 ${borderColor} ${bgColor}`}
+                  className={`border-2 rounded-xl my-2 p-4 ${borderColor} ${bgColor}`}
                 >
                   <Radio value={index.toString()} className="flex-row items-center">
                     <RadioIndicator className="mr-3">

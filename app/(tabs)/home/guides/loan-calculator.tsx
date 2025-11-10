@@ -167,7 +167,7 @@ const LoanCalculatorContent = () => {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="py-6">
           {/* Header Section */}
-          <VStack space="md" className="mb-8">
+          <VStack space="md" className="mb-6">
             <Heading size="xl" className="text-gray-900">
               Calculate Your Path to Financial Freedom
             </Heading>
@@ -178,7 +178,7 @@ const LoanCalculatorContent = () => {
           </VStack>
 
           {/* Loan Inputs Section */}
-          <VStack space="lg" className="mb-8">
+          <VStack space="md" className="mb-6">
             <TextInputField
               label="Total Loan Amount"
               value={totalLoanText}
@@ -225,15 +225,9 @@ const LoanCalculatorContent = () => {
           </VStack>
 
           {/* Loan Summary Section */}
-<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
-          <Card className="mb-6 bg-white border border-gray-200">
-            <VStack space="lg" className="p-5">
-              <Text className="text-base font-semibold text-gray-900">
-=======
           <Card className="rounded-xl mb-8 bg-white border border-gray-200">
             <VStack space="md" className="p-4">
               <Text className="text-lg font-semibold text-gray-900">
->>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
                 Your Loan Summary
               </Text>
 
@@ -267,13 +261,8 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* AI Recommendation Section */}
-<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
-          <Card className="mb-6 bg-red-50 border border-red-100">
-            <VStack space="md" className="p-5">
-=======
           <Card className="rounded-xl mb-8 bg-secondary-0 border border-secondary-300">
             <VStack space="sm" className="p-4">
->>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
               <HStack space="xs" className="items-center">
                 <Icon as={Sparkles} size="md" className="text-secondary-600" />
                 <Text className="text-lg font-semibold text-gray-900">
@@ -290,13 +279,8 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* Why This Matters Section */}
-<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
-          <Card className="mb-6 bg-white border border-gray-200">
-            <VStack space="md" className="p-5">
-=======
           <Card className="rounded-xl mb-8 bg-white border border-gray-200">
             <VStack space="sm" className="p-4">
->>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
               <HStack space="xs" className="items-center">
                 <Icon as={DollarSign} size="md" className="text-primary-500" />
                 <Text className="text-lg font-semibold text-gray-900">
@@ -313,82 +297,45 @@ const LoanCalculatorContent = () => {
           </Card>
 
           {/* Allocation Section */}
-<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
-          <VStack space="lg" className="mb-8">
-            <Text className="text-base font-semibold text-gray-900">
-=======
           <VStack space="md" className="mt-12 mb-8">
             <Text className="text-xl font-bold text-gray-900">
->>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
               Adjust Your Allocation
             </Text>
 
             {effectiveDiscretionaryIncome <= 0 ? (
-<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
-              <Card className="p-5 bg-red-50 border border-red-200">
-=======
               <Card className="rounded-xl p-4 bg-red-50 border border-red-200">
->>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
                 <Text size="sm" className="text-red-800">
                   Warning: Your expenses ({formatCurrency(monthlyPayment)}/mo) exceed
                   your income. No discretionary income available.
                 </Text>
               </Card>
             ) : (
-              <VStack space="lg">
+              <VStack space="md">
                 <Text size="sm" className="text-gray-700">
                   Based on your available discretionary income of{" "}
                   {formatCurrency(effectiveDiscretionaryIncome)}/month, decide how to
                   split between extra loan payments and retirement savings.
                 </Text>
 
-                <VStack space="md">
-                  <Text size="sm" className="font-medium text-gray-900 mb-4">
+                <VStack space="xs" className="mb-4">
+                  <Text size="sm" className="font-medium text-gray-900 mb-2">
                     Loan vs Retirement Split
                   </Text>
-                  <View className="px-4">
-                    <Slider
-                      defaultValue={loanAllocationPercentage}
-                      minValue={0}
-                      maxValue={100}
-                      step={1}
-                      onChange={setLoanAllocationPercentage}
-                      size="md"
-                    >
-                      <SliderTrack>
-                        <SliderFilledTrack className="bg-primary-500" />
-                      </SliderTrack>
-                      <SliderThumb className="bg-primary-500" />
-                    </Slider>
-                  </View>
+                  <Slider
+                    defaultValue={loanAllocationPercentage}
+                    minValue={0}
+                    maxValue={100}
+                    step={1}
+                    onChange={setLoanAllocationPercentage}
+                    size="md"
+                  >
+                    <SliderTrack>
+                      <SliderFilledTrack className="bg-primary-500" />
+                    </SliderTrack>
+                    <SliderThumb className="bg-primary-500" />
+                  </Slider>
                 </VStack>
 
-<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
-                <HStack space="md" className="justify-between mt-4">
-                  <VStack space="sm" className="flex-1 items-center">
-                    <Text size="xs" className="text-gray-600">
-                      Extra Loan Payment
-                    </Text>
-                    <Text size="xl" className="text-primary-500 font-bold">
-                      {formatPercentage(loanAllocationPercentage)}
-                    </Text>
-                    <Text size="sm" className="text-gray-900 font-semibold">
-                      {formatCurrency(extraLoanPayment)}/mo
-                    </Text>
-                  </VStack>
-
-                  <VStack space="sm" className="flex-1 items-center">
-                    <Text size="xs" className="text-gray-600">
-                      Retirement Savings
-                    </Text>
-                    <Text size="xl" className="text-primary-500 font-bold">
-                      {formatPercentage(100 - loanAllocationPercentage)}
-                    </Text>
-                    <Text size="sm" className="text-gray-900 font-semibold">
-                      {formatCurrency(retirementSavingsAllocation)}/mo
-                    </Text>
-                  </VStack>
-=======
                 <HStack space="md" className="justify-between">
                   <Card className="rounded-xl flex-1 bg-white border border-gray-200">
                     <VStack space="xs" className="p-4 items-center">
@@ -417,22 +364,15 @@ const LoanCalculatorContent = () => {
                       </Text>
                     </VStack>
                   </Card>
->>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
                 </HStack>
               </VStack>
             )}
           </VStack>
 
           {/* Impact Projections Section */}
-<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
-          <Card className="mb-6 bg-white border border-gray-200">
-            <VStack space="lg" className="p-5">
-              <Text className="text-base font-semibold text-gray-900">
-=======
           <Card className="rounded-xl mb-8 bg-white border border-gray-200">
             <VStack space="md" className="p-4">
               <Text className="text-lg font-semibold text-gray-900">
->>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
                 Impact Projections
               </Text>
 
@@ -461,29 +401,6 @@ const LoanCalculatorContent = () => {
               </HStack>
             </VStack>
           </Card>
-<<<<<<< HEAD:app/(tabs)/home/loan-calculator.tsx
-
-          {/* Action Buttons Section */}
-          <HStack space="md" className="w-full mb-8 mt-2">
-            <View className="flex-1">
-              <TextButton
-                label="Export"
-                variant="primary"
-                size="md"
-                onPress={() => console.log("Export pressed")}
-              />
-            </View>
-            <View className="flex-1">
-              <TextButton
-                label="Share"
-                variant="primary"
-                size="md"
-                onPress={() => console.log("Share pressed")}
-              />
-            </View>
-          </HStack>
-=======
->>>>>>> 4cc09b9e61288c2aafa11b4a7f22f1c22c46ba14:app/(tabs)/home/guides/loan-calculator.tsx
         </View>
       </ScrollView>
     </PageLayout>
@@ -491,4 +408,3 @@ const LoanCalculatorContent = () => {
 };
 
 export default LoanCalculatorContent;
-

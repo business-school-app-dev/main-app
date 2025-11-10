@@ -130,7 +130,7 @@ export default function CreditCardsScreen() {
   };
 
   return (
-    <PageLayout title="Credit Cards" profileButtonHidden>
+    <PageLayout title="Credit Cards">
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
@@ -181,9 +181,8 @@ export default function CreditCardsScreen() {
             <TextButton
               label="Close"
               onPress={closeModal}
-              variant="primary"
-              className="bg-red-600"
-              textClassName="text-white"
+              variant="secondary"
+            // className="bg-red-600"
             />
           </ModalFooter>
         </ModalContent>

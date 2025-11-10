@@ -65,7 +65,7 @@ export default function App() {
           contentContainerClassName="pb-5"
         >
           {/* Hero Section */}
-          <Box className="w-full">
+          <Box className="w-full pb-6">
             <ImageBackground
               source={require("@/assets/images/smith-school.jpg")}
               className="w-full h-72 justify-center rounded-lg overflow-hidden"
@@ -83,8 +83,11 @@ export default function App() {
             </ImageBackground>
           </Box>
 
-          {/* Quick Access Section */}
-          <Box className="w-full pt-4 pb-2">
+          {/* Guides Section */}
+          <Box className="w-full pt-3 pb-6">
+            <Text className="text-xl font-semibold text-gray-900 mb-4">
+              Guides
+            </Text>
             <Box className="flex-row flex-wrap justify-between">
               {[
                 { title: "Loan Calculator", icon: Banknote },
@@ -117,15 +120,18 @@ export default function App() {
             </Box>
           </Box>
 
-          {/* Meeting Section */}
+          {/* Links Section */}
           <Box className="w-full pt-3 pb-6">
+            <Text className="text-xl font-semibold text-gray-900 mb-4">
+              Links
+            </Text>
             <Box className="mb-4">
               <Pressable
                 onPress={() => {
                   router.navigate({
                     pathname: "/webview-modal",
                     params: {
-                      url: "https://calendar.app.google/f4qiFCshxAFLEtyD6",
+                      url: "https://www.rhsmith.umd.edu/centers-initiatives/financial-wellness/about-us",
                       title: "Schedule a Meeting",
                     },
                   });
@@ -134,31 +140,14 @@ export default function App() {
               >
                 <Icon as={Calendar} size="xl" className="text-red-600 mr-5" />
                 <Text className="text-base font-semibold text-gray-900 flex-1">
-                  Schedule a Meeting with a Financial Advisor
+                  Schedule a Meeting with a Peer Mentor
                 </Text>
-              </Pressable>
-            </Box>
-
-            <Box>
-              <Pressable
-                onPress={() => console.log("Office Hours pressed")}
-                className="bg-white rounded-lg border border-gray-200 flex-row items-center p-5 h-24"
-              >
-                <Icon as={Clock} size="xl" className="text-red-600 mr-5" />
-                <Box className="flex-1">
-                  <Text className="text-base font-semibold text-gray-900">
-                    Visit Office Hours
-                  </Text>
-                  <Text className="text-sm text-gray-600 mt-1">
-                    Stamp Student Union, Room 2201 • Mon–Fri 9AM–5PM
-                  </Text>
-                </Box>
               </Pressable>
             </Box>
           </Box>
 
           {/* Events Section */}
-          <Box className="w-full my-6">
+          <Box className="w-full pt-3 pb-6">
             <Text className="text-xl font-semibold text-gray-900">
               Upcoming Campus Events
             </Text>

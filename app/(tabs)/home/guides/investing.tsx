@@ -964,7 +964,7 @@ export default function InvestingLiteracyScreen() {
   };
 
   return (
-    <PageLayout title="Investing Accounts" profileButtonHidden>
+    <PageLayout title="Investing Accounts">
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}
@@ -1043,9 +1043,8 @@ export default function InvestingLiteracyScreen() {
             <TextButton
               label="Close"
               onPress={closeModal}
-              variant="primary"
-              className="bg-red-600"
-              textClassName="text-white"
+              variant="secondary"
+            // className="bg-red-600"
             />
           </ModalFooter>
         </ModalContent>

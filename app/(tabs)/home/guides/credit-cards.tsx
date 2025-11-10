@@ -130,7 +130,7 @@ export default function CreditCardsScreen() {
   };
 
   return (
-    <PageLayout title="Credit Cards">
+    <PageLayout title="Credit Cards" profileButtonHidden>
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}

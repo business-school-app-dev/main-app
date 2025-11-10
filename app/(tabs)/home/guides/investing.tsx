@@ -964,7 +964,7 @@ export default function InvestingLiteracyScreen() {
   };
 
   return (
-    <PageLayout title="Investing Accounts">
+    <PageLayout title="Investing Accounts" profileButtonHidden>
       <ScrollView
         className="flex-1"
         showsVerticalScrollIndicator={false}

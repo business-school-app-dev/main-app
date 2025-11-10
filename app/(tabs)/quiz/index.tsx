@@ -1,20 +1,20 @@
 import React, { useState } from 'react';
 import { ScrollView, StatusBar } from "react-native";
 
-import { Box } from "@/components/ui/box";
 import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
 
 import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
 
-import { CalendarDaysIcon, StarIcon } from '@/components/ui/icon';
+import { StarIcon } from '@/components/ui/icon';
 import { Flame } from 'lucide-react-native';
 
 import PageLayout from '@/components/layouts/page-layout';
-import TextButton from '@/components/inputs/text-button';
 import { HelpCircle } from 'lucide-react-native';
 import { router } from 'expo-router';
+import { Box } from '@/components/ui/box';
+import { View } from '@/components/ui/view';
 
 const leaderboardData = [
   { rank: 1, name: "Sarah Chen", score: 2850, avatar: "SC", streak: 12, bgColor: "bg-white" },
@@ -33,6 +33,7 @@ const currentUser = {
   streak: 5,
   profilePic: "https://plus.unsplash.com/premium_photo-1756131939171-728118fbad4a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=774",
 }
+
 
 export default function Leaderboard() {
   // TODO: Replace with actual authentication check
@@ -92,14 +93,14 @@ export default function Leaderboard() {
             <Pressable
               className="bg-primary-500 rounded-xl p-4 border border-gray-200 active:bg-primary-600"
               onPress={() => {
-                // router.push({
-                //   pathname: '/webview-modal',
-                //   params: {
-                //     url: 'https://www.google.com',
-                //     title: 'Sign In'
-                //   }
-                // });
-                setIsSignedIn(true); // For testing purposes
+                setIsSignedIn(true);
+                router.push({
+                  pathname: '/webview-modal',
+                  params: {
+                    url: 'https://terpengage.umd.edu/community/s/change-major',
+                    title: 'Sign In'
+                  }
+                });
               }}
             >
               <Box className="flex-row items-center justify-center py-4">
@@ -119,7 +120,7 @@ export default function Leaderboard() {
               }}
             >
               <Box className="flex-row items-center justify-between">
-                <Box className="flex-row items-center space-x-4">
+                <Box className="flex-row items-center gap-4">
                   <Box className="w-14 h-14 rounded-full bg-white/30 items-center justify-center">
                     <Icon as={HelpCircle} size="xl" color="black" />
                   </Box>
@@ -137,109 +138,34 @@ export default function Leaderboard() {
         )}
 
         {/* Top Performers */}
-        <Box className="pt-6">
+        <View className="pt-6">
           <Text className="text-lg font-semibold text-gray-900 mb-4">Top Players</Text>
-          <Box className="space-y-3">
+          <View className="space-y-3">
             {leaderboardData.map((user) => (
-              <Box key={user.rank} className={`rounded-xl mb-3 p-4 border border-gray-200 flex-row justify-between items-center ${user.bgColor}`}>
-                <Box className="flex-row items-center space-x-3">
-                  <Box className="relative">
-                    <Box className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">
+              <View key={user.rank} className={`rounded-xl mb-3 p-4 border border-gray-200 flex-row justify-between items-center ${user.bgColor}`}>
+                <View className="flex-row items-center space-x-3">
+                  <View className="relative">
+                    <View className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">
                       <Text className="text-base font-semibold text-white">{user.avatar}</Text>
-                    </Box>
-                  </Box>
-                  <Box className="p-1">
+                    </View>
+                  </View>
+                  <View className="p-1">
                     <Text className="text-base font-medium text-gray-900 mb-1 p-1">{user.name}</Text>
-                    <Box className="bg-gray-100 px-2 py-0.5 rounded self-start">
+                    <View className="bg-gray-100 px-2 py-0.5 rounded self-start">
                       <Text className="text-xs text-gray-600">{user.streak} day streak</Text>
-                    </Box>
-                  </Box>
-                </Box>
-                <Box className="items-end">
+                    </View>
+                  </View>
+                </View>
+                <View className="items-end">
                   <Text className="text-2xl font-bold text-gray-900">#{user.rank}</Text>
                   <Text className="text-sm text-gray-500 mt-0.5">{user.score} pts</Text>
-                </Box>
-              </Box>
+                </View>
+              </View>
             ))}
-          </Box>
-        </Box>
-
-
-
+          </View>
+        </View>
 
       </ScrollView>
     </PageLayout>
-
   );
 }
-
-
-
-
-
-// const quizCategories = [
-//     {
-//       icon: PiggyBank,
-//       title: "Budgeting Basics",
-//       questions: 15,
-//       difficulty: "Beginner",
-//       bgColor: "bg-red-50",
-//       iconColor: "$red500", // Gluestack token format
-//       completed: true,
-//     },
-//     {
-//       icon: TrendingUp,
-//       title: "Investment Fundamentals",
-//       questions: 20,
-//       difficulty: "Intermediate",
-//       bgColor: "bg-pink-50",
-//       iconColor: "$rose700", // Gluestack token format
-//       completed: true,
-//     },
-//     {
-//       icon: CreditCard,
-//       title: "Credit & Loans",
-//       questions: 18,
-//       difficulty: "Intermediate",
-//       bgColor: "bg-red-100",
-//       iconColor: "$red600", // Gluestack token format
-//       completed: false,
-//     },
-//     // ... (rest of quizCategories)
-// ]
-
-/*
-
-Quiz Categories
-                <Box className="px-4 pt-6">
-                    <Text className="text-lg font-semibold text-gray-900 mb-4">Practice Quizzes</Text>
-                    <Box className="space-y-3">
-                        {quizCategories.map((category, index) => {
-                            const IconComponent = category.icon
-                            return (
-                                <Pressable key={index} className="bg-white rounded-xl p-4 border border-gray-200 shadow-sm">
-                                    <Box className="flex-row items-center space-x-4">
-                                        <Box className={`w-14 h-14 rounded-xl items-center justify-center ${category.bgColor}`}>
-                                            
-                                            <Icon as={IconComponent} size="xl" color={category.iconColor} />
-                                        </Box>
-                                        <Box className="flex-1">
-                                            <Box className="flex-row justify-between items-center mb-1">
-                                                <Text className="text-base font-semibold text-gray-900">{category.title}</Text>
-                                                {category.completed && <Text className="text-lg text-green-600">✓</Text>}
-                                            </Box>
-                                            <Box className="flex-row items-center space-x-3">
-                                                <Text className="text-sm text-gray-500">{category.questions} questions</Text>
-                                                <Text className="text-sm text-gray-500">•</Text>
-                                                <Text className="text-sm text-gray-500">{category.difficulty}</Text>
-                                            </Box>
-                                        </Box>
-                                    </Box>
-                                </Pressable>
-                            )
-                        })}
-                    </Box>
-                </Box>
-
-
-*/

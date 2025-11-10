@@ -125,7 +125,7 @@ export default function App() {
                   router.navigate({
                     pathname: "/webview-modal",
                     params: {
-                      url: "https://calendar.app.google/f4qiFCshxAFLEtyD6",
+                      url: "https://www.rhsmith.umd.edu/centers-initiatives/financial-wellness/about-us",
                       title: "Schedule a Meeting",
                     },
                   });
@@ -134,25 +134,8 @@ export default function App() {
               >
                 <Icon as={Calendar} size="xl" className="text-red-600 mr-5" />
                 <Text className="text-base font-semibold text-gray-900 flex-1">
-                  Schedule a Meeting with a Financial Advisor
+                  Schedule a Meeting with a Peer Mentor
                 </Text>
-              </Pressable>
-            </Box>
-
-            <Box>
-              <Pressable
-                onPress={() => console.log("Office Hours pressed")}
-                className="bg-white rounded-lg border border-gray-200 flex-row items-center p-5 h-24"
-              >
-                <Icon as={Clock} size="xl" className="text-red-600 mr-5" />
-                <Box className="flex-1">
-                  <Text className="text-base font-semibold text-gray-900">
-                    Visit Office Hours
-                  </Text>
-                  <Text className="text-sm text-gray-600 mt-1">
-                    Stamp Student Union, Room 2201 • Mon–Fri 9AM–5PM
-                  </Text>
-                </Box>
               </Pressable>
             </Box>
           </Box>

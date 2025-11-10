@@ -4,6 +4,7 @@ import PageLayout from '@/components/layouts/page-layout';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { router } from "expo-router";
 import React, { useState } from 'react';
 import { ScrollView, View } from 'react-native';
 
@@ -103,7 +104,7 @@ const minors = [ "N/A", "African American Studies", "Arabic Studies", "Art Histo
           <View className="mb-4">
             <TextButton
               label="View All Courses"
-              onPress={() => console.log('View all courses pressed')}
+              onPress={() => router.navigate("/home/guides/course-options")}
               variant="primary"
               size="md"
             />

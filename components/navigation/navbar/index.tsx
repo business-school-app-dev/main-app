@@ -60,7 +60,7 @@ const Navbar: React.FC<NavbarProps> = ({
       {hideBackButton ? (
         EmptyView()
       ) : (
-        <View className="w-12 h-12">{backButton}</View>
+        <View className="w-12 h-12">{leftView ? leftView : backButton}</View>
       )}
 
       <View className="flex-row items-center">

@@ -39,9 +39,9 @@
           "image": "./assets/images/splash-icon.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff",
+          "backgroundColor": "#E11932",
           "dark": {
-            "backgroundColor": "#000000"
+            "backgroundColor": "#E11932"
           }
         }
       ]
@@ -53,7 +53,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "1b797db0-b576-4b95-9ef7-910d0121a005"
+        "projectId": "e52f1de9-996a-4005-af0c-8f5c5132ecb4"
       }
     },
     "owner": "umd-smith-business-school-app-team"

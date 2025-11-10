@@ -9,8 +9,10 @@ import { ScrollView, View } from 'react-native';
 
 const CourseRecommenderScreen = () => {
   const [credit, setCredit] = useState('');
-  const [major, setMajor] = useState('');
-  const [minor, setMinor] = useState('');
+  const [major1, setMajor1] = useState('');
+  const [major2, setMajor2] = useState('');
+  const [minor1, setMinor1] = useState('');
+  const [minor2, setMinor2] = useState('');
   const [comfortLevel, setComfortLevel] = useState('');
 
 const majors = [ "Accounting", "Agricultural and Resource Economics", "American Studies", "Animal and Avian Sciences", "Anthropology", "Applied Mathematics and Scientific Computation", "Arabic Studies", "Art History", "Astronomy", "Atmospheric and Oceanic Science", "Biochemistry", "Biological Sciences", "Chemistry", "Chinese Studies", "Cinema and Media Studies", "Civil Engineering", "Communication", "Computer Science", "Criminology and Criminal Justice", "Economics", "Electrical Engineering", "English Language and Literature", "Environmental Science and Policy", "Finance", "Geography", "Geology", "Government and Politics", "History", "Information Science", "International Business", "Journalism", "Linguistics", "Management", "Marketing", "Mathematics", "Mechanical Engineering", "Neuroscience", "Nursing", "Philosophy", "Physics", "Political Science", "Psychology", "Public Health Science", "Sociology", "Spanish Language and Literature", "Statistics", "Theatre", "Women's Studies" ]; 
@@ -47,8 +49,8 @@ const minors = [ "N/A", "African American Studies", "Arabic Studies", "Art Histo
               label="Major"
               placeholder="Select option"
               options={majors}
-              value={major}
-              onValueChange={setMajor}
+              value={major1}
+              onValueChange={setMajor1}
               isScrollable={true}
             />
 
@@ -56,8 +58,8 @@ const minors = [ "N/A", "African American Studies", "Arabic Studies", "Art Histo
               label="2nd Major"
               placeholder="N/A"
               options={majors}
-              value={major}
-              onValueChange={setMajor}
+              value={major2}
+              onValueChange={setMajor2}
               isScrollable={true}
             />
 
@@ -65,8 +67,8 @@ const minors = [ "N/A", "African American Studies", "Arabic Studies", "Art Histo
               label="Minor"
               placeholder="Select option"
               options={minors}
-              value={minor}
-              onValueChange={setMinor}
+              value={minor1}
+              onValueChange={setMinor1}
               isScrollable={true}
             />
 
@@ -74,8 +76,8 @@ const minors = [ "N/A", "African American Studies", "Arabic Studies", "Art Histo
               label="2nd Minor"
               placeholder="N/A"
               options={minors}
-              value={minor}
-              onValueChange={setMinor}
+              value={minor2}
+              onValueChange={setMinor2}
               isScrollable={true}
             />
 

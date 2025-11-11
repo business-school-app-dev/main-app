@@ -390,7 +390,7 @@ export default function SimulationResult() {
         <ModalContent className="rounded-xl">
           <ModalHeader>
             <Heading size="lg">
-              What is Monte Carlo Simulation?
+              What is Monte Carlo?
             </Heading>
             <ModalCloseButton>
               <Icon as={CloseIcon} />

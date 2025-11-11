@@ -1,15 +1,11 @@
 import React, { useState } from 'react';
-import { ScrollView, StatusBar } from "react-native";
-
+import { ScrollView } from "react-native";
 import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
-
 import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
-
 import { StarIcon } from '@/components/ui/icon';
 import { Flame } from 'lucide-react-native';
-
 import PageLayout from '@/components/layouts/page-layout';
 import { HelpCircle } from 'lucide-react-native';
 import { router } from 'expo-router';

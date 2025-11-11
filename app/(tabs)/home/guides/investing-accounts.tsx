@@ -1,16 +1,5 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from "react-native";
-import { Text } from "@/components/ui/text";
-import { CloseIcon, Icon } from '@/components/ui/icon';
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-} from '@/components/ui/modal';
-import { Heading } from '@/components/ui/heading';
 import PageLayout from "@/components/layouts/page-layout";
 import { PiggyBank, TrendingUp, Wallet, LineChart, Building2, BarChart3, FolderOpen } from 'lucide-react-native';
 import { INVESTING_ACCOUNTS_CONTENT } from '@/constants/strings';
@@ -95,7 +84,6 @@ export default function InvestingLiteracyScreen() {
           </View>
         </View>
       </ScrollView>
-
       <GuideCardModal
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}

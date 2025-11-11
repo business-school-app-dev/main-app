@@ -1,16 +1,5 @@
 import React, { useState } from 'react';
 import { ScrollView, View } from "react-native";
-import { Text } from "@/components/ui/text";
-import { CloseIcon, Icon } from '@/components/ui/icon';
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody
-} from '@/components/ui/modal';
-import { Heading } from '@/components/ui/heading';
 import PageLayout from "@/components/layouts/page-layout";
 import { CreditCard, TrendingUp, Shield } from 'lucide-react-native';
 import { CREDIT_CARDS_CONTENT } from '@/constants/strings';
@@ -63,8 +52,6 @@ export default function CreditCardsScreen() {
           </View>
         </View>
       </ScrollView>
-
-      {/* Modal for expanded content */}
       <GuideCardModal
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}

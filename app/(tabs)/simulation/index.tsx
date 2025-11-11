@@ -4,7 +4,6 @@ import { View } from '@/components/ui/view';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { HStack } from '@/components/ui/hstack';
-import { Card } from '@/components/ui/card';
 import { Pressable } from '@/components/ui/pressable';
 import { RadioGroup, Radio, RadioIndicator, RadioIcon, RadioLabel } from '@/components/ui/radio';
 import { CircleIcon } from '@/components/ui/icon';

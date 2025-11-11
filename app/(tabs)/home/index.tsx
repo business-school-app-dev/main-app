@@ -91,8 +91,8 @@ export default function App() {
             <Box className="flex-row flex-wrap justify-between">
               {[
                 { title: "Loan Calculator", icon: Banknote },
-                { title: "Investing", icon: TrendingUp },
-                { title: "Financial Courses", icon: GraduationCap },
+                { title: "Investing Accounts", icon: TrendingUp },
+                { title: "Course Recommender", icon: GraduationCap },
                 { title: "Credit Cards", icon: CreditCard },
               ].map((item, index) => (
                 <Box key={index} className="w-[48%] mb-4">
@@ -100,15 +100,15 @@ export default function App() {
                     onPress={() => {
                       if (item.title === "Credit Cards") {
                         router.navigate("/(tabs)/home/guides/credit-cards");
-                      } else if (item.title === "Financial Courses") {
-                        router.navigate("/(tabs)/home/guides/financial-courses");
+                      } else if (item.title === "Course Recommender") {
+                        router.navigate("/(tabs)/home/guides/course-recommender");
                       } else if (item.title === "Loan Calculator") {
                         router.navigate("/(tabs)/home/guides/loan-calculator");
-                      } else if (item.title === "Investing") {
-                        router.navigate("/(tabs)/home/guides/investing");
+                      } else if (item.title === "Investing Accounts") {
+                        router.navigate("/(tabs)/home/guides/investing-accounts");
                       }
                     }}
-                    className="bg-white rounded-lg border border-gray-200 h-32 items-center justify-center space-y-2"
+                    className="bg-white rounded-xl border border-gray-200 h-32 items-center justify-center space-y-2"
                   >
                     <Icon as={item.icon} size="xl" className="text-red-600" />
                     <Text className="text-base font-semibold text-gray-800 text-center">
@@ -136,7 +136,7 @@ export default function App() {
                     },
                   });
                 }}
-                className="bg-white rounded-lg border border-gray-200 flex-row items-center p-5 h-24"
+                className="bg-white rounded-xl border border-gray-200 flex-row items-center p-5 h-24"
               >
                 <Icon as={Calendar} size="xl" className="text-red-600 mr-5" />
                 <Text className="text-base font-semibold text-gray-900 flex-1">
@@ -171,7 +171,7 @@ export default function App() {
                         }
                       });
                     }}
-                    className="bg-white rounded-lg border border-gray-200 w-64 mr-4 p-4"
+                    className="bg-white rounded-xl border border-gray-200 w-64 mr-4 p-4"
                   >
                     <Box className="flex-row items-center mb-2">
                       <Icon

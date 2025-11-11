@@ -83,7 +83,7 @@ export default function Leaderboard() {
                 </Box>
                 <Pressable
                   onPress={() => setIsSignedIn(false)}
-                  className="bg-white/20 px-4 py-2 rounded-lg active:bg-white/30"
+                  className="bg-white/20 px-4 py-2 rounded-full active:bg-white/30"
                 >
                   <Text className="text-sm font-semibold text-white">Sign Out</Text>
                 </Pressable>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { View, StatusBar, ScrollView } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, StatusBar, ScrollView, Animated } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Pressable } from '@/components/ui/pressable';
 import { Icon } from '@/components/ui/icon';
@@ -16,6 +16,10 @@ export default function QuizModal() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+
+  const resultFadeAnim = useRef(new Animated.Value(0)).current;
+  const resultSlideAnim = useRef(new Animated.Value(20)).current;
+  const shakeAnim = useRef(new Animated.Value(0)).current;
 
   const questions = [
     {
@@ -64,10 +68,59 @@ export default function QuizModal() {
     const correct = selectedAnswer === currentQ.correctAnswer;
     setIsCorrect(correct);
     setShowResult(true);
+
+    // Animate result message appearance
+    resultFadeAnim.setValue(0);
+    resultSlideAnim.setValue(20);
+
+    Animated.parallel([
+      Animated.timing(resultFadeAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.spring(resultSlideAnim, {
+        toValue: 0,
+        tension: 50,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Add shake animation for incorrect answers
+    if (!correct) {
+      Animated.sequence([
+        Animated.timing(shakeAnim, {
+          toValue: 10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim, {
+          toValue: -10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim, {
+          toValue: 10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
   };
 
   const handleNext = () => {
     if (currentQuestion < questions.length) {
+      // Reset animations
+      resultFadeAnim.setValue(0);
+      resultSlideAnim.setValue(20);
+      shakeAnim.setValue(0);
+
       setCurrentQuestion(currentQuestion + 1);
       setSelectedOption("");
       setSelectedAnswer(null);
@@ -104,9 +157,15 @@ export default function QuizModal() {
       {/* Content */}
       <View className="flex-1 px-6">
         {/* Question */}
-        <Text className="text-2xl font-bold text-gray-900 mb-6 mt-4">
-          {currentQ.question}
-        </Text>
+        <Animated.View
+          style={{
+            transform: [{ translateX: shakeAnim }],
+          }}
+        >
+          <Text className="text-2xl font-bold text-gray-900 mb-6 mt-4">
+            {currentQ.question}
+          </Text>
+        </Animated.View>
 
         {/* Options */}
         <SelectionCard
@@ -124,13 +183,19 @@ export default function QuizModal() {
 
         {/* Result Message */}
         {showResult && (
-          <View className={`p-4 rounded-xl mt-6 ${isCorrect ? 'bg-green-100' : 'bg-red-100'
-            }`}>
+          <Animated.View
+            style={{
+              opacity: resultFadeAnim,
+              transform: [{ translateY: resultSlideAnim }],
+            }}
+            className={`p-4 rounded-xl mt-6 ${isCorrect ? 'bg-green-100' : 'bg-red-100'
+              }`}
+          >
             <Text className={`text-center text-base ${isCorrect ? 'text-green-800' : 'text-red-800'
               }`}>
-              {isCorrect ? "Correct" : "Not quite right. Try again next time"}
+              {isCorrect ? "Correct! 🎉" : "Not quite right. Try again next time!"}
             </Text>
-          </View>
+          </Animated.View>
         )}
       </View>
 

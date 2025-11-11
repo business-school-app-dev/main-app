@@ -6,22 +6,13 @@ import { Icon } from "@/components/ui/icon";
 import PageLayout from "@/components/layouts/page-layout";
 import { StatusBar } from "expo-status-bar";
 import {
-  Calculator,
-  BookOpen,
-  Award,
-  Briefcase,
   Calendar,
-  Clock,
   CreditCard,
   GraduationCap,
   Banknote,
   TrendingUp,
-  X
 } from "lucide-react-native";
 import { useState } from "react";
-import { WebView } from "react-native-webview";
-import { Modal, ModalContent, ModalBackdrop } from "@/components/ui/modal";
-import IconButton from "@/components/inputs/icon-button";
 import { router } from "expo-router";
 
 export default function App() {
@@ -90,7 +81,7 @@ export default function App() {
             </Text>
             <Box className="flex-row flex-wrap justify-between">
               {[
-                { title: "Loan Calculator", icon: Banknote },
+                { title: "Student Loans", icon: Banknote },
                 { title: "Investing Accounts", icon: TrendingUp },
                 { title: "Course Recommender", icon: GraduationCap },
                 { title: "Credit Cards", icon: CreditCard },
@@ -102,8 +93,8 @@ export default function App() {
                         router.navigate("/(tabs)/home/guides/credit-cards");
                       } else if (item.title === "Course Recommender") {
                         router.navigate("/(tabs)/home/guides/course-recommender");
-                      } else if (item.title === "Loan Calculator") {
-                        router.navigate("/(tabs)/home/guides/loan-calculator");
+                      } else if (item.title === "Student Loans") {
+                        router.navigate("/(tabs)/home/guides/student-loans");
                       } else if (item.title === "Investing Accounts") {
                         router.navigate("/(tabs)/home/guides/investing-accounts");
                       }

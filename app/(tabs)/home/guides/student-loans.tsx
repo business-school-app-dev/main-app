@@ -6,13 +6,9 @@ import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@/component
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { Icon } from "@/components/ui/icon";
-import "@/global.css";
 import React, { useMemo, useState } from "react";
 import { View } from "react-native";
 import { Sparkles, DollarSign } from "lucide-react-native";
-
-// Custom Components
-import TextButton from "@/components/inputs/text-button";
 import TextInputField from "@/components/inputs/text-input-field";
 import PageLayout from "@/components/layouts/page-layout";
 
@@ -163,7 +159,7 @@ const LoanCalculatorContent = () => {
   }, [retirementSavingsAllocation]);
 
   return (
-    <PageLayout title="Student Loan Guide">
+    <PageLayout title="Student Loans">
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="py-6">
           {/* Header Section */}

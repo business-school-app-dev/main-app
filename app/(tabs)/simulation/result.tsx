@@ -14,6 +14,7 @@ import { CloseIcon, Icon } from '@/components/ui/icon';
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@/components/ui/modal';
 import IconButton from '@/components/inputs/icon-button';
 import { Heading } from '@/components/ui/heading';
+import COLORS, { GRAY_COLORS } from '@/constants/colors';
 
 // Types
 export interface UserResponses {
@@ -220,10 +221,10 @@ export default function SimulationResult() {
               endOpacity={0.2}
               initialSpacing={0}
               noOfSections={4}
-              yAxisColor="#E5E7EB"
-              xAxisColor="#E5E7EB"
-              yAxisTextStyle={{ color: '#6B7280', fontSize: 10 }}
-              xAxisLabelTextStyle={{ color: '#6B7280', fontSize: 10 }}
+              yAxisColor={GRAY_COLORS[200]}
+              xAxisColor={GRAY_COLORS[200]}
+              yAxisTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
+              xAxisLabelTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
               areaChart
               curved
               hideDataPoints

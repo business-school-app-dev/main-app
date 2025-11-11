@@ -5,6 +5,7 @@ import { CreditCard, TrendingUp, Shield } from 'lucide-react-native';
 import { CREDIT_CARDS_CONTENT } from '@/constants/strings';
 import GuideCard from '@/components/cards/guidecard';
 import GuideCardModal from '@/components/cards/guidecard/modal';
+import { ICON_COLORS } from '@/constants/colors';
 
 export default function CreditCardsScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -29,21 +30,21 @@ export default function CreditCardsScreen() {
           {/* Guide Cards Grid */}
           <View className="gap-4 flex-1">
             <GuideCard
-              icon={<CreditCard size={40} color="#1e40af" />}
+              icon={<CreditCard size={40} color={ICON_COLORS.blue} />}
               iconBgColor="bg-blue-100"
               title="Credit Card Basics"
               description="Learn how credit cards work"
               onPress={() => handleReadMore('Credit Card Basics')}
             />
             <GuideCard
-              icon={<TrendingUp size={40} color="#16a34a" />}
+              icon={<TrendingUp size={40} color={ICON_COLORS.green} />}
               iconBgColor="bg-green-100"
               title="Building Credit"
               description="Improving your credit score"
               onPress={() => handleReadMore('Building Credit')}
             />
             <GuideCard
-              icon={<Shield size={40} color="#7c3aed" />}
+              icon={<Shield size={40} color={ICON_COLORS.purple} />}
               iconBgColor="bg-purple-100"
               title="Security Tips"
               description="Keep your information safe"

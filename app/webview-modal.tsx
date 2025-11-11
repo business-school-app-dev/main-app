@@ -13,6 +13,8 @@ import {
   ActionsheetItem,
   ActionsheetItemText,
 } from '@/components/ui/actionsheet';
+import { PRIMARY } from '@/constants/colors';
+import { Spinner } from '@/components/ui/spinner';
 
 const WebViewModal = () => {
   const router = useRouter();
@@ -114,10 +116,7 @@ const WebViewModal = () => {
         />
         {isLoading && isFirstLoad && (
           <View className="absolute inset-0 items-center justify-center bg-white/50 z-50">
-            <ActivityIndicator
-              size="large"
-              color="#E11932"
-            />
+            <Spinner size="large" color={PRIMARY} />
           </View>
         )}
       </View>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, Animated } from 'react-native';
 import { View } from '@/components/ui/view';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
@@ -66,10 +66,30 @@ export default function SimulationSetup() {
   const [responses, setResponses] = useState<Partial<UserResponses>>({});
   const [selectedOption, setSelectedOption] = useState<string | number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [fadeAnim] = useState(new Animated.Value(1));
+  const [slideAnim] = useState(new Animated.Value(0));
 
   useEffect(() => {
     checkExistingSetup();
   }, []);
+
+  useEffect(() => {
+    // Animate in when question changes
+    fadeAnim.setValue(0);
+    slideAnim.setValue(30);
+    Animated.parallel([
+      Animated.timing(fadeAnim, {
+        toValue: 1,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start();
+  }, [currentQuestionIndex]);
 
   const checkExistingSetup = async () => {
     try {
@@ -100,6 +120,20 @@ export default function SimulationSetup() {
       };
       setResponses(newResponses);
 
+      // Animate out before transitioning
+      await Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: -30,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+
       if (currentQuestionIndex < QUESTIONS.length - 1) {
         setCurrentQuestionIndex(currentQuestionIndex + 1);
         setSelectedOption(null);
@@ -117,9 +151,23 @@ export default function SimulationSetup() {
 
   const handleBack = () => {
     if (currentQuestionIndex > 0) {
-      setCurrentQuestionIndex(currentQuestionIndex - 1);
-      const prevQuestionId = QUESTIONS[currentQuestionIndex - 1].id;
-      setSelectedOption(responses[prevQuestionId as keyof UserResponses] ?? null);
+      // Animate out before transitioning
+      Animated.parallel([
+        Animated.timing(fadeAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(slideAnim, {
+          toValue: 30,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]).start(() => {
+        setCurrentQuestionIndex(currentQuestionIndex - 1);
+        const prevQuestionId = QUESTIONS[currentQuestionIndex - 1].id;
+        setSelectedOption(responses[prevQuestionId as keyof UserResponses] ?? null);
+      });
     }
   };
 
@@ -145,7 +193,13 @@ export default function SimulationSetup() {
       }
     >
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="py-6 min-h-full">
+        <Animated.View
+          style={{
+            opacity: fadeAnim,
+            transform: [{ translateX: slideAnim }],
+          }}
+          className="py-6 min-h-full"
+        >
           {/* Progress Bar */}
           <ProgressView
             currentStep={currentQuestionIndex + 1}
@@ -188,7 +242,7 @@ export default function SimulationSetup() {
               disabled={selectedOption === null}
             />
           </View>
-        </View>
+        </Animated.View>
       </ScrollView>
     </PageLayout>
   );

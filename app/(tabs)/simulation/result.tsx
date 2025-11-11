@@ -15,6 +15,7 @@ import { Lightbulb } from 'lucide-react-native';
 import { CloseIcon, Icon } from '@/components/ui/icon';
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@/components/ui/modal';
 import IconButton from '@/components/inputs/icon-button';
+import { Heading } from '@/components/ui/heading';
 
 // Types
 export interface UserResponses {
@@ -389,16 +390,14 @@ export default function SimulationResult() {
         <ModalBackdrop />
         <ModalContent className="rounded-xl">
           <ModalHeader>
-            <HStack space="xs" className="items-center">
-              <Text className="text-lg font-bold text-gray-900">
-                What is Monte Carlo Simulation?
-              </Text>
-            </HStack>
+            <Heading size="lg">
+              What is Monte Carlo Simulation?
+            </Heading>
             <ModalCloseButton>
               <Icon as={CloseIcon} />
             </ModalCloseButton>
           </ModalHeader>
-          <ModalBody>
+          <ModalBody scrollEnabled={false}>
             <Text className="text-base text-gray-700 leading-6">
               Monte Carlo simulation runs thousands of scenarios with random market
               returns to show the range of possible outcomes for your financial future.

@@ -4,7 +4,7 @@ import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
 import { SafeAreaView } from "@/components/ui/safe-area-view";
 import { router } from 'expo-router';
-import { ChevronLeftIcon } from '@/components/ui/icon';
+import { ChevronLeftIcon, CloseIcon, Icon } from '@/components/ui/icon';
 import {
   Modal,
   ModalBackdrop,
@@ -51,7 +51,7 @@ const GuideCard: React.FC<GuideCardProps> = ({ icon, iconBgColor, title, descrip
 const getExpandedContent = (accountType: string) => {
   const content = {
     'Roth IRA': {
-      title: 'Roth IRA - Tax-Free Growth',
+      title: 'Roth IRA',
       content: `A Roth IRA (Individual Retirement Account) is a retirement savings account that offers tax-free growth and tax-free withdrawals in retirement. Here's what you need to know:
 
 KEY FEATURES
@@ -84,7 +84,7 @@ GETTING STARTED
 Remember: Time is your greatest asset. Starting early, even with small contributions, can lead to substantial tax-free wealth in retirement.`
     },
     'Traditional IRA': {
-      title: 'Traditional IRA - Tax-Deferred Growth',
+      title: 'Traditional IRA',
       content: `A Traditional IRA is an individual retirement account that offers upfront tax deductions and tax-deferred growth. It's a powerful tool for building retirement savings on your own terms.
 
 KEY FEATURES
@@ -149,7 +149,7 @@ You can contribute for the previous tax year until Tax Day (April 15). This mean
 PRO TIP: If you're eligible for both traditional and Roth IRAs, consider splitting contributions between them for tax diversification in retirement.`
     },
     '401(k)': {
-      title: '401(k) - Employer-Sponsored Retirement',
+      title: '401(k)',
       content: `A 401(k) is an employer-sponsored retirement plan that offers tax advantages, higher contribution limits, and often includes employer matching contributions. It's one of the most powerful wealth-building tools available.
 
 KEY FEATURES
@@ -248,7 +248,7 @@ MAXIMIZING YOUR 401(K)
 Remember: Your 401(k) is likely your most powerful tool for building wealth. Maximize employer match first, then work toward maxing out contributions as your income grows.`
     },
     'Margin Account': {
-      title: 'Margin Account - Advanced Trading',
+      title: 'Margin Account',
       content: `A margin account is a specialized brokerage account that allows you to borrow money from your broker to invest, using leverage to amplify potential gains (and losses). This is an advanced investing tool that requires experience and risk tolerance.
 
 WHAT IS A MARGIN ACCOUNT?
@@ -400,7 +400,7 @@ Margin trading is not investing - it's speculation with borrowed money. The vast
 If you must use margin, treat it like a tool that can cut your hand off. Use it rarely, carefully, and always with a healthy respect for what can go wrong.`
     },
     'ETFs': {
-      title: 'ETFs - Exchange-Traded Funds',
+      title: 'ETFs',
       content: `Exchange-Traded Funds (ETFs) are one of the best investment vehicles for building long-term wealth. They combine the diversification of mutual funds with the flexibility of stocks, all while keeping costs low.
 
 WHAT IS AN ETF?
@@ -594,7 +594,7 @@ KEY TAKEAWAYS
 Remember: The best ETF portfolio is one you can stick with through market ups and downs. Keep it simple, keep costs low, and stay invested for the long term.`
     },
     'Mutual Funds': {
-      title: 'Mutual Funds - Professional Management',
+      title: 'Mutual Funds',
       content: `Mutual funds are professionally managed investment portfolios that pool money from many investors to purchase a diversified mix of stocks, bonds, or other securities. They've been the foundation of retirement investing for decades.
 
 WHAT IS A MUTUAL FUND?
@@ -848,7 +848,7 @@ Whether you choose mutual funds or ETFs, the most important factors are:
 Most investors will do well with a simple portfolio of low-cost index mutual funds, contributing regularly, and staying invested through market ups and downs. It's not exciting, but it works.`
     },
     'Investment Strategies': {
-      title: 'Investment Strategies for Success',
+      title: 'Investment Strategies',
       content: `Building wealth through investing requires understanding key strategies and principles. Here's your guide to smart investing across all account types.
 
 FUNDAMENTAL PRINCIPLES
@@ -1032,21 +1032,13 @@ export default function InvestingLiteracyScreen() {
         <ModalContent className="max-w-[90%] max-h-[80%] rounded-xl">
           <ModalHeader>
             <Heading size="lg">{selectedContent.title}</Heading>
-            <ModalCloseButton />
+            <ModalCloseButton>
+              <Icon as={CloseIcon} />
+            </ModalCloseButton>
           </ModalHeader>
-          <ModalBody>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <Text className="text-base text-gray-700 leading-6 text-left">{selectedContent.content}</Text>
-            </ScrollView>
+          <ModalBody showsVerticalScrollIndicator={false}>
+            <Text className="text-base text-gray-700 leading-6 text-left">{selectedContent.content}</Text>
           </ModalBody>
-          <ModalFooter>
-            <TextButton
-              label="Close"
-              onPress={closeModal}
-              variant="secondary"
-            // className="bg-red-600"
-            />
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </PageLayout>

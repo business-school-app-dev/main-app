@@ -4,7 +4,7 @@ import { VStack } from "@/components/ui/vstack";
 import { Text } from "@/components/ui/text";
 import { SafeAreaView } from "@/components/ui/safe-area-view";
 import { router } from 'expo-router';
-import { ChevronLeftIcon } from '@/components/ui/icon';
+import { ChevronLeftIcon, CloseIcon, Icon } from '@/components/ui/icon';
 import {
   Modal,
   ModalBackdrop,
@@ -18,6 +18,7 @@ import TextButton from '@/components/inputs/text-button';
 import { Heading } from '@/components/ui/heading';
 import PageLayout from "@/components/layouts/page-layout";
 import { CreditCard, TrendingUp, Shield } from 'lucide-react-native';
+import { HStack } from '@/components/ui/hstack';
 
 interface GuideCardProps {
   icon: React.ReactNode;
@@ -51,7 +52,7 @@ const GuideCard: React.FC<GuideCardProps> = ({ icon, iconBgColor, title, descrip
 const getExpandedContent = (cardType: string) => {
   const content = {
     'Credit Card Basics': {
-      title: 'Credit Card Basics & Responsible Use',
+      title: 'Credit Card Basics',
       content: `Credit cards are financial tools that allow you to borrow money from a bank or financial institution to make purchases. Here are the key concepts you should understand:
 
 • Credit Limit: The maximum amount you can borrow on your card
@@ -115,18 +116,10 @@ export default function CreditCardsScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
   const [selectedContent, setSelectedContent] = useState({ title: '', content: '' });
 
-  const handleGoBack = () => {
-    router.back();
-  };
-
   const handleReadMore = (cardType: string) => {
     const content = getExpandedContent(cardType);
     setSelectedContent(content);
     setIsModalVisible(true);
-  };
-
-  const closeModal = () => {
-    setIsModalVisible(false);
   };
 
   return (
@@ -165,26 +158,18 @@ export default function CreditCardsScreen() {
       </ScrollView>
 
       {/* Modal for expanded content */}
-      <Modal isOpen={isModalVisible} onClose={closeModal}>
+      <Modal isOpen={isModalVisible} onClose={() => setIsModalVisible(false)}>
         <ModalBackdrop />
         <ModalContent className="max-w-[90%] max-h-[80%] rounded-xl">
           <ModalHeader>
             <Heading size="lg">{selectedContent.title}</Heading>
-            <ModalCloseButton />
+            <ModalCloseButton>
+              <Icon as={CloseIcon} />
+            </ModalCloseButton>
           </ModalHeader>
-          <ModalBody>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <Text className="text-base text-gray-700 leading-6 text-left">{selectedContent.content}</Text>
-            </ScrollView>
+          <ModalBody showsVerticalScrollIndicator={false}>
+            <Text className="text-base text-gray-700 leading-6 text-left">{selectedContent.content}</Text>
           </ModalBody>
-          <ModalFooter>
-            <TextButton
-              label="Close"
-              onPress={closeModal}
-              variant="secondary"
-            // className="bg-red-600"
-            />
-          </ModalFooter>
         </ModalContent>
       </Modal>
     </PageLayout>

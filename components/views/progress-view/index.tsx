@@ -22,7 +22,7 @@ const ProgressView: React.FC<ProgressViewProps> = ({
 }) => {
   return (
     <VStack space="md" className={className}>
-      <HStack className="justify-between items-center">
+      <HStack className={`${leftElement ? 'justify-between' : 'justify-end'} items-center`}>
         {leftElement && <View>{leftElement}</View>}
         <Text size="sm" className="text-gray-600">
           {currentStep} / {totalSteps}

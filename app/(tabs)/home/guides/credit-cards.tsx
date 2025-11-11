@@ -3,8 +3,8 @@ import { ScrollView, View } from "react-native";
 import PageLayout from "@/components/layouts/page-layout";
 import { CreditCard, TrendingUp, Shield } from 'lucide-react-native';
 import { CREDIT_CARDS_CONTENT } from '@/constants/strings';
-import GuideCard from '@/components/cards/guidecard';
-import GuideCardModal from '@/components/cards/guidecard/modal';
+import GuideCard from '@/components/views/guide-card';
+import GuideCardModal from '@/components/views/guide-card/modal';
 import { ICON_COLORS } from '@/constants/colors';
 
 export default function CreditCardsScreen() {

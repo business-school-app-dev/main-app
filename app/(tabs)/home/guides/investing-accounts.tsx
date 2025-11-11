@@ -3,8 +3,8 @@ import { ScrollView, View } from "react-native";
 import PageLayout from "@/components/layouts/page-layout";
 import { PiggyBank, TrendingUp, Wallet, LineChart, Building2, BarChart3, FolderOpen } from 'lucide-react-native';
 import { INVESTING_ACCOUNTS_CONTENT } from '@/constants/strings';
-import GuideCard from '@/components/cards/guidecard';
-import GuideCardModal from '@/components/cards/guidecard/modal';
+import GuideCard from '@/components/views/guide-card';
+import GuideCardModal from '@/components/views/guide-card/modal';
 import { ICON_COLORS } from '@/constants/colors';
 
 export default function InvestingLiteracyScreen() {

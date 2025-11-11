@@ -3,15 +3,13 @@ import { ScrollView } from 'react-native';
 import { View } from '@/components/ui/view';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
-import { HStack } from '@/components/ui/hstack';
-import { Pressable } from '@/components/ui/pressable';
-import { RadioGroup, Radio, RadioIndicator, RadioIcon, RadioLabel } from '@/components/ui/radio';
-import { CircleIcon } from '@/components/ui/icon';
 import PageLayout from '@/components/layouts/page-layout';
 import TextButton from '@/components/inputs/text-button';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { router } from 'expo-router';
 import IconButton from '@/components/inputs/icon-button';
+import { SelectionCard } from '@/components/views/selection-card';
+import ProgressView from '@/components/views/progress-view';
 
 // Types
 interface Question {
@@ -147,24 +145,14 @@ export default function SimulationSetup() {
       }
     >
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="py-6">
+        <View className="py-6 min-h-full">
           {/* Progress Bar */}
-          <VStack space="md" className="mb-8">
-            <HStack className="justify-between items-center">
-              <Text size="sm" className="text-gray-600">
-                Question {currentQuestionIndex + 1} of {QUESTIONS.length}
-              </Text>
-              <Text size="sm" className="text-primary-500 font-semibold">
-                {Math.round(progress)}%
-              </Text>
-            </HStack>
-            <View className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-              <View
-                className="h-full bg-primary-500 rounded-full"
-                style={{ width: `${progress}%` }}
-              />
-            </View>
-          </VStack>
+          <ProgressView
+            currentStep={currentQuestionIndex + 1}
+            totalSteps={QUESTIONS.length}
+            progress={progress}
+            className="mb-8"
+          />
 
           {/* Question */}
           <VStack space="lg" className="mb-8">
@@ -177,61 +165,29 @@ export default function SimulationSetup() {
           </VStack>
 
           {/* Options */}
-          <RadioGroup
-            value={selectedOption?.toString() ?? ""}
-            onChange={(value) => {
-              const option = currentQuestion.options.find(opt => opt.value.toString() === value);
-              if (option) handleOptionSelect(option.value);
-            }}
-          >
-            <VStack space="md" className="mb-8">
-              {currentQuestion.options.map((option, index) => {
-                const isSelected = selectedOption === option.value;
-
-                return (
-                  <Pressable
-                    key={index}
-                    onPress={() => handleOptionSelect(option.value)}
-                    className={`border-2 rounded-xl p-4 ${isSelected
-                      ? 'border-primary-500 bg-red-50'
-                      : 'border-gray-200 bg-white'
-                      }`}
-                  >
-                    <Radio value={option.value.toString()}>
-                      <HStack className="items-center justify-between w-full">
-                        <HStack className="items-center flex-1" space="sm">
-                          <RadioIndicator className={isSelected ? 'border-primary-500' : ''}>
-                            <RadioIcon as={CircleIcon} className={isSelected ? 'text-primary-500' : ''} />
-                          </RadioIndicator>
-                          <RadioLabel>
-                            <Text
-                              className={`text-base font-medium ${isSelected ? 'text-primary-500' : 'text-gray-900'
-                                }`}
-                            >
-                              {option.label}
-                            </Text>
-                          </RadioLabel>
-                        </HStack>
-                      </HStack>
-                    </Radio>
-                  </Pressable>
-                );
-              })}
-            </VStack>
-          </RadioGroup>
+          <View className="mb-8">
+            <SelectionCard
+              options={currentQuestion.options}
+              selectedValue={selectedOption}
+              onSelect={handleOptionSelect}
+              spacing="md"
+            />
+          </View>
 
           {/* Navigation Buttons */}
-          <TextButton
-            label={
-              currentQuestionIndex === QUESTIONS.length - 1
-                ? 'See My Simulation'
-                : 'Continue'
-            }
-            variant="secondary"
-            size="lg"
-            onPress={handleNext}
-            disabled={selectedOption === null}
-          />
+          <View className="mt-auto">
+            <TextButton
+              label={
+                currentQuestionIndex === QUESTIONS.length - 1
+                  ? 'See My Simulation'
+                  : 'Continue'
+              }
+              variant="secondary"
+              size="lg"
+              onPress={handleNext}
+              disabled={selectedOption === null}
+            />
+          </View>
         </View>
       </ScrollView>
     </PageLayout>

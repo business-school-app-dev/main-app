@@ -50,14 +50,14 @@ export default function App() {
     <PageLayout title="Home" backButtonHidden>
       <ScrollView
         showsVerticalScrollIndicator={false}
-        className="flex-1"
+        className="flex-1 -mx-5"
         contentContainerClassName="pb-5"
       >
         {/* Hero Section */}
         <Box className="w-full pb-6">
           <ImageBackground
             source={require("@/assets/images/smith-school.jpg")}
-            className="w-full h-72 justify-center rounded-lg overflow-hidden"
+            className="w-full h-72 justify-center overflow-hidden"
             resizeMode="cover"
           >
             <Box className="absolute inset-0 bg-black/40" />
@@ -73,7 +73,7 @@ export default function App() {
         </Box>
 
         {/* Guides Section */}
-        <Box className="w-full pt-3 pb-6">
+        <Box className="w-full pt-3 pb-6 px-5">
           <Text className="text-xl font-semibold text-gray-900 mb-4">
             Guides
           </Text>
@@ -110,7 +110,7 @@ export default function App() {
         </Box>
 
         {/* Links Section */}
-        <Box className="w-full pt-3 pb-6">
+        <Box className="w-full pt-3 pb-6 px-5">
           <Text className="text-xl font-semibold text-gray-900 mb-4">
             Links
           </Text>
@@ -136,7 +136,7 @@ export default function App() {
         </Box>
 
         {/* Events Section */}
-        <Box className="w-full pt-3 pb-6">
+        <Box className="w-full pt-3 pb-6 px-5">
           <Text className="text-xl font-semibold text-gray-900">
             Upcoming Campus Events
           </Text>

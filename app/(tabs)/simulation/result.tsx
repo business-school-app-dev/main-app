@@ -58,7 +58,8 @@ export default function SimulationResult() {
   const handleReset = async () => {
     try {
       await AsyncStorage.removeItem('@simulation_setup');
-      router.replace('/(tabs)/simulation'); // animation needs to be fixed!
+      await AsyncStorage.setItem('@simulation_reset', 'true');
+      router.back(); // Go back with left-to-right animation
     } catch (error) {
       console.error('Error resetting setup data:', error);
     }
@@ -108,7 +109,8 @@ export default function SimulationResult() {
         if (!chartDatasets[year]) {
           chartDatasets[year] = {
             value: value,
-            label: year === 0 || year % 10 === 0 ? `${year}` : '',
+            // Add label to data point - show only for multiples of 10
+            label: year % 10 === 0 ? year.toString() : '',
             dataPointText: '',
           };
         }
@@ -134,6 +136,14 @@ export default function SimulationResult() {
       return `$${(value / 1000).toFixed(0)}K`;
     }
     return `$${value}`;
+  };
+
+  const formatText = (text: string) => {
+    // Replace underscores with spaces and capitalize first letter of each word
+    return text
+      .split('_')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
   };
 
   if (isLoading) {
@@ -178,18 +188,18 @@ export default function SimulationResult() {
                 Your Profile
               </Text>
               <HStack className="flex-wrap gap-2">
-                <View className="bg-white px-3 py-1 rounded-full">
-                  <Text size="xs" className="text-gray-700">
-                    Career: {userResponses.career}
+                <View className="bg-yellow-400 px-4 py-2 rounded-full" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
+                  <Text size="xs" className="text-gray-900 font-semibold">
+                    Career: {formatText(userResponses.career)}
                   </Text>
                 </View>
-                <View className="bg-white px-3 py-1 rounded-full">
-                  <Text size="xs" className="text-gray-700">
-                    Location: {userResponses.location}
+                <View className="bg-yellow-400 px-4 py-2 rounded-full" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
+                  <Text size="xs" className="text-gray-900 font-semibold">
+                    Location: {formatText(userResponses.location)}
                   </Text>
                 </View>
-                <View className="bg-white px-3 py-1 rounded-full">
-                  <Text size="xs" className="text-gray-700">
+                <View className="bg-yellow-400 px-4 py-2 rounded-full" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
+                  <Text size="xs" className="text-gray-900 font-semibold">
                     Children: {userResponses.children}
                   </Text>
                 </View>
@@ -209,33 +219,47 @@ export default function SimulationResult() {
 
           {/* Chart */}
           <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
-            <LineChart
-              data={chartData}
-              width={screenWidth - 64}
-              height={220}
-              color="#E11D48"
-              thickness={3}
-              startFillColor="rgba(225, 29, 72, 0.3)"
-              endFillColor="rgba(225, 29, 72, 0.01)"
-              startOpacity={0.9}
-              endOpacity={0.2}
-              initialSpacing={0}
-              noOfSections={4}
-              yAxisColor={GRAY_COLORS[200]}
-              xAxisColor={GRAY_COLORS[200]}
-              yAxisTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
-              xAxisLabelTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
-              areaChart
-              curved
-              hideDataPoints
-              yAxisLabelPrefix="$"
-              formatYLabel={(value: string) => {
-                const num = parseInt(value);
-                if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-                if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
-                return value;
-              }}
-            />
+            <VStack space="sm">
+              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+                <LineChart
+                  data={chartData}
+                  width={screenWidth + 100}
+                  height={220}
+                  color="#E11D48"
+                  thickness={3}
+                  startFillColor="rgba(225, 29, 72, 0.2)"
+                  endFillColor="rgba(225, 29, 72, 0.2)"
+                  startOpacity={1}
+                  endOpacity={1}
+                  initialSpacing={10}
+                  spacing={8}
+                  noOfSections={4}
+                  yAxisColor={GRAY_COLORS[200]}
+                  xAxisColor={GRAY_COLORS[200]}
+                  yAxisTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
+                  xAxisLabelTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
+                  showXAxisIndices
+                  xAxisIndicesHeight={5}
+                  xAxisIndicesWidth={2}
+                  xAxisIndicesColor={GRAY_COLORS[300]}
+                  areaChart
+                  curved
+                  hideDataPoints
+                  yAxisLabelPrefix="$"
+                  disableScroll={true}
+                  hideRules={true}
+                  formatYLabel={(value: string) => {
+                    const num = parseInt(value);
+                    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+                    if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
+                    return value;
+                  }}
+                />
+              </ScrollView>
+              <Text size="xs" className="text-gray-500 text-center">
+                40-year projection (swipe to see full timeline)
+              </Text>
+            </VStack>
           </Card>
 
           {/* Statistics */}

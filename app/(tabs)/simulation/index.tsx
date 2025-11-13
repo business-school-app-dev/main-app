@@ -6,10 +6,11 @@ import { VStack } from '@/components/ui/vstack';
 import PageLayout from '@/components/layouts/page-layout';
 import TextButton from '@/components/inputs/text-button';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import IconButton from '@/components/inputs/icon-button';
 import { SelectionCard } from '@/components/views/selection-card';
 import ProgressView from '@/components/views/progress-view';
+import { useCallback } from 'react';
 
 // Types
 interface Question {
@@ -68,15 +69,38 @@ export default function SimulationSetup() {
   const [isLoading, setIsLoading] = useState(true);
   const [fadeAnim] = useState(new Animated.Value(1));
   const [slideAnim] = useState(new Animated.Value(0));
+  const [animationDirection, setAnimationDirection] = useState<'forward' | 'backward'>('forward');
 
   useEffect(() => {
     checkExistingSetup();
   }, []);
 
+  useFocusEffect(
+    useCallback(() => {
+      // Check when screen comes into focus
+      const resetCheck = async () => {
+        const resetFlag = await AsyncStorage.getItem('@simulation_reset');
+        if (resetFlag === 'true') {
+          // Coming from reset, clear everything
+          await AsyncStorage.removeItem('@simulation_reset');
+          setCurrentQuestionIndex(0);
+          setResponses({});
+          setSelectedOption(null);
+          setIsLoading(false);
+          setAnimationDirection('forward');
+        } else {
+          checkExistingSetup();
+        }
+      };
+      resetCheck();
+    }, [])
+  );
+
   useEffect(() => {
     // Animate in when question changes
     fadeAnim.setValue(0);
-    slideAnim.setValue(30);
+    // Set starting position based on direction
+    slideAnim.setValue(animationDirection === 'forward' ? 30 : -30);
     Animated.parallel([
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -93,14 +117,23 @@ export default function SimulationSetup() {
 
   const checkExistingSetup = async () => {
     try {
+      const resetFlag = await AsyncStorage.getItem('@simulation_reset');
+      if (resetFlag === 'true') {
+        // Coming from reset, clear the flag and show first question
+        await AsyncStorage.removeItem('@simulation_reset');
+        setIsLoading(false);
+        return;
+      }
+
       const setupData = await AsyncStorage.getItem('@simulation_setup');
       if (setupData) {
         // If setup exists, navigate to results
         router.replace('/(tabs)/simulation/result');
+      } else {
+        setIsLoading(false);
       }
     } catch (error) {
       console.error('Error loading setup data:', error);
-    } finally {
       setIsLoading(false);
     }
   };
@@ -119,6 +152,9 @@ export default function SimulationSetup() {
         [currentQuestion.id]: selectedOption,
       };
       setResponses(newResponses);
+
+      // Set direction for next animation
+      setAnimationDirection('forward');
 
       // Animate out before transitioning
       await Animated.parallel([
@@ -149,25 +185,32 @@ export default function SimulationSetup() {
     }
   };
 
-  const handleBack = () => {
+  const handleBack = async () => {
     if (currentQuestionIndex > 0) {
-      // Animate out before transitioning
-      Animated.parallel([
+      // Set direction for backward animation (slide in from left)
+      setAnimationDirection('backward');
+
+      // Animate out to the right (sliding left to right)
+      await Animated.parallel([
         Animated.timing(fadeAnim, {
           toValue: 0,
           duration: 200,
           useNativeDriver: true,
         }),
         Animated.timing(slideAnim, {
-          toValue: 30,
+          toValue: 100, // Slide far to the right
           duration: 200,
           useNativeDriver: true,
         }),
-      ]).start(() => {
-        setCurrentQuestionIndex(currentQuestionIndex - 1);
-        const prevQuestionId = QUESTIONS[currentQuestionIndex - 1].id;
-        setSelectedOption(responses[prevQuestionId as keyof UserResponses] ?? null);
-      });
+      ]).start();
+
+      // Reset to first question
+      setCurrentQuestionIndex(0);
+      setResponses({});
+      setSelectedOption(null);
+    } else {
+      // On first question, go back to previous page
+      router.back();
     }
   };
 
@@ -184,7 +227,6 @@ export default function SimulationSetup() {
   return (
     <PageLayout
       title="Life Simulation Setup"
-      backButtonHidden={currentQuestionIndex === 0}
       leftView={
         <IconButton
           iconName="arrow-back"

@@ -64,96 +64,91 @@ const CourseRecommenderScreen = () => {
       }}
     >
       <PageLayout title="Course Recommender">
-        <ScrollView
-          showsVerticalScrollIndicator={false}
-          className="flex-1"
-          contentContainerClassName="px-4 pb-10 pt-4"
-        >
-          <VStack space="md">
-            <Heading size="xl" className="text-gray-900">
-              Financial Literacy Course Recommender
-            </Heading>
-            <Text size="xs" className="text-gray-600">
-              Tell us about yourself and we'll recommend the perfect courses for your financial literacy journey
-            </Text>
-          </VStack>
+        <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+          <View className="py-6">
+            <VStack space="md">
+              <Heading size="xl" className="text-gray-900">
+                Financial Course Recommender
+              </Heading>
+              <Text size="xs" className="text-gray-600">
+                Tell us about yourself and we'll recommend the perfect courses for your financial literacy journey
+              </Text>
+            </VStack>
 
-          {/* Form Inputs Section */}
-          <VStack space="sm" className="pt-2">
-            <FormSelect
-              label="Credits"
-              placeholder="Select option"
-              options={creditHours}
-              value={credit}
-              onValueChange={setCredit}
-            />
+            {/* Form Inputs Section */}
+            <VStack space="xs" className="mt-6">
+              <FormSelect
+                label="Credits"
+                placeholder="Select option"
+                options={creditHours}
+                value={credit}
+                onValueChange={setCredit}
+              />
 
-            <FormSelect
-              label="Major"
-              placeholder="Select option"
-              options={majors}
-              value={major1}
-              onValueChange={setMajor1}
-              isScrollable={true}
-            />
+              <FormSelect
+                label="Major"
+                placeholder="Select option"
+                options={majors}
+                value={major1}
+                onValueChange={setMajor1}
+                isScrollable={true}
+              />
 
-            <FormSelect
-              label="2nd Major"
-              placeholder="Select option"
-              options={["N/A", ...majors]}
-              value={major2}
-              onValueChange={setMajor2}
-              isScrollable={true}
-            />
+              <FormSelect
+                label="2nd Major"
+                placeholder="Select option"
+                options={["N/A", ...majors]}
+                value={major2}
+                onValueChange={setMajor2}
+                isScrollable={true}
+              />
 
-            <FormSelect
-              label="Minor"
-              placeholder="Select option"
-              options={minors}
-              value={minor1}
-              onValueChange={setMinor1}
-              isScrollable={true}
-            />
+              <FormSelect
+                label="Minor"
+                placeholder="Select option"
+                options={minors}
+                value={minor1}
+                onValueChange={setMinor1}
+                isScrollable={true}
+              />
 
-            <FormSelect
-              label="2nd Minor"
-              placeholder="Select option"
-              options={["N/A", ...minors]}
-              value={minor2}
-              onValueChange={setMinor2}
-              isScrollable={true}
-            />
+              <FormSelect
+                label="2nd Minor"
+                placeholder="Select option"
+                options={["N/A", ...minors]}
+                value={minor2}
+                onValueChange={setMinor2}
+                isScrollable={true}
+              />
 
-            <FormSelect
-              label="Comfort Level"
-              placeholder="Select option"
-              options={["Beginner", "Intermediate", "Advanced"]}
-              value={comfortLevel}
-              onValueChange={setComfortLevel}
-            />
-          </VStack>
+              <FormSelect
+                label="Comfort Level"
+                placeholder="Select option"
+                options={["Beginner", "Intermediate", "Advanced"]}
+                value={comfortLevel}
+                onValueChange={setComfortLevel}
+              />
+            </VStack>
 
-          {/* Submit Buttons 
+            {/* Submit Buttons 
             * TODO: add logic for only navigating if all dropdowns are filled, otw warning message*/}
-          <View className="pt-4">
-            <TextButton
-              label="Get Course Recommendations"
-              onPress={() => {
-                console.log({ credit, major1, major2, minor1, minor2, comfortLevel });
-                router.navigate("/home/guides/course-options");
-              }}
-              variant="secondary"
-              size="md"
-            />
-          </View>
-
-          <View className="pt-2 mb-4">
-            <TextButton
-              label="View All Courses"
-              onPress={() => router.navigate("/home/guides/course-options")}
-              variant="secondary"
-              size="md"
-            />
+            <VStack space="lg" className="mt-6">
+              <TextButton
+                label="Get Course Recommendations"
+                onPress={() => {
+                  console.log({ credit, major1, major2, minor1, minor2, comfortLevel });
+                  router.navigate("/home/guides/course-recommender/options");
+                }}
+                variant="secondary"
+                size="md"
+              />
+              <TextButton
+                label="View All Courses"
+                onPress={() => router.navigate("/home/guides/course-recommender/options")}
+                variant="secondary"
+                size="md"
+              />
+            </VStack>
           </View>
         </ScrollView>
       </PageLayout>

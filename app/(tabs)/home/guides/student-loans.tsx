@@ -2,7 +2,6 @@ import { Card } from "@/components/ui/card";
 import { Heading } from "@/components/ui/heading";
 import { HStack } from "@/components/ui/hstack";
 import { ScrollView } from "@/components/ui/scroll-view";
-import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from "@/components/ui/slider";
 import { Text } from "@/components/ui/text";
 import { VStack } from "@/components/ui/vstack";
 import { Icon } from "@/components/ui/icon";
@@ -11,6 +10,7 @@ import { View } from "react-native";
 import { Sparkles, DollarSign } from "lucide-react-native";
 import TextInputField from "@/components/inputs/text-input-field";
 import PageLayout from "@/components/layouts/page-layout";
+import LabeledSlider from "@/components/inputs/labeled-slider";
 
 // --- Helper Functions ---
 const formatCurrency = (amount: number) => {
@@ -313,26 +313,17 @@ const LoanCalculatorContent = () => {
                   split between extra loan payments and retirement savings.
                 </Text>
 
-                <VStack space="xs" className="mb-4">
-                  <Text size="sm" className="font-medium text-gray-900 mb-2">
-                    Loan vs Retirement Split
-                  </Text>
-                  <Slider
-                    defaultValue={loanAllocationPercentage}
-                    minValue={0}
-                    maxValue={100}
-                    step={1}
-                    onChange={setLoanAllocationPercentage}
-                    size="md"
-                  >
-                    <SliderTrack>
-                      <SliderFilledTrack className="bg-primary-500" />
-                    </SliderTrack>
-                    <SliderThumb className="bg-primary-500" />
-                  </Slider>
-                </VStack>
+                <LabeledSlider
+                  label="Loan vs Retirement Split"
+                  value={loanAllocationPercentage}
+                  minValue={0}
+                  maxValue={100}
+                  step={1}
+                  onChange={setLoanAllocationPercentage}
+                  suffix="%"
+                />
 
-                <HStack space="md" className="justify-between">
+                <HStack space="md" className="justify-between mt-4">
                   <Card className="rounded-xl flex-1 bg-white border border-gray-200">
                     <VStack space="xs" className="p-4 items-center">
                       <Text size="xs" className="text-gray-600">

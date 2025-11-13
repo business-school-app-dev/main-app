@@ -243,12 +243,12 @@ export default function SimulationResult() {
         <View className="py-6">
           {/* User Profile Summary */}
           <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
-            <VStack space="md">
+            <VStack space="md" className="p-4">
               <Text className="text-base font-semibold text-gray-900">
                 Your Profile
               </Text>
 
-              <HStack className="justify-between items-center">
+              <HStack className="justify-between items-center mt-2">
                 {profile.map((item, index) => (
                   <VStack key={index} className="flex-1 items-center" space="xs">
                     <View className="w-16 h-16 rounded-full items-center justify-center bg-secondary">
@@ -341,7 +341,7 @@ export default function SimulationResult() {
 
           {/* Statistics */}
           <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
-            <VStack space="md">
+            <VStack space="md" className="p-4">
               <Text className="text-base font-semibold text-gray-900">
                 Projected Net Worth in 40 Years
               </Text>

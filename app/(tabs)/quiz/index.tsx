@@ -1,15 +1,11 @@
-import React, { useState } from 'react';
-import { ScrollView, StatusBar } from "react-native";
-
+import React, { useState, useEffect, useRef } from 'react';
+import { ScrollView, Animated } from "react-native";
 import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
-
 import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
-
 import { StarIcon } from '@/components/ui/icon';
 import { Flame } from 'lucide-react-native';
-
 import PageLayout from '@/components/layouts/page-layout';
 import { HelpCircle } from 'lucide-react-native';
 import { router } from 'expo-router';
@@ -39,6 +35,71 @@ export default function Leaderboard() {
   // TODO: Replace with actual authentication check
   const [isSignedIn, setIsSignedIn] = useState(false); // Change this to true to test signed-in state
 
+  const cardFadeAnim = useRef(new Animated.Value(1)).current;
+  const cardScaleAnim = useRef(new Animated.Value(1)).current;
+  const quizButtonFadeAnim = useRef(new Animated.Value(0)).current;
+  const quizButtonSlideAnim = useRef(new Animated.Value(-20)).current;
+
+  useEffect(() => {
+    // Animate card transition when isSignedIn changes
+    Animated.sequence([
+      // Fade out and scale down current card
+      Animated.parallel([
+        Animated.timing(cardFadeAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(cardScaleAnim, {
+          toValue: 0.95,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]),
+      // Fade in and scale up new card
+      Animated.parallel([
+        Animated.timing(cardFadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.spring(cardScaleAnim, {
+          toValue: 1,
+          tension: 50,
+          friction: 7,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+
+    // Animate quiz button appearance/disappearance
+    if (isSignedIn) {
+      quizButtonFadeAnim.setValue(0);
+      quizButtonSlideAnim.setValue(-20);
+      Animated.parallel([
+        Animated.timing(quizButtonFadeAnim, {
+          toValue: 1,
+          duration: 400,
+          delay: 200,
+          useNativeDriver: true,
+        }),
+        Animated.spring(quizButtonSlideAnim, {
+          toValue: 0,
+          tension: 50,
+          friction: 7,
+          delay: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.timing(quizButtonFadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isSignedIn]);
+
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Icon as={StarIcon} size="lg" color="gold" />
     if (rank === 2) return <Icon as={StarIcon} size="lg" color="gray" />
@@ -51,89 +112,103 @@ export default function Leaderboard() {
       <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerClassName="pb-10">
         {/* Your Rank Card / Sign In Card */}
         <Box className="pt-4 pb-2">
-          {isSignedIn ? (
-            <Box className="bg-primary-500 rounded-xl p-4 border border-gray-200">
-              <Box className="flex-row justify-between mb-3">
-                <Box className="flex-row items-center space-x-3">
-                  <Box className="w-12 h-12 rounded-full bg-white/20 items-center justify-center m-4">
-                    <Avatar size="lg">
-                      <AvatarFallbackText>{currentUser.name}</AvatarFallbackText>
-                      <AvatarImage
-                        source={{
-                          uri: currentUser.profilePic,
-                        }}
-                      />
-                      <AvatarBadge />
-                    </Avatar>
+          <Animated.View
+            style={{
+              opacity: cardFadeAnim,
+              transform: [{ scale: cardScaleAnim }],
+            }}
+          >
+            {isSignedIn ? (
+              <Box className="bg-primary-500 rounded-xl p-4 border border-gray-200">
+                <Box className="flex-row justify-between mb-3">
+                  <Box className="flex-row items-center space-x-3">
+                    <Box className="w-12 h-12 rounded-full bg-white/20 items-center justify-center m-4">
+                      <Avatar size="lg">
+                        <AvatarFallbackText>{currentUser.name}</AvatarFallbackText>
+                        <AvatarImage
+                          source={{
+                            uri: currentUser.profilePic,
+                          }}
+                        />
+                        <AvatarBadge />
+                      </Avatar>
+                    </Box>
+                    <Box>
+                      <Text className="text-sm text-white/90 mb-0.5">Your Rank</Text>
+                      <Text className="text-2xl font-bold text-white">#{currentUser.rank}</Text>
+                    </Box>
                   </Box>
-                  <Box>
-                    <Text className="text-sm text-white/90 mb-0.5">Your Rank</Text>
-                    <Text className="text-2xl font-bold text-white">#{currentUser.rank}</Text>
+                  <Box className="items-end">
+                    <Text className="text-sm text-white/90 mb-0.5">Total Score</Text>
+                    <Text className="text-2xl font-bold text-white">{currentUser.score}</Text>
                   </Box>
                 </Box>
-                <Box className="items-end">
-                  <Text className="text-sm text-white/90 mb-0.5">Total Score</Text>
-                  <Text className="text-2xl font-bold text-white">{currentUser.score}</Text>
+                <Box className="flex-row items-center justify-between mt-3 pt-3 border-t border-white/20">
+                  <Box className="flex-row items-center space-x-2">
+                    <Icon as={Flame} size="sm" color="white" className="p-1" />
+                    <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
+                  </Box>
+                  <Pressable
+                    onPress={() => setIsSignedIn(false)}
+                    className="bg-white/20 px-4 py-2 rounded-full active:bg-white/30"
+                  >
+                    <Text className="text-sm font-semibold text-white">Sign Out</Text>
+                  </Pressable>
                 </Box>
               </Box>
-              <Box className="flex-row items-center justify-between mt-3 pt-3 border-t border-white/20">
-                <Box className="flex-row items-center space-x-2">
-                  <Icon as={Flame} size="sm" color="white" className="p-1" />
-                  <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
+            ) : (
+              <Pressable
+                className="bg-primary-500 rounded-xl p-4 border border-gray-200 active:bg-primary-600"
+                onPress={() => {
+                  setIsSignedIn(true);
+                  router.push({
+                    pathname: '/webview-modal',
+                    params: {
+                      url: 'https://terpengage.umd.edu/community/s/change-major',
+                      title: 'Sign In'
+                    }
+                  });
+                }}
+              >
+                <Box className="flex-row items-center justify-center py-4">
+                  <Text className="text-xl font-bold text-white">Sign In</Text>
                 </Box>
-                <Pressable
-                  onPress={() => setIsSignedIn(false)}
-                  className="bg-white/20 px-4 py-2 rounded-lg active:bg-white/30"
-                >
-                  <Text className="text-sm font-semibold text-white">Sign Out</Text>
-                </Pressable>
-              </Box>
-            </Box>
-          ) : (
-            <Pressable
-              className="bg-primary-500 rounded-xl p-4 border border-gray-200 active:bg-primary-600"
-              onPress={() => {
-                setIsSignedIn(true);
-                router.push({
-                  pathname: '/webview-modal',
-                  params: {
-                    url: 'https://terpengage.umd.edu/community/s/change-major',
-                    title: 'Sign In'
-                  }
-                });
-              }}
-            >
-              <Box className="flex-row items-center justify-center py-4">
-                <Text className="text-xl font-bold text-white">Sign In</Text>
-              </Box>
-            </Pressable>
-          )}
+              </Pressable>
+            )}
+          </Animated.View>
         </Box>
 
         {/* Daily Quiz Button - Only show if signed in */}
         {isSignedIn && (
           <Box className="pt-4 pb-2">
-            <Pressable
-              className="bg-secondary-500 rounded-xl p-6 border border-secondary-300 active:bg-secondary-700"
-              onPress={() => {
-                router.push("/(tabs)/quiz/quiz-modal");
+            <Animated.View
+              style={{
+                opacity: quizButtonFadeAnim,
+                transform: [{ translateY: quizButtonSlideAnim }],
               }}
             >
-              <Box className="flex-row items-center justify-between">
-                <Box className="flex-row items-center gap-4">
-                  <Box className="w-14 h-14 rounded-full bg-white/30 items-center justify-center">
-                    <Icon as={HelpCircle} size="xl" color="black" />
+              <Pressable
+                className="bg-secondary-500 rounded-xl p-6 border border-secondary-300 active:bg-secondary-700"
+                onPress={() => {
+                  router.push("/(tabs)/quiz/quiz-modal");
+                }}
+              >
+                <Box className="flex-row items-center justify-between">
+                  <Box className="flex-row items-center gap-4">
+                    <Box className="w-14 h-14 rounded-full bg-white/30 items-center justify-center">
+                      <Icon as={HelpCircle} size="xl" color="black" />
+                    </Box>
+                    <Box>
+                      <Text className="text-xl font-bold text-gray-900 mb-1">Daily Quiz</Text>
+                      <Text className="text-sm text-gray-700">Test your knowledge today!</Text>
+                    </Box>
                   </Box>
-                  <Box>
-                    <Text className="text-xl font-bold text-gray-900 mb-1">Daily Quiz</Text>
-                    <Text className="text-sm text-gray-700">Test your knowledge today!</Text>
+                  <Box className="bg-white/30 px-4 py-2 rounded-full">
+                    <Text className="text-sm font-semibold text-gray-900">Start</Text>
                   </Box>
                 </Box>
-                <Box className="bg-white/30 px-4 py-2 rounded-full">
-                  <Text className="text-sm font-semibold text-gray-900">Start</Text>
-                </Box>
-              </Box>
-            </Pressable>
+              </Pressable>
+            </Animated.View>
           </Box>
         )}
 

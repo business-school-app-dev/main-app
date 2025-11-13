@@ -6,15 +6,15 @@ import { VStack } from '@/components/ui/vstack';
 import { HStack } from '@/components/ui/hstack';
 import { Card } from '@/components/ui/card';
 import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from '@/components/ui/slider';
-import { Pressable } from '@/components/ui/pressable';
 import PageLayout from '@/components/layouts/page-layout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LineChart } from 'react-native-gifted-charts';
 import { router } from 'expo-router';
-import { Lightbulb } from 'lucide-react-native';
 import { CloseIcon, Icon } from '@/components/ui/icon';
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@/components/ui/modal';
 import IconButton from '@/components/inputs/icon-button';
+import { Heading } from '@/components/ui/heading';
+import COLORS, { GRAY_COLORS } from '@/constants/colors';
 
 // Types
 export interface UserResponses {
@@ -221,10 +221,10 @@ export default function SimulationResult() {
               endOpacity={0.2}
               initialSpacing={0}
               noOfSections={4}
-              yAxisColor="#E5E7EB"
-              xAxisColor="#E5E7EB"
-              yAxisTextStyle={{ color: '#6B7280', fontSize: 10 }}
-              xAxisLabelTextStyle={{ color: '#6B7280', fontSize: 10 }}
+              yAxisColor={GRAY_COLORS[200]}
+              xAxisColor={GRAY_COLORS[200]}
+              yAxisTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
+              xAxisLabelTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
               areaChart
               curved
               hideDataPoints
@@ -389,16 +389,14 @@ export default function SimulationResult() {
         <ModalBackdrop />
         <ModalContent className="rounded-xl">
           <ModalHeader>
-            <HStack space="xs" className="items-center">
-              <Text className="text-lg font-bold text-gray-900">
-                What is Monte Carlo Simulation?
-              </Text>
-            </HStack>
+            <Heading size="lg">
+              What is Monte Carlo?
+            </Heading>
             <ModalCloseButton>
               <Icon as={CloseIcon} />
             </ModalCloseButton>
           </ModalHeader>
-          <ModalBody>
+          <ModalBody scrollEnabled={false}>
             <Text className="text-base text-gray-700 leading-6">
               Monte Carlo simulation runs thousands of scenarios with random market
               returns to show the range of possible outcomes for your financial future.

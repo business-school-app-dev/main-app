@@ -228,11 +228,14 @@ export default function SimulationSetup() {
     <PageLayout
       title="Life Simulation Setup"
       leftView={
-        <IconButton
-          iconName="arrow-back"
-          onPress={handleBack}
-        />
+        currentQuestionIndex > 0 ? (
+          <IconButton
+            iconName="arrow-back"
+            onPress={handleBack}
+          />
+        ) : undefined
       }
+      backButtonHidden={currentQuestionIndex === 0}
     >
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <Animated.View

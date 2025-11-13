@@ -14,7 +14,7 @@ import { CloseIcon, Icon } from '@/components/ui/icon';
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@/components/ui/modal';
 import IconButton from '@/components/inputs/icon-button';
 import { Heading } from '@/components/ui/heading';
-import COLORS, { GRAY_COLORS } from '@/constants/colors';
+import COLORS, { GRAY_COLORS, PRIMARY_COLORS, SECONDARY_COLORS } from '@/constants/colors';
 
 // Types
 export interface UserResponses {
@@ -34,6 +34,7 @@ export default function SimulationResult() {
   const [retirementAge, setRetirementAge] = useState(65);
 
   const screenWidth = Dimensions.get('window').width;
+  const chartHeight = 250;
 
   useEffect(() => {
     loadUserResponses();
@@ -188,17 +189,17 @@ export default function SimulationResult() {
                 Your Profile
               </Text>
               <HStack className="flex-wrap gap-2">
-                <View className="bg-yellow-400 px-4 py-2 rounded-full" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
+                <View className="px-4 py-2 rounded-full" style={{ backgroundColor: SECONDARY_COLORS[500], elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
                   <Text size="xs" className="text-gray-900 font-semibold">
                     Career: {formatText(userResponses.career)}
                   </Text>
                 </View>
-                <View className="bg-yellow-400 px-4 py-2 rounded-full" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
+                <View className="px-4 py-2 rounded-full" style={{ backgroundColor: SECONDARY_COLORS[500], elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
                   <Text size="xs" className="text-gray-900 font-semibold">
                     Location: {formatText(userResponses.location)}
                   </Text>
                 </View>
-                <View className="bg-yellow-400 px-4 py-2 rounded-full" style={{ elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
+                <View className="px-4 py-2 rounded-full" style={{ backgroundColor: SECONDARY_COLORS[500], elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
                   <Text size="xs" className="text-gray-900 font-semibold">
                     Children: {userResponses.children}
                   </Text>
@@ -220,44 +221,62 @@ export default function SimulationResult() {
           {/* Chart */}
           <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
             <VStack space="sm">
-              <ScrollView horizontal showsHorizontalScrollIndicator={false}>
-                <LineChart
-                  data={chartData}
-                  width={screenWidth + 100}
-                  height={220}
-                  color="#E11D48"
-                  thickness={3}
-                  startFillColor="rgba(225, 29, 72, 0.2)"
-                  endFillColor="rgba(225, 29, 72, 0.2)"
-                  startOpacity={1}
-                  endOpacity={1}
-                  initialSpacing={10}
-                  spacing={8}
-                  noOfSections={4}
-                  yAxisColor={GRAY_COLORS[200]}
-                  xAxisColor={GRAY_COLORS[200]}
-                  yAxisTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
-                  xAxisLabelTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
-                  showXAxisIndices
-                  xAxisIndicesHeight={5}
-                  xAxisIndicesWidth={2}
-                  xAxisIndicesColor={GRAY_COLORS[300]}
-                  areaChart
-                  curved
-                  hideDataPoints
-                  yAxisLabelPrefix="$"
-                  disableScroll={true}
-                  hideRules={true}
-                  formatYLabel={(value: string) => {
-                    const num = parseInt(value);
-                    if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-                    if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
-                    return value;
-                  }}
-                />
-              </ScrollView>
+              <LineChart
+                data={chartData}
+                // width={0}
+                height={chartHeight}
+                color={PRIMARY_COLORS[600]}
+                thickness={3}
+                startFillColor={`${PRIMARY_COLORS[500]}33`}
+                endFillColor={`${PRIMARY_COLORS[500]}33`}
+                startOpacity={0.9}
+                endOpacity={0.1}
+                initialSpacing={5}
+                spacing={8}
+                noOfSections={4}
+                yAxisColor={GRAY_COLORS[200]}
+                xAxisColor={GRAY_COLORS[200]}
+                yAxisTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
+                xAxisLabelTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
+                showXAxisIndices
+                xAxisIndicesHeight={5}
+                xAxisIndicesWidth={1}
+                xAxisIndicesColor={GRAY_COLORS[300]}
+                areaChart
+                curved
+                isAnimated
+                showDataPointLabelOnFocus
+                hideDataPoints
+                yAxisLabelPrefix="$"
+                disableScroll={true}
+                hideRules={false}
+                formatYLabel={(value: string) => {
+                  const num = parseInt(value);
+                  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+                  if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
+                  return value;
+                }}
+                pointerConfig={{
+                  pointerStripHeight: chartHeight,
+                  pointerStripColor: PRIMARY_COLORS[500],
+                  pointerStripWidth: 1.5,
+                  pointerColor: PRIMARY_COLORS[500],
+                  radius: 6,
+                  pointerLabelWidth: 100,
+                  // pointerLabelHeight: 50,
+                  activatePointersOnLongPress: true,
+                  autoAdjustPointerLabelPosition: false,
+                  pointerLabelComponent: (items: any[]) => {
+                    return (
+                      <Text className="h-fit w-fit text-primary text-center text-sm font-semibold -ml-[77px] mt-[33.5px]">
+                        {formatCurrency(items[0].value)}
+                      </Text>
+                    );
+                  },
+                }}
+              />
               <Text size="xs" className="text-gray-500 text-center">
-                40-year projection (swipe to see full timeline)
+                40-year projection based on your inputs
               </Text>
             </VStack>
           </Card>

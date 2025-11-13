@@ -6,7 +6,7 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { router } from "expo-router";
 import React, { createContext, useContext, useState } from 'react';
-import { View } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
 interface CourseContextType {
   credit: string;
@@ -47,7 +47,7 @@ const CourseRecommenderScreen = () => {
   const creditHours = ["0-29", "30-59", "60-89", "90-119", "120+"];
 
   return (
-      <CourseContext.Provider
+    <CourseContext.Provider
       value={{
         credit,
         major1,
@@ -63,10 +63,12 @@ const CourseRecommenderScreen = () => {
         setComfortLevel,
       }}
     >
-    <PageLayout title="Course Recommender">
-      <View className="flex-1 justify-start py-6 px-4"> {/* reduced vertical padding */}
-
-          {/* Header Section */}
+      <PageLayout title="Course Recommender">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="flex-1"
+          contentContainerClassName="px-4 pb-10 pt-4"
+        >
           <VStack space="md"> {/* slightly less spacing */}
             <Heading size="xl" className="text-gray-900">
               Financial Literacy Course Recommender
@@ -77,7 +79,7 @@ const CourseRecommenderScreen = () => {
           </VStack>
 
           {/* Form Inputs Section */}
-          <VStack space="sm" style={{ paddingVertical: 6, paddingHorizontal: 8, paddingTop: 13 }}> {/* reduced spacing between inputs */}
+          <VStack space="sm" className="pt-2">
             <FormSelect
               label="Credits"
               placeholder="Select option"
@@ -132,31 +134,32 @@ const CourseRecommenderScreen = () => {
           </VStack>
 
           {/* Submit Buttons */}
-          <View className="mb-4">
+          <View className="pt-4">
             <TextButton
               label="Get Course Recommendations"
               onPress={() => {
                 console.log({ credit, major1, major2, minor1, minor2, comfortLevel });
                 router.navigate("/home/guides/course-options");
               }}
-              variant="primary"
+              variant="secondary"
               size="md"
             />
           </View>
 
-          <View className="mb-4">
+          <View className="pt-2 mb-4">
             <TextButton
               label="View All Courses"
               onPress={() => router.navigate("/home/guides/course-options")}
-              variant="primary"
+              variant="secondary"
               size="md"
             />
           </View>
-        </View>
-    </PageLayout>
+        </ScrollView>
+      </PageLayout>
     </CourseContext.Provider>
   );
 };
 
 export default CourseRecommenderScreen;
+
 

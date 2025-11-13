@@ -1,9 +1,7 @@
-import TextButton from '@/components/inputs/text-button';
 import PageLayout from '@/components/layouts/page-layout';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
-import { router } from 'expo-router';
 import React from 'react';
 import { ScrollView, View } from 'react-native';
 
@@ -34,16 +32,19 @@ const dummyCourses = [
 const CourseOptionsScreen = () => {
   return (
     <PageLayout title="All Courses">
-      <ScrollView contentContainerStyle={{ padding: 16 }}>
-        <VStack space="md">
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerClassName="pb-10 px-4"
+        >
+        <VStack space="md" className="pt-4">
           <Heading size="xl" className="text-gray-900">
             All Available Courses
           </Heading>
 
           {dummyCourses.map((course) => (
             <View
-              key={course.id}
-              className="bg-white rounded-2xl p-4 shadow-md"
+            key={course.id}
+            className="rounded-xl mb-3 p-4 border border-gray-200 bg-white"
             >
               <Heading size="md" className="text-gray-900 mb-1">
                 {course.name} ({course.id})
@@ -57,13 +58,6 @@ const CourseOptionsScreen = () => {
               <Text className="text-gray-600">{course.description}</Text>
             </View>
           ))}
-
-          <TextButton
-            label="Back"
-            onPress={() => router.back()}
-            variant="primary"
-            size="md"
-          />
         </VStack>
       </ScrollView>
     </PageLayout>

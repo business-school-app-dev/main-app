@@ -5,7 +5,6 @@ import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { HStack } from '@/components/ui/hstack';
 import { Card } from '@/components/ui/card';
-import { Slider, SliderTrack, SliderFilledTrack, SliderThumb } from '@/components/ui/slider';
 import PageLayout from '@/components/layouts/page-layout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LineChart } from 'react-native-gifted-charts';
@@ -15,6 +14,8 @@ import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, Moda
 import IconButton from '@/components/inputs/icon-button';
 import { Heading } from '@/components/ui/heading';
 import COLORS, { GRAY_COLORS, PRIMARY_COLORS, SECONDARY_COLORS } from '@/constants/colors';
+import { Briefcase, MapPin, Baby, Laptop, Heart, DollarSign, GraduationCap, Building2, Users, Home, TreePine } from 'lucide-react-native';
+import LabeledSlider from '@/components/inputs/labeled-slider';
 
 // Types
 export interface UserResponses {
@@ -147,6 +148,28 @@ export default function SimulationResult() {
       .join(' ');
   };
 
+  const getCareerIcon = (career: string) => {
+    const iconMap: { [key: string]: any } = {
+      tech: Laptop,
+      healthcare: Heart,
+      finance: DollarSign,
+      education: GraduationCap,
+      business: Building2,
+      other: Briefcase,
+    };
+    return iconMap[career] || Briefcase;
+  };
+
+  const getLocationIcon = (location: string) => {
+    const iconMap: { [key: string]: any } = {
+      high_cost: Building2,
+      medium_cost: Home,
+      low_cost: Users,
+      very_low_cost: TreePine,
+    };
+    return iconMap[location] || MapPin;
+  };
+
   if (isLoading) {
     return (
       <PageLayout title="Life Simulation">
@@ -160,6 +183,42 @@ export default function SimulationResult() {
   if (!userResponses) {
     return null;
   }
+
+  const profile = [
+    {
+      icon: getCareerIcon(userResponses.career),
+      value: formatText(userResponses.career),
+      label: 'Career',
+    },
+    {
+      icon: getLocationIcon(userResponses.location),
+      value: formatText(userResponses.location),
+      label: 'Location',
+    },
+    {
+      icon: Baby,
+      value: userResponses.children.toString(),
+      label: 'Children',
+    },
+  ]
+
+  const assumptions = [
+    {
+      label: 'Best Case (75th percentile)',
+      value: stats.percentile75,
+      color: 'text-green-600',
+    },
+    {
+      label: 'Median Case (50th percentile)',
+      value: stats.median,
+      color: 'text-primary-500',
+    },
+    {
+      label: 'Worst Case (25th percentile)',
+      value: stats.percentile25,
+      color: 'text-orange-600',
+    },
+  ]
 
   return (
     <PageLayout
@@ -183,27 +242,26 @@ export default function SimulationResult() {
       <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
         <View className="py-6">
           {/* User Profile Summary */}
-          <Card className="mb-8 p-4 bg-primary-50 border border-primary-100 rounded-xl">
-            <VStack space="sm">
-              <Text className="text-sm font-bold text-gray-900">
+          <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
+            <VStack space="md">
+              <Text className="text-base font-semibold text-gray-900">
                 Your Profile
               </Text>
-              <HStack className="flex-wrap gap-2">
-                <View className="px-4 py-2 rounded-full" style={{ backgroundColor: SECONDARY_COLORS[500], elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
-                  <Text size="xs" className="text-gray-900 font-semibold">
-                    Career: {formatText(userResponses.career)}
-                  </Text>
-                </View>
-                <View className="px-4 py-2 rounded-full" style={{ backgroundColor: SECONDARY_COLORS[500], elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
-                  <Text size="xs" className="text-gray-900 font-semibold">
-                    Location: {formatText(userResponses.location)}
-                  </Text>
-                </View>
-                <View className="px-4 py-2 rounded-full" style={{ backgroundColor: SECONDARY_COLORS[500], elevation: 2, shadowColor: '#000', shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.1, shadowRadius: 2 }}>
-                  <Text size="xs" className="text-gray-900 font-semibold">
-                    Children: {userResponses.children}
-                  </Text>
-                </View>
+
+              <HStack className="justify-between items-center">
+                {profile.map((item, index) => (
+                  <VStack key={index} className="flex-1 items-center" space="xs">
+                    <View className="w-16 h-16 rounded-full items-center justify-center bg-secondary">
+                      <Icon as={item.icon} size="xl" className="text-gray-900" />
+                    </View>
+                    <Text size="xs" className="text-gray-900 font-semibold text-center">
+                      {item.value}
+                    </Text>
+                    <Text size="2xs" className="text-gray-600">
+                      {item.label}
+                    </Text>
+                  </VStack>
+                ))}
               </HStack>
             </VStack>
           </Card>
@@ -289,32 +347,16 @@ export default function SimulationResult() {
               </Text>
 
               <VStack space="sm">
-                <HStack className="justify-between items-center">
-                  <Text size="sm" className="text-gray-600">
-                    Best Case (75th percentile)
-                  </Text>
-                  <Text className="text-base font-bold text-green-600">
-                    {formatCurrency(stats.percentile75)}
-                  </Text>
-                </HStack>
-
-                <HStack className="justify-between items-center">
-                  <Text size="sm" className="text-gray-600">
-                    Median Case (50th percentile)
-                  </Text>
-                  <Text className="text-base font-bold text-primary-500">
-                    {formatCurrency(stats.median)}
-                  </Text>
-                </HStack>
-
-                <HStack className="justify-between items-center">
-                  <Text size="sm" className="text-gray-600">
-                    Worst Case (25th percentile)
-                  </Text>
-                  <Text className="text-base font-bold text-orange-600">
-                    {formatCurrency(stats.percentile25)}
-                  </Text>
-                </HStack>
+                {assumptions.map((stat, index) => (
+                  <HStack key={index} className="justify-between items-center">
+                    <Text size="sm" className="text-gray-600">
+                      {stat.label}
+                    </Text>
+                    <Text className={`text-base font-bold ${stat.color}`}>
+                      {formatCurrency(stat.value)}
+                    </Text>
+                  </HStack>
+                ))}
               </VStack>
             </VStack>
           </Card>
@@ -325,104 +367,35 @@ export default function SimulationResult() {
               Adjust Your Assumptions
             </Text>
 
-            {/* Savings Rate Slider */}
-            <VStack space="xs">
-              <HStack className="justify-between items-center mb-2">
-                <Text size="sm" className="text-gray-900 font-medium">
-                  Savings Rate
-                </Text>
-                <Text size="md" className="text-primary-500 font-semibold">
-                  {savingsRate}%
-                </Text>
-              </HStack>
-              <Slider
-                value={savingsRate}
-                minValue={5}
-                maxValue={50}
-                step={5}
-                onChange={setSavingsRate}
-                size="md"
-              >
-                <SliderTrack>
-                  <SliderFilledTrack className="bg-primary-500" />
-                </SliderTrack>
-                <SliderThumb className="bg-primary-500" />
-              </Slider>
-              <HStack className="justify-between items-center mt-1">
-                <Text size="xs" className="text-gray-500">
-                  5%
-                </Text>
-                <Text size="xs" className="text-gray-500">
-                  50%
-                </Text>
-              </HStack>
-            </VStack>
+            <LabeledSlider
+              label="Savings Rate"
+              value={savingsRate}
+              minValue={5}
+              maxValue={50}
+              step={5}
+              onChange={setSavingsRate}
+              suffix="%"
+            />
 
-            {/* Investment Return Slider */}
-            <VStack space="xs">
-              <HStack className="justify-between items-center mb-2">
-                <Text size="sm" className="text-gray-900 font-medium">
-                  Expected Annual Return
-                </Text>
-                <Text size="md" className="text-primary-500 font-semibold">
-                  {investmentReturn}%
-                </Text>
-              </HStack>
-              <Slider
-                value={investmentReturn}
-                minValue={3}
-                maxValue={12}
-                step={0.5}
-                onChange={setInvestmentReturn}
-                size="md"
-              >
-                <SliderTrack>
-                  <SliderFilledTrack className="bg-primary-500" />
-                </SliderTrack>
-                <SliderThumb className="bg-primary-500" />
-              </Slider>
-              <HStack className="justify-between items-center mt-1">
-                <Text size="xs" className="text-gray-500">
-                  3%
-                </Text>
-                <Text size="xs" className="text-gray-500">
-                  12%
-                </Text>
-              </HStack>
-            </VStack>
+            <LabeledSlider
+              label="Expected Annual Return"
+              value={investmentReturn}
+              minValue={3}
+              maxValue={12}
+              step={0.5}
+              onChange={setInvestmentReturn}
+              suffix="%"
+            />
 
-            {/* Retirement Age Slider */}
-            <VStack space="xs">
-              <HStack className="justify-between items-center mb-2">
-                <Text size="sm" className="text-gray-900 font-medium">
-                  Target Retirement Age
-                </Text>
-                <Text size="md" className="text-primary-500 font-semibold">
-                  {retirementAge}
-                </Text>
-              </HStack>
-              <Slider
-                value={retirementAge}
-                minValue={55}
-                maxValue={75}
-                step={1}
-                onChange={setRetirementAge}
-                size="md"
-              >
-                <SliderTrack>
-                  <SliderFilledTrack className="bg-primary-500" />
-                </SliderTrack>
-                <SliderThumb className="bg-primary-500" />
-              </Slider>
-              <HStack className="justify-between items-center mt-1">
-                <Text size="xs" className="text-gray-500">
-                  55
-                </Text>
-                <Text size="xs" className="text-gray-500">
-                  75
-                </Text>
-              </HStack>
-            </VStack>
+            <LabeledSlider
+              label="Target Retirement Age"
+              value={retirementAge}
+              minValue={55}
+              maxValue={75}
+              step={1}
+              onChange={setRetirementAge}
+              suffix=""
+            />
           </VStack>
         </View>
       </ScrollView>

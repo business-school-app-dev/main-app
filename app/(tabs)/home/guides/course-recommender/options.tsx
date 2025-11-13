@@ -32,33 +32,29 @@ const dummyCourses = [
 const CourseOptionsScreen = () => {
   return (
     <PageLayout title="All Courses">
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="py-6">
-          <VStack space="md">
-            <Heading size="xl" className="text-gray-900">
-              All Available Courses
-            </Heading>
+      <Heading size="xl" className="text-gray-900">
+        All Available Courses
+      </Heading>
 
-            {dummyCourses.map((course) => (
-              <View
-                key={course.id}
-                className="rounded-xl mb-3 p-4 border border-gray-200 bg-white"
-              >
-                <Heading size="md" className="text-gray-900 mb-1">
-                  {course.name} ({course.id})
-                </Heading>
-                <Text className="text-gray-600 mb-1">
-                  <Text className="font-bold">Credits:</Text> {course.credits}
-                </Text>
-                <Text className="text-gray-600 mb-1">
-                  <Text className="font-bold">Restrictions:</Text> {course.restrictions}
-                </Text>
-                <Text className="text-gray-600">{course.description}</Text>
-              </View>
-            ))}
-          </VStack>
-        </View>
-      </ScrollView>
+      <VStack space="md" className="mt-8">
+        {dummyCourses.map((course) => (
+          <View
+            key={course.id}
+            className="rounded-xl mb-3 p-4 border border-gray-200 bg-white"
+          >
+            <Heading size="md" className="text-gray-900 mb-1">
+              {course.name} ({course.id})
+            </Heading>
+            <Text className="text-gray-600 mb-1">
+              <Text className="font-bold">Credits:</Text> {course.credits}
+            </Text>
+            <Text className="text-gray-600 mb-1">
+              <Text className="font-bold">Restrictions:</Text> {course.restrictions}
+            </Text>
+            <Text className="text-gray-600">{course.description}</Text>
+          </View>
+        ))}
+      </VStack>
     </PageLayout>
   );
 };

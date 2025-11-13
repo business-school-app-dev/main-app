@@ -109,138 +109,136 @@ export default function Leaderboard() {
 
   return (
     <PageLayout title="Quiz" backButtonHidden>
-      <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerClassName="pb-10">
-        {/* Your Rank Card / Sign In Card */}
+      {/* Your Rank Card / Sign In Card */}
+      <Box className="pt-4 pb-2">
+        <Animated.View
+          style={{
+            opacity: cardFadeAnim,
+            transform: [{ scale: cardScaleAnim }],
+          }}
+        >
+          {isSignedIn ? (
+            <Box className="bg-primary-500 rounded-xl p-4 border border-gray-200">
+              <Box className="flex-row justify-between mb-3">
+                <Box className="flex-row items-center space-x-3">
+                  <Box className="w-12 h-12 rounded-full bg-white/20 items-center justify-center m-4">
+                    <Avatar size="lg">
+                      <AvatarFallbackText>{currentUser.name}</AvatarFallbackText>
+                      <AvatarImage
+                        source={{
+                          uri: currentUser.profilePic,
+                        }}
+                      />
+                      <AvatarBadge />
+                    </Avatar>
+                  </Box>
+                  <Box>
+                    <Text className="text-sm text-white/90 mb-0.5">Your Rank</Text>
+                    <Text className="text-2xl font-bold text-white">#{currentUser.rank}</Text>
+                  </Box>
+                </Box>
+                <Box className="items-end">
+                  <Text className="text-sm text-white/90 mb-0.5">Total Score</Text>
+                  <Text className="text-2xl font-bold text-white">{currentUser.score}</Text>
+                </Box>
+              </Box>
+              <Box className="flex-row items-center justify-between mt-3 pt-3 border-t border-white/20">
+                <Box className="flex-row items-center space-x-2">
+                  <Icon as={Flame} size="sm" color="white" className="p-1" />
+                  <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
+                </Box>
+                <Pressable
+                  onPress={() => setIsSignedIn(false)}
+                  className="bg-white/20 px-4 py-2 rounded-full active:bg-white/30"
+                >
+                  <Text className="text-sm font-semibold text-white">Sign Out</Text>
+                </Pressable>
+              </Box>
+            </Box>
+          ) : (
+            <Pressable
+              className="bg-primary-500 rounded-xl p-4 border border-gray-200 active:bg-primary-600"
+              onPress={() => {
+                setIsSignedIn(true);
+                router.push({
+                  pathname: '/webview-modal',
+                  params: {
+                    url: 'https://terpengage.umd.edu/community/s/change-major',
+                    title: 'Sign In'
+                  }
+                });
+              }}
+            >
+              <Box className="flex-row items-center justify-center py-4">
+                <Text className="text-xl font-bold text-white">Sign In</Text>
+              </Box>
+            </Pressable>
+          )}
+        </Animated.View>
+      </Box>
+
+      {/* Daily Quiz Button - Only show if signed in */}
+      {isSignedIn && (
         <Box className="pt-4 pb-2">
           <Animated.View
             style={{
-              opacity: cardFadeAnim,
-              transform: [{ scale: cardScaleAnim }],
+              opacity: quizButtonFadeAnim,
+              transform: [{ translateY: quizButtonSlideAnim }],
             }}
           >
-            {isSignedIn ? (
-              <Box className="bg-primary-500 rounded-xl p-4 border border-gray-200">
-                <Box className="flex-row justify-between mb-3">
-                  <Box className="flex-row items-center space-x-3">
-                    <Box className="w-12 h-12 rounded-full bg-white/20 items-center justify-center m-4">
-                      <Avatar size="lg">
-                        <AvatarFallbackText>{currentUser.name}</AvatarFallbackText>
-                        <AvatarImage
-                          source={{
-                            uri: currentUser.profilePic,
-                          }}
-                        />
-                        <AvatarBadge />
-                      </Avatar>
-                    </Box>
-                    <Box>
-                      <Text className="text-sm text-white/90 mb-0.5">Your Rank</Text>
-                      <Text className="text-2xl font-bold text-white">#{currentUser.rank}</Text>
-                    </Box>
-                  </Box>
-                  <Box className="items-end">
-                    <Text className="text-sm text-white/90 mb-0.5">Total Score</Text>
-                    <Text className="text-2xl font-bold text-white">{currentUser.score}</Text>
-                  </Box>
-                </Box>
-                <Box className="flex-row items-center justify-between mt-3 pt-3 border-t border-white/20">
-                  <Box className="flex-row items-center space-x-2">
-                    <Icon as={Flame} size="sm" color="white" className="p-1" />
-                    <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
-                  </Box>
-                  <Pressable
-                    onPress={() => setIsSignedIn(false)}
-                    className="bg-white/20 px-4 py-2 rounded-full active:bg-white/30"
-                  >
-                    <Text className="text-sm font-semibold text-white">Sign Out</Text>
-                  </Pressable>
-                </Box>
-              </Box>
-            ) : (
-              <Pressable
-                className="bg-primary-500 rounded-xl p-4 border border-gray-200 active:bg-primary-600"
-                onPress={() => {
-                  setIsSignedIn(true);
-                  router.push({
-                    pathname: '/webview-modal',
-                    params: {
-                      url: 'https://terpengage.umd.edu/community/s/change-major',
-                      title: 'Sign In'
-                    }
-                  });
-                }}
-              >
-                <Box className="flex-row items-center justify-center py-4">
-                  <Text className="text-xl font-bold text-white">Sign In</Text>
-                </Box>
-              </Pressable>
-            )}
-          </Animated.View>
-        </Box>
-
-        {/* Daily Quiz Button - Only show if signed in */}
-        {isSignedIn && (
-          <Box className="pt-4 pb-2">
-            <Animated.View
-              style={{
-                opacity: quizButtonFadeAnim,
-                transform: [{ translateY: quizButtonSlideAnim }],
+            <Pressable
+              className="bg-secondary-500 rounded-xl p-6 border border-secondary-300 active:bg-secondary-700"
+              onPress={() => {
+                router.push("/(tabs)/quiz/quiz-modal");
               }}
             >
-              <Pressable
-                className="bg-secondary-500 rounded-xl p-6 border border-secondary-300 active:bg-secondary-700"
-                onPress={() => {
-                  router.push("/(tabs)/quiz/quiz-modal");
-                }}
-              >
-                <Box className="flex-row items-center justify-between">
-                  <Box className="flex-row items-center gap-4">
-                    <Box className="w-14 h-14 rounded-full bg-white/30 items-center justify-center">
-                      <Icon as={HelpCircle} size="xl" color="black" />
-                    </Box>
-                    <Box>
-                      <Text className="text-xl font-bold text-gray-900 mb-1">Daily Quiz</Text>
-                      <Text className="text-sm text-gray-700">Test your knowledge today!</Text>
-                    </Box>
+              <Box className="flex-row items-center justify-between">
+                <Box className="flex-row items-center gap-4">
+                  <Box className="w-14 h-14 rounded-full bg-white/30 items-center justify-center">
+                    <Icon as={HelpCircle} size="xl" color="black" />
                   </Box>
-                  <Box className="bg-white/30 px-4 py-2 rounded-full">
-                    <Text className="text-sm font-semibold text-gray-900">Start</Text>
+                  <Box>
+                    <Text className="text-xl font-bold text-gray-900 mb-1">Daily Quiz</Text>
+                    <Text className="text-sm text-gray-700">Test your knowledge today!</Text>
                   </Box>
                 </Box>
-              </Pressable>
-            </Animated.View>
-          </Box>
-        )}
+                <Box className="bg-white/30 px-4 py-2 rounded-full">
+                  <Text className="text-sm font-semibold text-gray-900">Start</Text>
+                </Box>
+              </Box>
+            </Pressable>
+          </Animated.View>
+        </Box>
+      )}
 
-        {/* Top Performers */}
-        <View className="pt-6">
-          <Text className="text-lg font-semibold text-gray-900 mb-4">Top Players</Text>
-          <View className="space-y-3">
-            {leaderboardData.map((user) => (
-              <View key={user.rank} className={`rounded-xl mb-3 p-4 border border-gray-200 flex-row justify-between items-center ${user.bgColor}`}>
-                <View className="flex-row items-center space-x-3">
-                  <View className="relative">
-                    <View className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">
-                      <Text className="text-base font-semibold text-white">{user.avatar}</Text>
-                    </View>
-                  </View>
-                  <View className="p-1">
-                    <Text className="text-base font-medium text-gray-900 mb-1 p-1">{user.name}</Text>
-                    <View className="bg-gray-100 px-2 py-0.5 rounded self-start">
-                      <Text className="text-xs text-gray-600">{user.streak} day streak</Text>
-                    </View>
+      {/* Top Performers */}
+      <View className="pt-6">
+        <Text className="text-lg font-semibold text-gray-900 mb-4">Top Players</Text>
+        <View className="space-y-3">
+          {leaderboardData.map((user) => (
+            <View key={user.rank} className={`rounded-xl mb-3 p-4 border border-gray-200 flex-row justify-between items-center ${user.bgColor}`}>
+              <View className="flex-row items-center space-x-3">
+                <View className="relative">
+                  <View className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">
+                    <Text className="text-base font-semibold text-white">{user.avatar}</Text>
                   </View>
                 </View>
-                <View className="items-end">
-                  <Text className="text-2xl font-bold text-gray-900">#{user.rank}</Text>
-                  <Text className="text-sm text-gray-500 mt-0.5">{user.score} pts</Text>
+                <View className="p-1">
+                  <Text className="text-base font-medium text-gray-900 mb-1 p-1">{user.name}</Text>
+                  <View className="bg-gray-100 px-2 py-0.5 rounded self-start">
+                    <Text className="text-xs text-gray-600">{user.streak} day streak</Text>
+                  </View>
                 </View>
               </View>
-            ))}
-          </View>
+              <View className="items-end">
+                <Text className="text-2xl font-bold text-gray-900">#{user.rank}</Text>
+                <Text className="text-sm text-gray-500 mt-0.5">{user.score} pts</Text>
+              </View>
+            </View>
+          ))}
         </View>
+      </View>
 
-      </ScrollView>
     </PageLayout>
   );
 }

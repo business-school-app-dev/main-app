@@ -239,166 +239,161 @@ export default function SimulationResult() {
           onPress={() => setShowModal(true)}
         />}
     >
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="py-6">
-          {/* User Profile Summary */}
-          <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
-            <VStack space="md" className="p-4">
-              <Text className="text-base font-semibold text-gray-900">
-                Your Profile
-              </Text>
-
-              <HStack className="justify-between items-center mt-2">
-                {profile.map((item, index) => (
-                  <VStack key={index} className="flex-1 items-center" space="xs">
-                    <View className="w-16 h-16 rounded-full items-center justify-center bg-secondary">
-                      <Icon as={item.icon} size="xl" className="text-gray-900" />
-                    </View>
-                    <Text size="xs" className="text-gray-900 font-semibold text-center">
-                      {item.value}
-                    </Text>
-                    <Text size="2xs" className="text-gray-600">
-                      {item.label}
-                    </Text>
-                  </VStack>
-                ))}
-              </HStack>
-            </VStack>
-          </Card>
-
-          {/* Net Worth Projection */}
-          <VStack space="md" className="mb-8">
-            <Text className="text-xl font-bold text-gray-900">
-              Net Worth Projection (40 Years)
-            </Text>
-            <Text size="sm" className="text-gray-600">
-              Monte Carlo simulation showing possible outcomes
-            </Text>
-          </VStack>
-
-          {/* Chart */}
-          <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
-            <VStack space="sm">
-              <LineChart
-                data={chartData}
-                // width={0}
-                height={chartHeight}
-                color={PRIMARY_COLORS[600]}
-                thickness={3}
-                startFillColor={`${PRIMARY_COLORS[500]}33`}
-                endFillColor={`${PRIMARY_COLORS[500]}33`}
-                startOpacity={0.9}
-                endOpacity={0.1}
-                initialSpacing={5}
-                spacing={8}
-                noOfSections={4}
-                yAxisColor={GRAY_COLORS[200]}
-                xAxisColor={GRAY_COLORS[200]}
-                yAxisTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
-                xAxisLabelTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
-                showXAxisIndices
-                xAxisIndicesHeight={5}
-                xAxisIndicesWidth={1}
-                xAxisIndicesColor={GRAY_COLORS[300]}
-                areaChart
-                curved
-                isAnimated
-                showDataPointLabelOnFocus
-                hideDataPoints
-                yAxisLabelPrefix="$"
-                disableScroll={true}
-                hideRules={false}
-                formatYLabel={(value: string) => {
-                  const num = parseInt(value);
-                  if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
-                  if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
-                  return value;
-                }}
-                pointerConfig={{
-                  pointerStripHeight: chartHeight,
-                  pointerStripColor: PRIMARY_COLORS[500],
-                  pointerStripWidth: 1.5,
-                  pointerColor: PRIMARY_COLORS[500],
-                  radius: 6,
-                  pointerLabelWidth: 100,
-                  // pointerLabelHeight: 50,
-                  activatePointersOnLongPress: true,
-                  autoAdjustPointerLabelPosition: false,
-                  pointerLabelComponent: (items: any[]) => {
-                    return (
-                      <Text className="h-fit w-fit text-primary text-center text-sm font-semibold -ml-[77px] mt-[33.5px]">
-                        {formatCurrency(items[0].value)}
-                      </Text>
-                    );
-                  },
-                }}
-              />
-              <Text size="xs" className="text-gray-500 text-center">
-                40-year projection based on your inputs
-              </Text>
-            </VStack>
-          </Card>
-
-          {/* Statistics */}
-          <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
-            <VStack space="md" className="p-4">
-              <Text className="text-base font-semibold text-gray-900">
-                Projected Net Worth in 40 Years
-              </Text>
-
-              <VStack space="sm">
-                {assumptions.map((stat, index) => (
-                  <HStack key={index} className="justify-between items-center">
-                    <Text size="sm" className="text-gray-600">
-                      {stat.label}
-                    </Text>
-                    <Text className={`text-base font-bold ${stat.color}`}>
-                      {formatCurrency(stat.value)}
-                    </Text>
-                  </HStack>
-                ))}
+      {/* User Profile Summary */}
+      <VStack space="md">
+        <Text className="text-xl font-bold text-gray-900">
+          Your Profile
+        </Text>
+        <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
+          <HStack className="justify-between items-center mt-2">
+            {profile.map((item, index) => (
+              <VStack key={index} className="flex-1 items-center" space="xs">
+                <View className="w-16 h-16 rounded-full items-center justify-center bg-secondary">
+                  <Icon as={item.icon} size="xl" className="text-gray-900" />
+                </View>
+                <Text size="xs" className="text-gray-900 font-semibold text-center">
+                  {item.value}
+                </Text>
+                <Text size="2xs" className="text-gray-600">
+                  {item.label}
+                </Text>
               </VStack>
-            </VStack>
-          </Card>
+            ))}
+          </HStack>
+        </Card>
+      </VStack>
 
-          {/* Adjustable Parameters */}
-          <VStack space="md" className="mb-8">
-            <Text className="text-lg font-bold text-gray-900">
-              Adjust Your Assumptions
-            </Text>
+      {/* Net Worth Projection */}
+      <VStack space="md" className="mb-8">
+        <Text className="text-xl font-bold text-gray-900">
+          Net Worth Projection (40 Years)
+        </Text>
+        <Text size="sm" className="text-gray-600">
+          Monte Carlo simulation showing possible outcomes
+        </Text>
+      </VStack>
 
-            <LabeledSlider
-              label="Savings Rate"
-              value={savingsRate}
-              minValue={5}
-              maxValue={50}
-              step={5}
-              onChange={setSavingsRate}
-              suffix="%"
-            />
+      {/* Chart */}
+      <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
+        <VStack space="sm">
+          <LineChart
+            data={chartData}
+            // width={0}
+            height={chartHeight}
+            color={PRIMARY_COLORS[600]}
+            thickness={3}
+            startFillColor={`${PRIMARY_COLORS[500]}33`}
+            endFillColor={`${PRIMARY_COLORS[500]}33`}
+            startOpacity={0.9}
+            endOpacity={0.1}
+            initialSpacing={5}
+            spacing={8}
+            noOfSections={4}
+            yAxisColor={GRAY_COLORS[200]}
+            xAxisColor={GRAY_COLORS[200]}
+            yAxisTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
+            xAxisLabelTextStyle={{ color: GRAY_COLORS[500], fontSize: 10 }}
+            showXAxisIndices
+            xAxisIndicesHeight={5}
+            xAxisIndicesWidth={1}
+            xAxisIndicesColor={GRAY_COLORS[300]}
+            areaChart
+            curved
+            isAnimated
+            showDataPointLabelOnFocus
+            hideDataPoints
+            yAxisLabelPrefix="$"
+            disableScroll={true}
+            hideRules={false}
+            formatYLabel={(value: string) => {
+              const num = parseInt(value);
+              if (num >= 1000000) return `${(num / 1000000).toFixed(1)}M`;
+              if (num >= 1000) return `${(num / 1000).toFixed(0)}K`;
+              return value;
+            }}
+            pointerConfig={{
+              pointerStripHeight: chartHeight,
+              pointerStripColor: PRIMARY_COLORS[500],
+              pointerStripWidth: 1.5,
+              pointerColor: PRIMARY_COLORS[500],
+              radius: 6,
+              pointerLabelWidth: 100,
+              // pointerLabelHeight: 50,
+              activatePointersOnLongPress: true,
+              autoAdjustPointerLabelPosition: false,
+              pointerLabelComponent: (items: any[]) => {
+                return (
+                  <Text className="h-fit w-fit text-primary text-center text-sm font-semibold -ml-[77px] mt-[33.5px]">
+                    {formatCurrency(items[0].value)}
+                  </Text>
+                );
+              },
+            }}
+          />
+          <Text size="xs" className="text-gray-500 text-center">
+            40-year projection based on your inputs
+          </Text>
+        </VStack>
+      </Card>
 
-            <LabeledSlider
-              label="Expected Annual Return"
-              value={investmentReturn}
-              minValue={3}
-              maxValue={12}
-              step={0.5}
-              onChange={setInvestmentReturn}
-              suffix="%"
-            />
+      {/* Statistics */}
+      <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
+        <VStack space="md" className="p-4">
+          <Text className="text-base font-semibold text-gray-900">
+            Projected Net Worth in 40 Years
+          </Text>
 
-            <LabeledSlider
-              label="Target Retirement Age"
-              value={retirementAge}
-              minValue={55}
-              maxValue={75}
-              step={1}
-              onChange={setRetirementAge}
-              suffix=""
-            />
+          <VStack space="sm">
+            {assumptions.map((stat, index) => (
+              <HStack key={index} className="justify-between items-center">
+                <Text size="sm" className="text-gray-600">
+                  {stat.label}
+                </Text>
+                <Text className={`text-base font-bold ${stat.color}`}>
+                  {formatCurrency(stat.value)}
+                </Text>
+              </HStack>
+            ))}
           </VStack>
-        </View>
-      </ScrollView>
+        </VStack>
+      </Card>
+
+      {/* Adjustable Parameters */}
+      <VStack space="md" className="mb-8">
+        <Text className="text-lg font-bold text-gray-900">
+          Adjust Your Assumptions
+        </Text>
+
+        <LabeledSlider
+          label="Savings Rate"
+          value={savingsRate}
+          minValue={5}
+          maxValue={50}
+          step={5}
+          onChange={setSavingsRate}
+          suffix="%"
+        />
+
+        <LabeledSlider
+          label="Expected Annual Return"
+          value={investmentReturn}
+          minValue={3}
+          maxValue={12}
+          step={0.5}
+          onChange={setInvestmentReturn}
+          suffix="%"
+        />
+
+        <LabeledSlider
+          label="Target Retirement Age"
+          value={retirementAge}
+          minValue={55}
+          maxValue={75}
+          step={1}
+          onChange={setRetirementAge}
+          suffix=""
+        />
+      </VStack>
 
       {/* Help Modal */}
       <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="md">

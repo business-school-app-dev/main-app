@@ -160,236 +160,232 @@ const LoanCalculatorContent = () => {
 
   return (
     <PageLayout title="Student Loans">
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <View className="py-6">
-          {/* Header Section */}
-          <VStack space="md" className="mb-6">
-            <Heading size="xl" className="text-gray-900">
-              Calculate Your Path to Financial Freedom
-            </Heading>
+      {/* Header Section */}
+      <VStack space="md" className="mb-6">
+        <Heading size="xl" className="text-gray-900">
+          Calculate Your Path to Financial Freedom
+        </Heading>
+        <Text size="sm" className="text-gray-600">
+          Enter your student loan details to receive personalized advice on
+          balancing loan repayment with retirement savings.
+        </Text>
+      </VStack>
+
+      {/* Loan Inputs Section */}
+      <VStack space="md" className="mb-6">
+        <TextInputField
+          label="Total Loan Amount"
+          value={totalLoanText}
+          onChangeText={setTotalLoanText}
+          placeholder="50000"
+          keyboardType="numeric"
+          prefix="$"
+        />
+
+        <TextInputField
+          label="Interest Rate"
+          value={interestRateText}
+          onChangeText={setInterestRateText}
+          placeholder="5.5"
+          keyboardType="decimal-pad"
+          suffix="%"
+        />
+
+        <TextInputField
+          label="Loan Term (Years)"
+          value={loanTermText}
+          onChangeText={setLoanTermText}
+          placeholder="10"
+          keyboardType="numeric"
+        />
+
+        <TextInputField
+          label="Monthly Income"
+          value={monthlyIncomeText}
+          onChangeText={setMonthlyIncomeText}
+          placeholder="4000"
+          keyboardType="numeric"
+          prefix="$"
+        />
+
+        <TextInputField
+          label="Current Retirement Contribution (%)"
+          value={retirementContributionText}
+          onChangeText={setRetirementContributionText}
+          placeholder="5"
+          keyboardType="decimal-pad"
+          suffix="%"
+        />
+      </VStack>
+
+      {/* Loan Summary Section */}
+      <Card className="rounded-xl mb-8 bg-white border border-gray-200">
+        <VStack space="md" className="p-4">
+          <Text className="text-lg font-semibold text-gray-900">
+            Your Loan Summary
+          </Text>
+
+          <HStack className="justify-between items-center">
             <Text size="sm" className="text-gray-600">
-              Enter your student loan details to receive personalized advice on
-              balancing loan repayment with retirement savings.
+              Monthly Payment
             </Text>
-          </VStack>
+            <Text size="sm" className="text-primary-500 font-semibold">
+              {formatCurrency(monthlyPayment)}
+            </Text>
+          </HStack>
 
-          {/* Loan Inputs Section */}
-          <VStack space="md" className="mb-6">
-            <TextInputField
-              label="Total Loan Amount"
-              value={totalLoanText}
-              onChangeText={setTotalLoanText}
-              placeholder="50000"
-              keyboardType="numeric"
-              prefix="$"
-            />
+          <HStack className="justify-between items-center">
+            <Text size="sm" className="text-gray-600">
+              Total Interest
+            </Text>
+            <Text size="sm" className="text-gray-900 font-medium">
+              {formatCurrency(totalInterest)}
+            </Text>
+          </HStack>
 
-            <TextInputField
-              label="Interest Rate"
-              value={interestRateText}
-              onChangeText={setInterestRateText}
-              placeholder="5.5"
-              keyboardType="decimal-pad"
+          <HStack className="justify-between items-center">
+            <Text size="sm" className="text-gray-600">
+              Debt-to-Income Ratio
+            </Text>
+            <Text size="sm" className={`font-semibold ${debtToIncome > 36 ? "text-red-600" : "text-gray-900"}`}>
+              {formatPercentage(debtToIncome)}
+            </Text>
+          </HStack>
+        </VStack>
+      </Card>
+
+      {/* AI Recommendation Section */}
+      <Card className="rounded-xl mb-8 bg-secondary-0 border border-secondary-300">
+        <VStack space="sm" className="p-4">
+          <HStack space="xs" className="items-center">
+            <Icon as={Sparkles} size="md" className="text-secondary-600" />
+            <Text className="text-lg font-semibold text-gray-900">
+              AI Generated Recommendation
+            </Text>
+          </HStack>
+          <Text size="sm" className="text-gray-700 leading-5">
+            Your debt-to-income ratio of {formatPercentage(debtToIncome)} is{" "}
+            {debtToIncome > 36 ? "high" : "manageable"}. Consider balancing loan
+            payments with retirement contributions to take advantage of compound
+            interest and employer matching (if available).
+          </Text>
+        </VStack>
+      </Card>
+
+      {/* Why This Matters Section */}
+      <Card className="rounded-xl mb-8 bg-white border border-gray-200">
+        <VStack space="sm" className="p-4">
+          <HStack space="xs" className="items-center">
+            <Icon as={DollarSign} size="md" className="text-primary-500" />
+            <Text className="text-lg font-semibold text-gray-900">
+              Why This Matters
+            </Text>
+          </HStack>
+          <Text size="sm" className="text-gray-700 leading-5">
+            Paying off high-interest student loans early can save you thousands
+            in interest. However, don't completely neglect retirement savings,
+            especially if your employer offers matching contributions. Use the
+            slider below to find the right balance for your situation.
+          </Text>
+        </VStack>
+      </Card>
+
+      {/* Allocation Section */}
+      <VStack space="md" className="mt-12 mb-8">
+        <Text className="text-xl font-bold text-gray-900">
+          Adjust Your Allocation
+        </Text>
+
+        {effectiveDiscretionaryIncome <= 0 ? (
+          <Card className="rounded-xl p-4 bg-red-50 border border-red-200">
+            <Text size="sm" className="text-red-800">
+              Warning: Your expenses ({formatCurrency(monthlyPayment)}/mo) exceed
+              your income. No discretionary income available.
+            </Text>
+          </Card>
+        ) : (
+          <VStack space="md">
+            <Text size="sm" className="text-gray-700">
+              Based on your available discretionary income of{" "}
+              {formatCurrency(effectiveDiscretionaryIncome)}/month, decide how to
+              split between extra loan payments and retirement savings.
+            </Text>
+
+            <LabeledSlider
+              label="Loan vs Retirement Split"
+              value={loanAllocationPercentage}
+              minValue={0}
+              maxValue={100}
+              step={1}
+              onChange={setLoanAllocationPercentage}
               suffix="%"
             />
 
-            <TextInputField
-              label="Loan Term (Years)"
-              value={loanTermText}
-              onChangeText={setLoanTermText}
-              placeholder="10"
-              keyboardType="numeric"
-            />
-
-            <TextInputField
-              label="Monthly Income"
-              value={monthlyIncomeText}
-              onChangeText={setMonthlyIncomeText}
-              placeholder="4000"
-              keyboardType="numeric"
-              prefix="$"
-            />
-
-            <TextInputField
-              label="Current Retirement Contribution (%)"
-              value={retirementContributionText}
-              onChangeText={setRetirementContributionText}
-              placeholder="5"
-              keyboardType="decimal-pad"
-              suffix="%"
-            />
-          </VStack>
-
-          {/* Loan Summary Section */}
-          <Card className="rounded-xl mb-8 bg-white border border-gray-200">
-            <VStack space="md" className="p-4">
-              <Text className="text-lg font-semibold text-gray-900">
-                Your Loan Summary
-              </Text>
-
-              <HStack className="justify-between items-center">
-                <Text size="sm" className="text-gray-600">
-                  Monthly Payment
-                </Text>
-                <Text size="sm" className="text-primary-500 font-semibold">
-                  {formatCurrency(monthlyPayment)}
-                </Text>
-              </HStack>
-
-              <HStack className="justify-between items-center">
-                <Text size="sm" className="text-gray-600">
-                  Total Interest
-                </Text>
-                <Text size="sm" className="text-gray-900 font-medium">
-                  {formatCurrency(totalInterest)}
-                </Text>
-              </HStack>
-
-              <HStack className="justify-between items-center">
-                <Text size="sm" className="text-gray-600">
-                  Debt-to-Income Ratio
-                </Text>
-                <Text size="sm" className={`font-semibold ${debtToIncome > 36 ? "text-red-600" : "text-gray-900"}`}>
-                  {formatPercentage(debtToIncome)}
-                </Text>
-              </HStack>
-            </VStack>
-          </Card>
-
-          {/* AI Recommendation Section */}
-          <Card className="rounded-xl mb-8 bg-secondary-0 border border-secondary-300">
-            <VStack space="sm" className="p-4">
-              <HStack space="xs" className="items-center">
-                <Icon as={Sparkles} size="md" className="text-secondary-600" />
-                <Text className="text-lg font-semibold text-gray-900">
-                  AI Generated Recommendation
-                </Text>
-              </HStack>
-              <Text size="sm" className="text-gray-700 leading-5">
-                Your debt-to-income ratio of {formatPercentage(debtToIncome)} is{" "}
-                {debtToIncome > 36 ? "high" : "manageable"}. Consider balancing loan
-                payments with retirement contributions to take advantage of compound
-                interest and employer matching (if available).
-              </Text>
-            </VStack>
-          </Card>
-
-          {/* Why This Matters Section */}
-          <Card className="rounded-xl mb-8 bg-white border border-gray-200">
-            <VStack space="sm" className="p-4">
-              <HStack space="xs" className="items-center">
-                <Icon as={DollarSign} size="md" className="text-primary-500" />
-                <Text className="text-lg font-semibold text-gray-900">
-                  Why This Matters
-                </Text>
-              </HStack>
-              <Text size="sm" className="text-gray-700 leading-5">
-                Paying off high-interest student loans early can save you thousands
-                in interest. However, don't completely neglect retirement savings,
-                especially if your employer offers matching contributions. Use the
-                slider below to find the right balance for your situation.
-              </Text>
-            </VStack>
-          </Card>
-
-          {/* Allocation Section */}
-          <VStack space="md" className="mt-12 mb-8">
-            <Text className="text-xl font-bold text-gray-900">
-              Adjust Your Allocation
-            </Text>
-
-            {effectiveDiscretionaryIncome <= 0 ? (
-              <Card className="rounded-xl p-4 bg-red-50 border border-red-200">
-                <Text size="sm" className="text-red-800">
-                  Warning: Your expenses ({formatCurrency(monthlyPayment)}/mo) exceed
-                  your income. No discretionary income available.
-                </Text>
+            <HStack space="md" className="justify-between mt-4">
+              <Card className="rounded-xl flex-1 bg-white border border-gray-200">
+                <VStack space="xs" className="p-4 items-center">
+                  <Text size="xs" className="text-gray-600">
+                    Extra Loan Payment
+                  </Text>
+                  <Text size="xl" className="text-primary-500 font-bold">
+                    {formatPercentage(loanAllocationPercentage)}
+                  </Text>
+                  <Text size="sm" className="text-gray-900 font-semibold">
+                    {formatCurrency(extraLoanPayment)}/mo
+                  </Text>
+                </VStack>
               </Card>
-            ) : (
-              <VStack space="md">
-                <Text size="sm" className="text-gray-700">
-                  Based on your available discretionary income of{" "}
-                  {formatCurrency(effectiveDiscretionaryIncome)}/month, decide how to
-                  split between extra loan payments and retirement savings.
-                </Text>
 
-                <LabeledSlider
-                  label="Loan vs Retirement Split"
-                  value={loanAllocationPercentage}
-                  minValue={0}
-                  maxValue={100}
-                  step={1}
-                  onChange={setLoanAllocationPercentage}
-                  suffix="%"
-                />
-
-                <HStack space="md" className="justify-between mt-4">
-                  <Card className="rounded-xl flex-1 bg-white border border-gray-200">
-                    <VStack space="xs" className="p-4 items-center">
-                      <Text size="xs" className="text-gray-600">
-                        Extra Loan Payment
-                      </Text>
-                      <Text size="xl" className="text-primary-500 font-bold">
-                        {formatPercentage(loanAllocationPercentage)}
-                      </Text>
-                      <Text size="sm" className="text-gray-900 font-semibold">
-                        {formatCurrency(extraLoanPayment)}/mo
-                      </Text>
-                    </VStack>
-                  </Card>
-
-                  <Card className="rounded-xl flex-1 bg-white border border-gray-200">
-                    <VStack space="xs" className="p-4 items-center">
-                      <Text size="xs" className="text-gray-600">
-                        Retirement Savings
-                      </Text>
-                      <Text size="xl" className="text-primary-500 font-bold">
-                        {formatPercentage(100 - loanAllocationPercentage)}
-                      </Text>
-                      <Text size="sm" className="text-gray-900 font-semibold">
-                        {formatCurrency(retirementSavingsAllocation)}/mo
-                      </Text>
-                    </VStack>
-                  </Card>
-                </HStack>
-              </VStack>
-            )}
+              <Card className="rounded-xl flex-1 bg-white border border-gray-200">
+                <VStack space="xs" className="p-4 items-center">
+                  <Text size="xs" className="text-gray-600">
+                    Retirement Savings
+                  </Text>
+                  <Text size="xl" className="text-primary-500 font-bold">
+                    {formatPercentage(100 - loanAllocationPercentage)}
+                  </Text>
+                  <Text size="sm" className="text-gray-900 font-semibold">
+                    {formatCurrency(retirementSavingsAllocation)}/mo
+                  </Text>
+                </VStack>
+              </Card>
+            </HStack>
           </VStack>
+        )}
+      </VStack>
 
-          {/* Impact Projections Section */}
-          <Card className="rounded-xl mb-8 bg-white border border-gray-200">
-            <VStack space="md" className="p-4">
-              <Text className="text-lg font-semibold text-gray-900">
-                Impact Projections
-              </Text>
+      {/* Impact Projections Section */}
+      <Card className="rounded-xl mb-8 bg-white border border-gray-200">
+        <VStack space="md" className="p-4">
+          <Text className="text-lg font-semibold text-gray-900">
+            Impact Projections
+          </Text>
 
-              <HStack className="justify-between items-center">
-                <Text size="sm" className="text-gray-600 flex-1">
-                  Loan payoff with extra {formatCurrency(extraLoanPayment)}/mo:
-                </Text>
-                <Text size="sm" className="text-gray-900 font-medium">
-                  {yearsSaved > 0
-                    ? `~${yearsSaved.toFixed(1)} years faster`
-                    : extraLoanPayment === 0
-                      ? "No extra payment"
-                      : "Same timeframe"}
-                </Text>
-              </HStack>
+          <HStack className="justify-between items-center">
+            <Text size="sm" className="text-gray-600 flex-1">
+              Loan payoff with extra {formatCurrency(extraLoanPayment)}/mo:
+            </Text>
+            <Text size="sm" className="text-gray-900 font-medium">
+              {yearsSaved > 0
+                ? `~${yearsSaved.toFixed(1)} years faster`
+                : extraLoanPayment === 0
+                  ? "No extra payment"
+                  : "Same timeframe"}
+            </Text>
+          </HStack>
 
-              <HStack className="justify-between items-center">
-                <Text size="sm" className="text-gray-600 flex-1">
-                  Retirement in 30 years at {formatCurrency(retirementSavingsAllocation)}/mo:
-                </Text>
-                <Text size="sm" className="text-gray-900 font-medium">
-                  {retirementProjection > 0
-                    ? `~${formatLargeCurrency(retirementProjection)}`
-                    : "$0"}
-                </Text>
-              </HStack>
-            </VStack>
-          </Card>
-        </View>
-      </ScrollView>
+          <HStack className="justify-between items-center">
+            <Text size="sm" className="text-gray-600 flex-1">
+              Retirement in 30 years at {formatCurrency(retirementSavingsAllocation)}/mo:
+            </Text>
+            <Text size="sm" className="text-gray-900 font-medium">
+              {retirementProjection > 0
+                ? `~${formatLargeCurrency(retirementProjection)}`
+                : "$0"}
+            </Text>
+          </HStack>
+        </VStack>
+      </Card>
     </PageLayout>
   );
 };

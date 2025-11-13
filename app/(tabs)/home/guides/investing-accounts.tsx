@@ -25,66 +25,58 @@ export default function InvestingLiteracyScreen() {
 
   return (
     <PageLayout title="Investing Accounts">
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        <View className="py-6 flex-1">
-          {/* Guide Cards Grid */}
-          <View className="gap-4 flex-1">
-            <GuideCard
-              icon={<PiggyBank size={40} color={ICON_COLORS.red} />}
-              iconBgColor="bg-red-100"
-              title="Roth IRA"
-              description="Tax-free growth and withdrawals"
-              onPress={() => handleReadMore('Roth IRA')}
-            />
-            <GuideCard
-              icon={<TrendingUp size={40} color={ICON_COLORS.pink} />}
-              iconBgColor="bg-pink-100"
-              title="Traditional IRA"
-              description="Tax-deferred individual retirement"
-              onPress={() => handleReadMore('Traditional IRA')}
-            />
-            <GuideCard
-              icon={<Building2 size={40} color={ICON_COLORS.orange} />}
-              iconBgColor="bg-orange-100"
-              title="401(k)"
-              description="Employer-sponsored retirement plan"
-              onPress={() => handleReadMore('401(k)')}
-            />
-            <GuideCard
-              icon={<BarChart3 size={40} color={ICON_COLORS.cyan} />}
-              iconBgColor="bg-cyan-100"
-              title="ETFs"
-              description="Low-cost diversified investing"
-              onPress={() => handleReadMore('ETFs')}
-            />
-            <GuideCard
-              icon={<FolderOpen size={40} color={ICON_COLORS.violet} />}
-              iconBgColor="bg-violet-100"
-              title="Mutual Funds"
-              description="Professional portfolio management"
-              onPress={() => handleReadMore('Mutual Funds')}
-            />
-            <GuideCard
-              icon={<Wallet size={40} color={ICON_COLORS.blue} />}
-              iconBgColor="bg-blue-100"
-              title="Margin Account"
-              description="Advanced trading with leverage"
-              onPress={() => handleReadMore('Margin Account')}
-            />
-            <GuideCard
-              icon={<LineChart size={40} color={ICON_COLORS.emerald} />}
-              iconBgColor="bg-emerald-100"
-              title="Investment Strategies"
-              description="Build wealth over time"
-              onPress={() => handleReadMore('Investment Strategies')}
-            />
-          </View>
-        </View>
-      </ScrollView>
+      {/* Guide Cards Grid */}
+      <View className="gap-4 flex-1">
+        <GuideCard
+          icon={<PiggyBank size={40} color={ICON_COLORS.red} />}
+          iconBgColor="bg-red-100"
+          title="Roth IRA"
+          description="Tax-free growth and withdrawals"
+          onPress={() => handleReadMore('Roth IRA')}
+        />
+        <GuideCard
+          icon={<TrendingUp size={40} color={ICON_COLORS.pink} />}
+          iconBgColor="bg-pink-100"
+          title="Traditional IRA"
+          description="Tax-deferred individual retirement"
+          onPress={() => handleReadMore('Traditional IRA')}
+        />
+        <GuideCard
+          icon={<Building2 size={40} color={ICON_COLORS.orange} />}
+          iconBgColor="bg-orange-100"
+          title="401(k)"
+          description="Employer-sponsored retirement plan"
+          onPress={() => handleReadMore('401(k)')}
+        />
+        <GuideCard
+          icon={<BarChart3 size={40} color={ICON_COLORS.cyan} />}
+          iconBgColor="bg-cyan-100"
+          title="ETFs"
+          description="Low-cost diversified investing"
+          onPress={() => handleReadMore('ETFs')}
+        />
+        <GuideCard
+          icon={<FolderOpen size={40} color={ICON_COLORS.violet} />}
+          iconBgColor="bg-violet-100"
+          title="Mutual Funds"
+          description="Professional portfolio management"
+          onPress={() => handleReadMore('Mutual Funds')}
+        />
+        <GuideCard
+          icon={<Wallet size={40} color={ICON_COLORS.blue} />}
+          iconBgColor="bg-blue-100"
+          title="Margin Account"
+          description="Advanced trading with leverage"
+          onPress={() => handleReadMore('Margin Account')}
+        />
+        <GuideCard
+          icon={<LineChart size={40} color={ICON_COLORS.emerald} />}
+          iconBgColor="bg-emerald-100"
+          title="Investment Strategies"
+          description="Build wealth over time"
+          onPress={() => handleReadMore('Investment Strategies')}
+        />
+      </View>
       <GuideCardModal
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}

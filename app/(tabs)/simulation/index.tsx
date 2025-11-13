@@ -237,58 +237,56 @@ export default function SimulationSetup() {
       }
       backButtonHidden={currentQuestionIndex === 0}
     >
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
-        <Animated.View
-          style={{
-            opacity: fadeAnim,
-            transform: [{ translateX: slideAnim }],
-          }}
-          className="py-6 min-h-full"
-        >
-          {/* Progress Bar */}
-          <ProgressView
-            currentStep={currentQuestionIndex + 1}
-            totalSteps={QUESTIONS.length}
-            progress={progress}
-            className="mb-8"
+      <Animated.View
+        style={{
+          opacity: fadeAnim,
+          transform: [{ translateX: slideAnim }],
+        }}
+        className="min-h-full"
+      >
+        {/* Progress Bar */}
+        <ProgressView
+          currentStep={currentQuestionIndex + 1}
+          totalSteps={QUESTIONS.length}
+          progress={progress}
+          className="mb-8"
+        />
+
+        {/* Question */}
+        <VStack space="lg" className="mb-8">
+          <Text className="text-2xl font-bold text-gray-900">
+            {currentQuestion.question}
+          </Text>
+          <Text size="sm" className="text-gray-600">
+            Select one option to continue
+          </Text>
+        </VStack>
+
+        {/* Options */}
+        <View className="mb-8">
+          <SelectionCard
+            options={currentQuestion.options}
+            selectedValue={selectedOption}
+            onSelect={handleOptionSelect}
+            spacing="md"
           />
+        </View>
 
-          {/* Question */}
-          <VStack space="lg" className="mb-8">
-            <Text className="text-2xl font-bold text-gray-900">
-              {currentQuestion.question}
-            </Text>
-            <Text size="sm" className="text-gray-600">
-              Select one option to continue
-            </Text>
-          </VStack>
-
-          {/* Options */}
-          <View className="mb-8">
-            <SelectionCard
-              options={currentQuestion.options}
-              selectedValue={selectedOption}
-              onSelect={handleOptionSelect}
-              spacing="md"
-            />
-          </View>
-
-          {/* Navigation Buttons */}
-          <View className="mt-auto">
-            <TextButton
-              label={
-                currentQuestionIndex === QUESTIONS.length - 1
-                  ? 'See My Simulation'
-                  : 'Continue'
-              }
-              variant="secondary"
-              size="lg"
-              onPress={handleNext}
-              disabled={selectedOption === null}
-            />
-          </View>
-        </Animated.View>
-      </ScrollView>
+        {/* Navigation Buttons */}
+        <View className="mt-auto">
+          <TextButton
+            label={
+              currentQuestionIndex === QUESTIONS.length - 1
+                ? 'See My Simulation'
+                : 'Continue'
+            }
+            variant="secondary"
+            size="lg"
+            onPress={handleNext}
+            disabled={selectedOption === null}
+          />
+        </View>
+      </Animated.View>
     </PageLayout>
   );
 }

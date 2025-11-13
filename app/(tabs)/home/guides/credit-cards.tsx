@@ -21,38 +21,30 @@ export default function CreditCardsScreen() {
 
   return (
     <PageLayout title="Credit Cards">
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        <View className="py-6 flex-1">
-          {/* Guide Cards Grid */}
-          <View className="gap-4 flex-1">
-            <GuideCard
-              icon={<CreditCard size={40} color={ICON_COLORS.blue} />}
-              iconBgColor="bg-blue-100"
-              title="Credit Card Basics"
-              description="Learn how credit cards work"
-              onPress={() => handleReadMore('Credit Card Basics')}
-            />
-            <GuideCard
-              icon={<TrendingUp size={40} color={ICON_COLORS.green} />}
-              iconBgColor="bg-green-100"
-              title="Building Credit"
-              description="Improving your credit score"
-              onPress={() => handleReadMore('Building Credit')}
-            />
-            <GuideCard
-              icon={<Shield size={40} color={ICON_COLORS.purple} />}
-              iconBgColor="bg-purple-100"
-              title="Security Tips"
-              description="Keep your information safe"
-              onPress={() => handleReadMore('Security Tips')}
-            />
-          </View>
-        </View>
-      </ScrollView>
+      {/* Guide Cards Grid */}
+      <View className="gap-4 flex-1">
+        <GuideCard
+          icon={<CreditCard size={40} color={ICON_COLORS.blue} />}
+          iconBgColor="bg-blue-100"
+          title="Credit Card Basics"
+          description="Learn how credit cards work"
+          onPress={() => handleReadMore('Credit Card Basics')}
+        />
+        <GuideCard
+          icon={<TrendingUp size={40} color={ICON_COLORS.green} />}
+          iconBgColor="bg-green-100"
+          title="Building Credit"
+          description="Improving your credit score"
+          onPress={() => handleReadMore('Building Credit')}
+        />
+        <GuideCard
+          icon={<Shield size={40} color={ICON_COLORS.purple} />}
+          iconBgColor="bg-purple-100"
+          title="Security Tips"
+          description="Keep your information safe"
+          onPress={() => handleReadMore('Security Tips')}
+        />
+      </View>
       <GuideCardModal
         isModalVisible={isModalVisible}
         setIsModalVisible={setIsModalVisible}

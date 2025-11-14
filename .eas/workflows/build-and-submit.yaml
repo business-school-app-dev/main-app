@@ -1,8 +1,8 @@
 name: Build and submit
 
-# on:
-#   push:
-#     branches: ['main']
+on:
+  push:
+    branches: ["ios"]
 
 jobs:
   build_android:

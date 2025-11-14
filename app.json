@@ -1,15 +1,19 @@
 {
   "expo": {
-    "name": "UMDSmithBusinessApp",
-    "slug": "UMDSmithBusinessApp",
+    "name": "UMDollar",
+    "slug": "umdollar",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
-    "scheme": "umdsmithbusinessapp",
+    "scheme": "umdollar",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "com.umdsmithbusinessschoolappteam.umdollar",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +23,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.umdsmithbusinessschoolappteam.umdollar"
     },
     "web": {
       "bundler": "metro",
@@ -44,6 +49,13 @@
     "experiments": {
       "typedRoutes": true,
       "reactCompiler": true
-    }
+    },
+    "extra": {
+      "router": {},
+      "eas": {
+        "projectId": "1b797db0-b576-4b95-9ef7-910d0121a005"
+      }
+    },
+    "owner": "umd-smith-business-school-app-team"
   }
 }

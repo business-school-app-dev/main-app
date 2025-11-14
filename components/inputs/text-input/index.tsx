@@ -2,6 +2,7 @@ import { View, Text } from "react-native";
 import { Input, InputField } from "@/components/ui/input";
 import { Ionicons } from "@expo/vector-icons";
 import React, { forwardRef } from "react";
+import { PRIMARY } from '@/constants/colors';
 
 interface CustomTextInputProps {
   iconName?: keyof typeof Ionicons.glyphMap;
@@ -69,10 +70,10 @@ const CustomTextInput = forwardRef<any, CustomTextInputProps>(
         >
           {iconName && (
             <View className="pl-3 justify-center">
-              <Ionicons 
-                name={iconName} 
-                size={20} 
-                color={color || "#71717a"} 
+              <Ionicons
+                name={iconName}
+                size={20}
+                color={color || "#71717a"}
               />
             </View>
           )}
@@ -90,7 +91,7 @@ const CustomTextInput = forwardRef<any, CustomTextInputProps>(
             onBlur={onBlur}
             keyboardType={keyboardType}
             secureTextEntry={secureTextEntry}
-            selectionColor="rgb(225, 25, 50)"
+            selectionColor={PRIMARY}
             className="text-typography-500 text-md"
             {...inputProps}
           />
@@ -103,10 +104,9 @@ const CustomTextInput = forwardRef<any, CustomTextInputProps>(
 
         {/* Helper Text */}
         {helperText && (
-          <Text 
-            className={`text-xs mt-1 ${
-              isInvalid ? "text-error-700" : "text-typography-500"
-            }`}
+          <Text
+            className={`text-xs mt-1 ${isInvalid ? "text-error-700" : "text-typography-500"
+              }`}
           >
             {helperText}
           </Text>

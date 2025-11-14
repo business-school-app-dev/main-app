@@ -31,7 +31,7 @@ function TextButton({
   const getVariantClasses = () => {
     switch (variant) {
       case "secondary":
-        return "bg-secondary border border-secondary";
+        return "bg-secondary-500 border border-secondary-300 data-[hover=true]:border-secondary-550 data-[hover=true]:bg-secondary-550 data-[active=true]:border-secondary-550 data-[active=true]:bg-secondary-550";
       case "outline":
         return "bg-transparent border border-secondary";
       case "link":
@@ -47,7 +47,7 @@ function TextButton({
   const getTextColorClass = () => {
     switch (variant) {
       case "secondary":
-        return "text-background";
+        return "text-black data-[hover=true]:text-gray-800 data-[active=true]:text-gray-800";
       case "outline":
         return "text-secondary";
       case "link":
@@ -89,6 +89,7 @@ function TextButton({
     <Button
       onPress={onPress}
       disabled={disabled}
+      // isPressed={true}
       className={`h-fit ${center ? "items-center justify-center" : ""} ${getRoundedClasses()} ${getVariantClasses()} ${getSizeClasses()} ${disabled ? "opacity-50" : ""
         } ${className || ""}`}
     >

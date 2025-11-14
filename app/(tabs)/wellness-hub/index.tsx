@@ -5,14 +5,28 @@ import { Pressable } from "@/components/ui/pressable";
 import { Icon } from "@/components/ui/icon";
 import PageLayout from "@/components/layouts/page-layout";
 import { StatusBar } from "expo-status-bar";
+import * as Linking from "expo-linking";  
 import {
-  Calculator,
+  Newspaper,       
   BookOpen,
   Award,
   Briefcase,
   Calendar,
   Clock,
 } from "lucide-react-native";
+
+async function openLink(url: string) {
+  try {
+    const ok = await Linking.canOpenURL(url);
+    if (!ok) {
+      console.error("❌ Cannot open URL:", url);
+      return;
+    }
+    await Linking.openURL(url);
+  } catch (error) {
+    console.error("❌ Error opening URL:", error);
+  }
+}
 
 export default function App() {
   const events = [
@@ -47,7 +61,11 @@ export default function App() {
         backButtonHidden
         className="flex-1 bg-gray-50"
       >
-        <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerClassName="pb-5">
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          className="flex-1"
+          contentContainerClassName="pb-5"
+        >
           {/* Hero Section */}
           <Box className="w-full">
             <ImageBackground
@@ -58,10 +76,10 @@ export default function App() {
               <Box className="absolute inset-0 bg-black/40" />
               <Box className="items-center space-y-3 px-6">
                 <Text className="text-3xl font-semibold text-white text-center">
-                  Finance at Your Fingertips
+                  Finance at Your Fingertipssss
                 </Text>
                 <Text className="text-xl text-white text-center">
-                  Welcome Terp!
+                  Welcome Terp!!!!!!!!
                 </Text>
               </Box>
             </ImageBackground>
@@ -71,14 +89,36 @@ export default function App() {
           <Box className="w-full pt-4 pb-2">
             <Box className="flex-row flex-wrap justify-between">
               {[
-                { title: "Budgeting Tools", icon: Calculator },
+                { title: "Finance News", icon: Newspaper },
                 { title: "Financial Literacy", icon: BookOpen },
                 { title: "Scholarship Help", icon: Award },
                 { title: "Internship Help", icon: Briefcase },
               ].map((item, index) => (
                 <Box key={index} className="w-[48%] mb-4">
                   <Pressable
-                    onPress={() => console.log(`${item.title} pressed`)}
+                    onPress={() => {
+                      if (item.title === "Scholarship Help") {
+                        openLink(
+                          "https://financialaid.umd.edu/resources-policies/scholarship-search"
+                        );
+                      } else if (item.title === "Financial Literacy") {
+                        openLink(
+                          "https://www.rhsmith.umd.edu/centers-initiatives/financial-wellness/resources"
+                        );
+                      } else if (item.title === "Finance News") {
+                        openLink(
+                          "https://www.rhsmith.umd.edu/centers-initiatives/financial-wellness/news"
+                        );
+                      } 
+                      else if (item.title === "Internship Help") {
+                        openLink(
+                          "https://careers.umd.edu/find-jobs-internships"
+                        );
+                      }
+                      else {
+                        console.log(`${item.title} pressed`);
+                      }
+                    }}
                     className="bg-white rounded-lg border border-gray-200 h-32 items-center justify-center space-y-2"
                   >
                     <Icon as={item.icon} size="xl" className="text-red-600" />
@@ -95,12 +135,16 @@ export default function App() {
           <Box className="w-full pt-3 pb-6">
             <Box className="mb-4">
               <Pressable
-                onPress={() => console.log("Schedule Meeting pressed")}
+                onPress={() =>
+                  openLink(
+                    "https://www.rhsmith.umd.edu/centers-initiatives/financial-wellness/about-us"
+                  )
+                }
                 className="bg-white rounded-lg border border-gray-200 flex-row items-center p-5 h-24"
               >
                 <Icon as={Calendar} size="xl" className="text-red-600 mr-5" />
                 <Text className="text-base font-semibold text-gray-900 flex-1">
-                  Schedule a Meeting with a Financial Advisor
+                  Meet with a Financial Advisor
                 </Text>
               </Pressable>
             </Box>
@@ -133,7 +177,6 @@ export default function App() {
               horizontal
               showsHorizontalScrollIndicator={false}
               className="mt-5"
-              contentContainerClassName=""
             >
               <Box className="flex-row">
                 {events.map((event, idx) => (
@@ -143,7 +186,11 @@ export default function App() {
                     className="bg-white rounded-lg border border-gray-200 w-64 mr-4 p-4"
                   >
                     <Box className="flex-row items-center mb-2">
-                      <Icon as={Calendar} size="md" className="text-red-600 mr-2" />
+                      <Icon
+                        as={Calendar}
+                        size="md"
+                        className="text-red-600 mr-2"
+                      />
                       <Text className="text-sm font-medium text-red-600">
                         {event.date}
                       </Text>

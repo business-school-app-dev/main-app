@@ -1,12 +1,15 @@
 import PageLayout from '@/components/layouts/page-layout';
 import { Heading } from '@/components/ui/heading';
+import { SearchIcon } from '@/components/ui/icon';
+import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useLocalSearchParams } from 'expo-router';
-import React from 'react';
+import React, { useState, useMemo } from 'react';
 import { View } from 'react-native';
 
 const CourseOptionsScreen = () => {
+  const [searchText, setSearchText] = useState('');
   const { recommendations, comfort_level, max_credits } =
     useLocalSearchParams<{
       recommendations?: string;
@@ -15,13 +18,35 @@ const CourseOptionsScreen = () => {
     }>();
 
   // 👇 turn the JSON string back into an array
-  const courses = recommendations ? JSON.parse(recommendations) : [];
+  const allCourses = recommendations ? JSON.parse(recommendations) : [];
+
+  // 👇 filter courses based on search text
+  const courses = useMemo(() => {
+    if (!searchText.trim()) {
+      return allCourses;
+    }
+
+    const lowerSearch = searchText.toLowerCase();
+    return allCourses.filter((course: any) =>
+      course.name?.toLowerCase().includes(lowerSearch) ||
+      course.course_id?.toLowerCase().includes(lowerSearch) ||
+      course.description?.toLowerCase().includes(lowerSearch)
+    );
+  }, [allCourses, searchText]);
 
   return (
     <PageLayout title="Recommended Courses">
-      <Heading size="xl" className="text-gray-900">
-        Recommended Courses
-      </Heading>
+      <Input className="bg-zinc-200 border-outline-100 rounded-lg">
+        <InputSlot className="pl-3">
+          <InputIcon as={SearchIcon} />
+        </InputSlot>
+        <InputField
+          onChangeText={(text) => setSearchText(text.toLowerCase())}
+          placeholder="Search..."
+          selectionColor="#E11932"
+          className="text-md"
+        />
+      </Input>
 
       {comfort_level && (
         <Text size="xs" className="text-gray-600 mt-1">

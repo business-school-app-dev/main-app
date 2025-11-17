@@ -202,7 +202,7 @@ export default function SimulationResult() {
     },
   ]
 
-  const assumptions = [
+  const assumptions =  [
     {
       label: 'Best Case (75th percentile)',
       value: stats.percentile75,

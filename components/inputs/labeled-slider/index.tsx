@@ -44,7 +44,7 @@ export default function LabeledSlider({
             maxValue={maxValue}
             step={step}
             onChange={onChange}
-            size="md"
+            size="lg"
           >
             <SliderTrack>
               <SliderFilledTrack className="bg-primary-500" />

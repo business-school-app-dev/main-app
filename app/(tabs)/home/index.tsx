@@ -47,11 +47,10 @@ export default function App() {
   };
 
   return (
-    <PageLayout title="Home" backButtonHidden>
+    <PageLayout title="Home" backButtonHidden className="-mt-6">
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1 -mx-5"
-        contentContainerClassName="pb-5"
       >
         {/* Hero Section */}
         <Box className="w-full pb-6">

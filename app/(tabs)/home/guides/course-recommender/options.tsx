@@ -1,9 +1,11 @@
 import PageLayout from '@/components/layouts/page-layout';
 import { Heading } from '@/components/ui/heading';
+import { SearchIcon } from '@/components/ui/icon';
+import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useLocalSearchParams } from 'expo-router';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import { View } from 'react-native';
 
 type Course = {
@@ -24,6 +26,7 @@ type Course = {
 };
 
 const CourseOptionsScreen = () => {
+  const [searchText, setSearchText] = useState('');
   const { recommendations, comfort_level, max_credits } =
     useLocalSearchParams<{
       recommendations?: string;
@@ -31,25 +34,36 @@ const CourseOptionsScreen = () => {
       max_credits?: string;
     }>();
 
-  // safely parse the JSON string into an array
-  let courses: Course[] = [];
-  if (recommendations) {
-    try {
-      const parsed = JSON.parse(recommendations);
-      courses = Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      console.error('Failed to parse recommendations param:', e);
-      courses = [];
-    }
-  }
+  // 👇 turn the JSON string back into an array
+  const allCourses = recommendations ? JSON.parse(recommendations) : [];
 
-  const isAllCoursesMode = comfort_level === 'all';
+  // 👇 filter courses based on search text
+  const courses = useMemo(() => {
+    if (!searchText.trim()) {
+      return allCourses;
+    }
+
+    const lowerSearch = searchText.toLowerCase();
+    return allCourses.filter((course: any) =>
+      course.name?.toLowerCase().includes(lowerSearch) ||
+      course.course_id?.toLowerCase().includes(lowerSearch) ||
+      course.description?.toLowerCase().includes(lowerSearch)
+    );
+  }, [allCourses, searchText]);
 
   return (
-    <PageLayout title={isAllCoursesMode ? 'All Courses' : 'Recommended Courses'}>
-      <Heading size="xl" className="text-gray-900">
-        {isAllCoursesMode ? 'All Courses' : 'Recommended Courses'}
-      </Heading>
+    <PageLayout title="Recommended Courses">
+      <Input className="bg-zinc-200 border-outline-100 rounded-lg">
+        <InputSlot className="pl-3">
+          <InputIcon as={SearchIcon} />
+        </InputSlot>
+        <InputField
+          onChangeText={(text) => setSearchText(text.toLowerCase())}
+          placeholder="Search..."
+          selectionColor="#E11932"
+          className="text-md"
+        />
+      </Input>
 
       {/* Subtitle / metadata row */}
       {comfort_level && !isAllCoursesMode && (

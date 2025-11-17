@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.umdsmithbusinessschoolappteam.umdollar",
+      "bundleIdentifier": "com.umd-smith-business-school-app-team.umdollar",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -44,7 +44,8 @@
             "backgroundColor": "#000000"
           }
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,
@@ -53,7 +54,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "1b797db0-b576-4b95-9ef7-910d0121a005"
+        "projectId": "e52f1de9-996a-4005-af0c-8f5c5132ecb4"
       }
     },
     "owner": "umd-smith-business-school-app-team"

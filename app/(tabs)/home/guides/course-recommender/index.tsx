@@ -56,15 +56,15 @@ const CourseRecommenderScreen = () => {
     const maxCredits = "3";
 
     setIsLoading(true);
-  
+
     try {
-      const url = `http://127.0.0.1:5000/api/v1/recommend?comfort=${comfortLevel.toLowerCase()}&max_credits=${maxCredits}`;
+      const url = `${API_BASE_URL}/recommend?comfort=${comfortLevel.toLowerCase()}&max_credits=${maxCredits}`;
       const response = await fetch(url);
-  
+
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
       }
-  
+
       const data = await response.json();
 
       router.navigate({

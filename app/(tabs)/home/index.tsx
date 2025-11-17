@@ -1,4 +1,4 @@
-import { ScrollView, ImageBackground, View, TouchableOpacity } from "react-native";
+import { ScrollView, ImageBackground, View, TouchableOpacity, Platform } from "react-native";
 import { Box } from "@/components/ui/box";
 import { Text } from "@/components/ui/text";
 import { Pressable } from "@/components/ui/pressable";
@@ -12,38 +12,61 @@ import {
   Banknote,
   TrendingUp,
 } from "lucide-react-native";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { router } from "expo-router";
 import { PRIMARY } from '@/constants/colors';
 
+type EventItem = {
+  title: string;
+  date: string;           // e.g. "Monday, November 17, 2025"
+  time?: string | null;   // e.g. "12:00 PM EST"
+  description?: string | null;
+  url: string;
+};
+
 export default function App() {
-  const events = [
-    {
-      title: "Financial Planning Workshop",
-      date: "Nov 15",
-      detail: "Learn budgeting basics and investment strategies",
-    },
-    {
-      title: "Career & Finance Fair",
-      date: "Nov 22",
-      detail: "Meet employers and financial advisors",
-    },
-    {
-      title: "Student Loan Information Session",
-      date: "Dec 1",
-      detail: "Understanding repayment options and forgiveness programs",
-    },
-    {
-      title: "Tax Preparation Workshop",
-      date: "Dec 8",
-      detail: "Free tax prep assistance for students",
-    },
-  ];
+  // 🔄 Events now come from the API instead of being hard-coded
+  const [events, setEvents] = useState<EventItem[]>([]);
 
   const [modalVisible, setModalVisible] = useState(false);
 
   const handleMeetClick = () => {
     setModalVisible(true);
+  };
+
+  // Fetch events from the backend API (Postgres-backed)
+  useEffect(() => {
+    const fetchEvents = async () => {
+      try {
+        const baseUrl =
+          Platform.OS === "android"
+            ? "http://10.0.2.2:5000" // Android emulator → host machine
+            : "http://localhost:5000"; // iOS simulator / other
+
+        const res = await fetch(
+          `${baseUrl}/api/v1/scraping/events?days=365`
+        );
+
+        if (!res.ok) {
+          console.error("Failed to fetch events", res.status);
+          return;
+        }
+
+        const data: EventItem[] = await res.json();
+        setEvents(data.slice(0, 10));
+      } catch (err) {
+        console.error("Error fetching events", err);
+      }
+    };
+
+    fetchEvents();
+  }, []);
+
+  const formatDateTime = (date: string, time?: string | null) => {
+    if (time && time.trim().length > 0) {
+      return `${date} · ${time}`;
+    }
+    return date;
   };
 
   return (
@@ -154,8 +177,8 @@ export default function App() {
                     router.push({
                       pathname: '/webview-modal',
                       params: {
-                        url: 'https://www.google.com',
-                        title: "Campus Event"
+                        url: event.url,
+                        title: event.title
                       }
                     });
                   }}
@@ -168,7 +191,7 @@ export default function App() {
                       className="text-red-600 mr-2"
                     />
                     <Text className="text-sm font-medium text-red-600">
-                      {event.date}
+                      {formatDateTime(event.date, event.time)}
                     </Text>
                   </Box>
 
@@ -177,7 +200,7 @@ export default function App() {
                   </Text>
 
                   <Text className="text-sm text-gray-600">
-                    {event.detail}
+                    {event.description}
                   </Text>
                 </Pressable>
               ))}

@@ -7,25 +7,9 @@ import { VStack } from '@/components/ui/vstack';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { View } from 'react-native';
+import Course from '@/types/Course';
 
-type Course = {
-  course_id: string;
-  name: string;
-  credits?: string | number;
-  department?: string;
-  description?: string;
-  semester?: string;
-  // older recommendation shape might have restrictions at top level
-  restrictions?: string | null;
-  // new "all courses" shape
-  relationships?: {
-    restrictions?: string | null;
-    [key: string]: any;
-  };
-  [key: string]: any;
-};
-
-const CourseOptionsScreen = () => {
+export default function CourseOptionsScreen() {
   const [searchText, setSearchText] = useState('');
   const { recommendations, comfort_level, max_credits } =
     useLocalSearchParams<{
@@ -59,9 +43,6 @@ const CourseOptionsScreen = () => {
       course.description?.toLowerCase().includes(lowerSearch)
     );
   }, [courses_list, searchText]);
-
-
-  const isAllCoursesMode = comfort_level === 'all';
 
   return (
     <PageLayout title="Recommended Courses">
@@ -109,5 +90,3 @@ const CourseOptionsScreen = () => {
     </PageLayout>
   );
 };
-
-export default CourseOptionsScreen;

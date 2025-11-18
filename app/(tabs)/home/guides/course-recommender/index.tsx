@@ -1,5 +1,6 @@
 import FormSelect from '@/components/inputs/form-select';
 import TextButton from '@/components/inputs/text-button';
+import HelpButton from '@/components/inputs/help-button';
 import PageLayout from '@/components/layouts/page-layout';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
@@ -101,18 +102,22 @@ const CourseRecommenderScreen = () => {
         setComfortLevel,
       }}
     >
-      <PageLayout title="Course Recommender">
-        <VStack space="md">
-          <Heading size="xl" className="text-gray-900">
-            Financial Course Recommender
-          </Heading>
-          <Text size="xs" className="text-gray-600">
-            Tell us about yourself and we'll recommend the perfect courses for your financial literacy journey
-          </Text>
-        </VStack>
 
+      <PageLayout
+        title="Course Recommender"
+        rightView={
+          <HelpButton
+            title="Financial Course Recommender"
+            content="Tell us about yourself and we'll recommend the perfect courses for your financial literacy journey. Select your current credits, major(s), minor(s), and comfort level to get personalized course recommendations."
+            variant="link"
+            color="white"
+          />
+        }
+      >
+        {/* Section Title */}
+        <Heading size="md" className="mb-6">Student Details</Heading>
         {/* Form Inputs Section */}
-        <VStack space="xs" className="mt-6">
+        <VStack space="xs">
           <FormSelect
             label="Credits"
             placeholder="Select option"
@@ -168,7 +173,7 @@ const CourseRecommenderScreen = () => {
 
         {/* Submit Buttons 
             * TODO: add logic for only navigating if all dropdowns are filled, otw warning message*/}
-        <VStack space="lg" className="mt-6">
+        <VStack space="lg" className="mt-12">
           <TextButton
             label={isLoading ? "Getting Recommendations..." : "Get Course Recommendations"}
             onPress={() => {

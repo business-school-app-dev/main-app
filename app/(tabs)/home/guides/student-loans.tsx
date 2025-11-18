@@ -11,6 +11,7 @@ import { Sparkles, DollarSign } from "lucide-react-native";
 import TextInputField from "@/components/inputs/text-input-field";
 import PageLayout from "@/components/layouts/page-layout";
 import LabeledSlider from "@/components/inputs/labeled-slider";
+import HelpButton from "@/components/inputs/help-button";
 
 // --- Helper Functions ---
 const formatCurrency = (amount: number) => {
@@ -159,20 +160,23 @@ const LoanCalculatorContent = () => {
   }, [retirementSavingsAllocation]);
 
   return (
-    <PageLayout title="Student Loans">
-      {/* Header Section */}
-      <VStack space="md" className="mb-6">
-        <Heading size="xl" className="text-gray-900">
-          Calculate Your Path to Financial Freedom
-        </Heading>
-        <Text size="sm" className="text-gray-600">
-          Enter your student loan details to receive personalized advice on
-          balancing loan repayment with retirement savings.
-        </Text>
-      </VStack>
-
+    <PageLayout
+      title="Student Loans"
+      rightView={
+        <HelpButton
+          title="Your Path to Financial Freedom"
+          content="Enter your student loan details to receive personalized advice on balancing loan repayment with retirement savings. This calculator helps you understand your monthly payments, debt-to-income ratio, and how to optimize your financial future."
+          variant="link"
+          color="white"
+        />
+      }
+    >
+      {/* Section Title */}
+      <Text className="text-xl font-bold text-gray-900">
+        Loan Details
+      </Text>
       {/* Loan Inputs Section */}
-      <VStack space="md" className="mb-6">
+      <VStack space="md" className="my-6">
         <TextInputField
           label="Total Loan Amount"
           value={totalLoanText}
@@ -297,8 +301,8 @@ const LoanCalculatorContent = () => {
         </Text>
 
         {effectiveDiscretionaryIncome <= 0 ? (
-          <Card className="rounded-xl p-4 bg-red-50 border border-red-200">
-            <Text size="sm" className="text-red-800">
+          <Card className="rounded-xl p-4 bg-primary-0 border border-primary-200">
+            <Text size="sm" className="text-primary-800">
               Warning: Your expenses ({formatCurrency(monthlyPayment)}/mo) exceed
               your income. No discretionary income available.
             </Text>

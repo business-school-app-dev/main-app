@@ -1,3 +1,8 @@
+import {
+  fetchAllCourses,
+  getRecommendations,
+  RecommendationResponse,
+} from "@/api/courseRecommender";
 import FormSelect from '@/components/inputs/form-select';
 import HelpButton from '@/components/inputs/help-button';
 import TextButton from '@/components/inputs/text-button';
@@ -6,12 +11,6 @@ import { Heading } from '@/components/ui/heading';
 import { VStack } from '@/components/ui/vstack';
 import { router } from "expo-router";
 import React, { createContext, useContext, useState } from 'react';
-
-interface RecommendationResponse {
-  recommendations?: any[];
-  comfort_level?: string;
-  max_credits?: string | number;
-}
 
 interface CourseContextType {
   credit: string;
@@ -61,22 +60,13 @@ const CourseRecommenderScreen = () => {
 
   const creditHours = ["N/A", "1", "2", "3", "4"];
 
-  const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
-
   const allCourses = async () => {
     console.log("Button pressed → allCourses running");
 
     setIsLoading(true);
 
     try {
-      const url = `${API_BASE_URL}/courses/all`;
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        throw new Error(`Request failed with status ${response.status}`);
-      }
-
-      const data = await response.json();
+      const data = await fetchAllCourses();
       // data is an ARRAY of courses based on your sample JSON
 
       router.navigate({
@@ -103,24 +93,7 @@ const CourseRecommenderScreen = () => {
     setIsLoading(true);
 
     try {
-      const url = `${API_BASE_URL}/recommend?comfort=${comfortLevel.toLowerCase()}&max_credits=${credit}`;
-      const response = await fetch(url);
-
-      if (!response.ok) {
-        // even if status is bad, we'll treat as "no courses" instead of crashing
-        router.navigate({
-          pathname: "/home/guides/course-recommender/courses",
-          params: {
-            recommendations: JSON.stringify([]),
-            comfort_level: comfortLevel,
-            max_credits: credit,
-          },
-        });
-        return;
-      }
-
-      // 👇 tell TS what this shape is
-      const data = (await response.json()) as RecommendationResponse;
+      const data = await getRecommendations(comfortLevel, credit);
 
       const recs = Array.isArray(data.recommendations)
         ? data.recommendations

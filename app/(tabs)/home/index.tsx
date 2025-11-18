@@ -14,15 +14,7 @@ import {
 } from "lucide-react-native";
 import { useState, useEffect } from "react";
 import { router } from "expo-router";
-import { PRIMARY } from '@/constants/colors';
-
-type EventItem = {
-  title: string;
-  date: string;           // e.g. "Monday, November 17, 2025"
-  time?: string | null;   // e.g. "12:00 PM EST"
-  description?: string | null;
-  url: string;
-};
+import { fetchEvents, EventItem } from "@/api/home";
 
 export default function App() {
   // 🔄 Events now come from the API instead of being hard-coded
@@ -36,30 +28,17 @@ export default function App() {
 
   // Fetch events from the backend API (Postgres-backed)
   useEffect(() => {
-    const fetchEvents = async () => {
+    const loadEvents = async () => {
       try {
-        const baseUrl =
-          Platform.OS === "android"
-            ? "http://10.0.2.2:5000" // Android emulator → host machine
-            : "http://127.0.0.1:5000"; // iOS simulator / other
-
-        const res = await fetch(
-          `${baseUrl}/api/v1/scraping/events?days=365`
-        );
-
-        if (!res.ok) {
-          console.error("Failed to fetch events", res.status);
-          return;
-        }
-
-        const data: EventItem[] = await res.json();
+        const data = await fetchEvents(365);
         setEvents(data.slice(0, 10));
       } catch (err) {
         console.error("Error fetching events", err);
+        setEvents([]); // Ensure events is an empty array on error
       }
     };
 
-    fetchEvents();
+    loadEvents();
   }, []);
 
   const formatDateTime = (date: string, time?: string | null) => {

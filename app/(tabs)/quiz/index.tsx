@@ -1,15 +1,11 @@
-import React, { useState } from 'react';
-import { ScrollView, StatusBar } from "react-native";
-
+import React, { useState, useEffect, useRef } from 'react';
+import { ScrollView, Animated } from "react-native";
 import { Icon } from "@/components/ui/icon";
 import { Pressable } from "@/components/ui/pressable";
 import { Text } from "@/components/ui/text";
-
 import { Avatar, AvatarBadge, AvatarFallbackText, AvatarImage } from '@/components/ui/avatar';
-
 import { StarIcon } from '@/components/ui/icon';
 import { Flame } from 'lucide-react-native';
-
 import PageLayout from '@/components/layouts/page-layout';
 import { HelpCircle } from 'lucide-react-native';
 import { router } from 'expo-router';
@@ -39,6 +35,71 @@ export default function Leaderboard() {
   // TODO: Replace with actual authentication check
   const [isSignedIn, setIsSignedIn] = useState(false); // Change this to true to test signed-in state
 
+  const cardFadeAnim = useRef(new Animated.Value(1)).current;
+  const cardScaleAnim = useRef(new Animated.Value(1)).current;
+  const quizButtonFadeAnim = useRef(new Animated.Value(0)).current;
+  const quizButtonSlideAnim = useRef(new Animated.Value(-20)).current;
+
+  useEffect(() => {
+    // Animate card transition when isSignedIn changes
+    Animated.sequence([
+      // Fade out and scale down current card
+      Animated.parallel([
+        Animated.timing(cardFadeAnim, {
+          toValue: 0,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+        Animated.timing(cardScaleAnim, {
+          toValue: 0.95,
+          duration: 200,
+          useNativeDriver: true,
+        }),
+      ]),
+      // Fade in and scale up new card
+      Animated.parallel([
+        Animated.timing(cardFadeAnim, {
+          toValue: 1,
+          duration: 300,
+          useNativeDriver: true,
+        }),
+        Animated.spring(cardScaleAnim, {
+          toValue: 1,
+          tension: 50,
+          friction: 7,
+          useNativeDriver: true,
+        }),
+      ]),
+    ]).start();
+
+    // Animate quiz button appearance/disappearance
+    if (isSignedIn) {
+      quizButtonFadeAnim.setValue(0);
+      quizButtonSlideAnim.setValue(-20);
+      Animated.parallel([
+        Animated.timing(quizButtonFadeAnim, {
+          toValue: 1,
+          duration: 400,
+          delay: 200,
+          useNativeDriver: true,
+        }),
+        Animated.spring(quizButtonSlideAnim, {
+          toValue: 0,
+          tension: 50,
+          friction: 7,
+          delay: 200,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    } else {
+      Animated.timing(quizButtonFadeAnim, {
+        toValue: 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [isSignedIn]);
+
   const getRankIcon = (rank: number) => {
     if (rank === 1) return <Icon as={StarIcon} size="lg" color="gold" />
     if (rank === 2) return <Icon as={StarIcon} size="lg" color="gray" />
@@ -48,9 +109,14 @@ export default function Leaderboard() {
 
   return (
     <PageLayout title="Quiz" backButtonHidden>
-      <ScrollView showsVerticalScrollIndicator={false} className="flex-1" contentContainerClassName="pb-10">
-        {/* Your Rank Card / Sign In Card */}
-        <Box className="pt-4 pb-2">
+      {/* Your Rank Card / Sign In Card */}
+      <Box className="pt-4 pb-2">
+        <Animated.View
+          style={{
+            opacity: cardFadeAnim,
+            transform: [{ scale: cardScaleAnim }],
+          }}
+        >
           {isSignedIn ? (
             <Box className="bg-primary-500 rounded-xl p-4 border border-gray-200">
               <Box className="flex-row justify-between mb-3">
@@ -83,7 +149,7 @@ export default function Leaderboard() {
                 </Box>
                 <Pressable
                   onPress={() => setIsSignedIn(false)}
-                  className="bg-white/20 px-4 py-2 rounded-lg active:bg-white/30"
+                  className="bg-white/20 px-4 py-2 rounded-full active:bg-white/30"
                 >
                   <Text className="text-sm font-semibold text-white">Sign Out</Text>
                 </Pressable>
@@ -108,11 +174,18 @@ export default function Leaderboard() {
               </Box>
             </Pressable>
           )}
-        </Box>
+        </Animated.View>
+      </Box>
 
-        {/* Daily Quiz Button - Only show if signed in */}
-        {isSignedIn && (
-          <Box className="pt-4 pb-2">
+      {/* Daily Quiz Button - Only show if signed in */}
+      {isSignedIn && (
+        <Box className="pt-4 pb-2">
+          <Animated.View
+            style={{
+              opacity: quizButtonFadeAnim,
+              transform: [{ translateY: quizButtonSlideAnim }],
+            }}
+          >
             <Pressable
               className="bg-secondary-500 rounded-xl p-6 border border-secondary-300 active:bg-secondary-700"
               onPress={() => {
@@ -134,38 +207,38 @@ export default function Leaderboard() {
                 </Box>
               </Box>
             </Pressable>
-          </Box>
-        )}
+          </Animated.View>
+        </Box>
+      )}
 
-        {/* Top Performers */}
-        <View className="pt-6">
-          <Text className="text-lg font-semibold text-gray-900 mb-4">Top Players</Text>
-          <View className="space-y-3">
-            {leaderboardData.map((user) => (
-              <View key={user.rank} className={`rounded-xl mb-3 p-4 border border-gray-200 flex-row justify-between items-center ${user.bgColor}`}>
-                <View className="flex-row items-center space-x-3">
-                  <View className="relative">
-                    <View className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">
-                      <Text className="text-base font-semibold text-white">{user.avatar}</Text>
-                    </View>
-                  </View>
-                  <View className="p-1">
-                    <Text className="text-base font-medium text-gray-900 mb-1 p-1">{user.name}</Text>
-                    <View className="bg-gray-100 px-2 py-0.5 rounded self-start">
-                      <Text className="text-xs text-gray-600">{user.streak} day streak</Text>
-                    </View>
+      {/* Top Performers */}
+      <View className="pt-6">
+        <Text className="text-lg font-semibold text-gray-900 mb-4">Top Players</Text>
+        <View className="space-y-3">
+          {leaderboardData.map((user) => (
+            <View key={user.rank} className={`rounded-xl mb-3 p-4 border border-gray-200 flex-row justify-between items-center ${user.bgColor}`}>
+              <View className="flex-row items-center space-x-3">
+                <View className="relative">
+                  <View className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">
+                    <Text className="text-base font-semibold text-white">{user.avatar}</Text>
                   </View>
                 </View>
-                <View className="items-end">
-                  <Text className="text-2xl font-bold text-gray-900">#{user.rank}</Text>
-                  <Text className="text-sm text-gray-500 mt-0.5">{user.score} pts</Text>
+                <View className="p-1">
+                  <Text className="text-base font-medium text-gray-900 mb-1 p-1">{user.name}</Text>
+                  <View className="bg-gray-100 px-2 py-0.5 rounded self-start">
+                    <Text className="text-xs text-gray-600">{user.streak} day streak</Text>
+                  </View>
                 </View>
               </View>
-            ))}
-          </View>
+              <View className="items-end">
+                <Text className="text-2xl font-bold text-gray-900">#{user.rank}</Text>
+                <Text className="text-sm text-gray-500 mt-0.5">{user.score} pts</Text>
+              </View>
+            </View>
+          ))}
         </View>
+      </View>
 
-      </ScrollView>
     </PageLayout>
   );
 }

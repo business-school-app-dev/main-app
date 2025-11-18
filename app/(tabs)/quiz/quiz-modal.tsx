@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import { View, StatusBar, ScrollView } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { View, StatusBar, ScrollView, Animated } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Pressable } from '@/components/ui/pressable';
 import { Icon } from '@/components/ui/icon';
 import { X } from 'lucide-react-native';
 import { router } from 'expo-router';
-import { RadioGroup, Radio, RadioIndicator, RadioIcon, RadioLabel } from '@/components/ui/radio';
-import { CircleIcon } from '@/components/ui/icon';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import TextButton from '@/components/inputs/text-button';
+import { SelectionCard } from '@/components/views/selection-card';
+import ProgressView from '@/components/views/progress-view';
 
 export default function QuizModal() {
   const [selectedOption, setSelectedOption] = useState<string>("");
@@ -16,6 +16,10 @@ export default function QuizModal() {
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [showResult, setShowResult] = useState(false);
   const [isCorrect, setIsCorrect] = useState(false);
+
+  const resultFadeAnim = useRef(new Animated.Value(0)).current;
+  const resultSlideAnim = useRef(new Animated.Value(20)).current;
+  const shakeAnim = useRef(new Animated.Value(0)).current;
 
   const questions = [
     {
@@ -64,10 +68,59 @@ export default function QuizModal() {
     const correct = selectedAnswer === currentQ.correctAnswer;
     setIsCorrect(correct);
     setShowResult(true);
+
+    // Animate result message appearance
+    resultFadeAnim.setValue(0);
+    resultSlideAnim.setValue(20);
+
+    Animated.parallel([
+      Animated.timing(resultFadeAnim, {
+        toValue: 1,
+        duration: 400,
+        useNativeDriver: true,
+      }),
+      Animated.spring(resultSlideAnim, {
+        toValue: 0,
+        tension: 50,
+        friction: 7,
+        useNativeDriver: true,
+      }),
+    ]).start();
+
+    // Add shake animation for incorrect answers
+    if (!correct) {
+      Animated.sequence([
+        Animated.timing(shakeAnim, {
+          toValue: 10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim, {
+          toValue: -10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim, {
+          toValue: 10,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+        Animated.timing(shakeAnim, {
+          toValue: 0,
+          duration: 50,
+          useNativeDriver: true,
+        }),
+      ]).start();
+    }
   };
 
   const handleNext = () => {
     if (currentQuestion < questions.length) {
+      // Reset animations
+      resultFadeAnim.setValue(0);
+      resultSlideAnim.setValue(20);
+      shakeAnim.setValue(0);
+
       setCurrentQuestion(currentQuestion + 1);
       setSelectedOption("");
       setSelectedAnswer(null);
@@ -80,98 +133,71 @@ export default function QuizModal() {
   };
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1">
       <StatusBar barStyle="dark-content" backgroundColor="white" translucent={false} />
 
       {/* Header */}
       <View className="px-6 pb-4">
-        <View className="flex-row items-center justify-between mb-4">
-          <Pressable
-            onPress={() => router.back()}
-            className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center active:bg-gray-200"
-          >
-            <Icon as={X} size="lg" color="black" />
-          </Pressable>
-          <Text className="text-base font-medium text-gray-700">
-            {currentQuestion} / {questions.length}
-          </Text>
-        </View>
-
         {/* Progress Bar */}
-        <View className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
-          <View
-            className="h-full bg-primary-500 rounded-full"
-            style={{ width: `${progress}%` }}
-          />
-        </View>
+        <ProgressView
+          currentStep={currentQuestion}
+          totalSteps={questions.length}
+          progress={progress}
+          leftElement={
+            <Pressable
+              onPress={() => router.back()}
+              className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center active:bg-gray-200"
+            >
+              <Icon as={X} size="lg" color="black" />
+            </Pressable>
+          }
+        />
       </View>
 
       {/* Content */}
-      <ScrollView
-        className="flex-1 px-6"
-        showsVerticalScrollIndicator={false}
-      >
+      <View className="flex-1 px-6">
         {/* Question */}
-        <Text className="text-2xl font-bold text-gray-900 mb-6 mt-4">
-          {currentQ.question}
-        </Text>
+        <Animated.View
+          style={{
+            transform: [{ translateX: shakeAnim }],
+          }}
+        >
+          <Text className="text-2xl font-bold text-gray-900 mb-6 mt-4">
+            {currentQ.question}
+          </Text>
+        </Animated.View>
 
         {/* Options */}
-        <RadioGroup value={selectedOption} onChange={(value) => handleAnswerSelect(parseInt(value))}>
-          <View className="space-y-3">
-            {currentQ.options.map((option, index) => {
-              const isSelected = selectedOption === index.toString();
-              const isCorrectAnswer = index === currentQ.correctAnswer;
-
-              let borderColor = 'border-gray-200';
-              let bgColor = 'bg-white';
-
-              if (showResult) {
-                if (isCorrectAnswer) {
-                  borderColor = 'border-green-500';
-                  bgColor = 'bg-green-50';
-                } else if (isSelected && !isCorrect) {
-                  borderColor = 'border-red-500';
-                  bgColor = 'bg-red-50';
-                }
-              } else if (isSelected) {
-                borderColor = 'border-primary-500';
-              }
-
-              return (
-                <Pressable
-                  key={index}
-                  onPress={() => handleAnswerSelect(index)}
-                  disabled={showResult}
-                  className={`border-2 rounded-2xl my-2 p-4 ${borderColor} ${bgColor}`}
-                >
-                  <Radio value={index.toString()} className="flex-row items-center">
-                    <RadioIndicator className="mr-3">
-                      <RadioIcon as={CircleIcon} />
-                    </RadioIndicator>
-                    <RadioLabel>
-                      <Text className="text-base text-gray-900 flex-1">
-                        {option}
-                      </Text>
-                    </RadioLabel>
-                  </Radio>
-                </Pressable>
-              );
-            })}
-          </View>
-        </RadioGroup>
+        <SelectionCard
+          options={currentQ.options.map((option, index) => ({
+            label: option,
+            value: index
+          }))}
+          selectedValue={selectedAnswer}
+          onSelect={(value) => handleAnswerSelect(value as number)}
+          disabled={showResult}
+          showResult={showResult}
+          correctAnswer={currentQ.correctAnswer}
+          spacing="sm"
+        />
 
         {/* Result Message */}
         {showResult && (
-          <View className={`p-4 rounded-xl mt-6 ${isCorrect ? 'bg-green-100' : 'bg-red-100'
-            }`}>
+          <Animated.View
+            style={{
+              opacity: resultFadeAnim,
+              transform: [{ translateY: resultSlideAnim }],
+            }}
+            className={`p-4 rounded-xl mt-6 ${isCorrect ? 'bg-green-100' : 'bg-red-100'
+              }`}
+          >
             <Text className={`text-center text-base ${isCorrect ? 'text-green-800' : 'text-red-800'
               }`}>
-              {isCorrect ? "Correct" : "Not quite right. Try again next time"}
+              {isCorrect ? "Correct! 🎉" : "Not quite right. Try again next time!"}
             </Text>
-          </View>
+          </Animated.View>
         )}
-      </ScrollView>
+      </View>
 
       {/* Bottom Button */}
       <View className="px-6 pt-4 pb-4">

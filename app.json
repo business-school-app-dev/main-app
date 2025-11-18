@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.umdsmithbusinessschoolappteam.umdollar",
+      "bundleIdentifier": "com.umd-smith-business-school-app-team.umdollar",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -44,7 +44,8 @@
             "backgroundColor": "#E11932"
           }
         }
-      ]
+      ],
+      "expo-web-browser"
     ],
     "experiments": {
       "typedRoutes": true,

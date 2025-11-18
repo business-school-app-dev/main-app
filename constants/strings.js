@@ -1,58 +1,60 @@
-import React, { useState } from 'react';
-import { ScrollView, View } from "react-native";
-import { VStack } from "@/components/ui/vstack";
-import { Text } from "@/components/ui/text";
-import { SafeAreaView } from "@/components/ui/safe-area-view";
-import { router } from 'expo-router';
-import { ChevronLeftIcon } from '@/components/ui/icon';
-import {
-  Modal,
-  ModalBackdrop,
-  ModalContent,
-  ModalHeader,
-  ModalCloseButton,
-  ModalBody,
-  ModalFooter
-} from '@/components/ui/modal';
-import TextButton from '@/components/inputs/text-button';
-import { Heading } from '@/components/ui/heading';
-import PageLayout from "@/components/layouts/page-layout";
-import { PiggyBank, TrendingUp, Wallet, LineChart, Building2, BarChart3, FolderOpen } from 'lucide-react-native';
+// Credit Cards Content
+export const CREDIT_CARDS_CONTENT = {
+  "Credit Card Basics": `Credit cards are financial tools that allow you to borrow money from a bank or financial institution to make purchases. Here are the key concepts you should understand:
 
-interface GuideCardProps {
-  icon: React.ReactNode;
-  iconBgColor: string;
-  title: string;
-  description: string;
-  onPress: () => void;
-}
+• Credit Limit: The maximum amount you can borrow on your card
+• Interest Rate (APR): The cost of borrowing money, expressed as an annual percentage
+• Minimum Payment: The smallest amount you must pay each month
+• Grace Period: Time between purchase and when interest starts accruing
+• Credit Score Impact: How your card usage affects your creditworthiness
 
-const GuideCard: React.FC<GuideCardProps> = ({ icon, iconBgColor, title, description, onPress }) => (
-  <View className="bg-white p-6 w-full rounded-xl border border-gray-200 shadow-black/10 elevation-5 flex-1 min-h-0">
-    <View className={`w-20 h-20 rounded-xl justify-center items-center ${iconBgColor}`}>
-      {icon}
-    </View>
-    <Text className="text-2xl font-semibold text-gray-900 mt-5 mb-2">{title}</Text>
-    <View className="flex-row items-center justify-between mt-auto">
-      <Text className="text-lg text-gray-500 leading-6 flex-1 mr-4">{description}</Text>
-      <TextButton
-        label="Read More"
-        onPress={onPress}
-        variant="secondary"
-        size="md"
-      // rounded="full"
-      // textClassName="text-white text-base font-medium"
-      />
-    </View>
-  </View>
-);
+Benefits of credit cards include building credit history, earning rewards, fraud protection, and convenience for online purchases. However, it's important to use them responsibly to avoid debt accumulation.
 
-// Expanded content for each account type
-const getExpandedContent = (accountType: string) => {
-  const content = {
-    'Roth IRA': {
-      title: 'Roth IRA - Tax-Free Growth',
-      content: `A Roth IRA (Individual Retirement Account) is a retirement savings account that offers tax-free growth and tax-free withdrawals in retirement. Here's what you need to know:
+RESPONSIBLE USE BEST PRACTICES
+
+Responsible credit card management helps you build wealth and avoid debt traps. Here are essential practices:
+
+• Create a budget and stick to it
+• Only charge what you can afford to pay off in full
+• Pay your full balance each month to avoid interest charges
+• Set up automatic payments for at least the minimum amount
+• Use credit cards for planned purchases, not impulse buys
+• Take advantage of rewards programs that match your spending
+• Read and understand your card's terms and conditions
+• Don't use credit cards for cash advances (high fees apply)
+• Keep your credit utilization below 30% of your limit
+
+Remember: Credit cards are tools to build credit and earn rewards, not extensions of your income. Living within your means is the foundation of financial health.`,
+
+  "Building Credit": `Building good credit takes time and consistent responsible behavior. Here are proven strategies to establish and improve your credit score:
+
+• Pay on time, every time: Payment history is 35% of your credit score
+• Keep balances low: Use less than 30% of your available credit limit
+• Don't close old accounts: Length of credit history matters
+• Limit new credit applications: Too many inquiries can hurt your score
+• Monitor your credit report: Check for errors and dispute them promptly
+• Consider becoming an authorized user on someone else's account
+
+Start with a secured credit card or student card if you're new to credit. Be patient - building excellent credit typically takes 6+ months of responsible use.`,
+
+  "Security Tips": `Protecting your credit card information is crucial in today's digital world. Follow these security best practices:
+
+• Never share your card details via email, text, or phone unless you initiated the contact
+• Use secure websites (look for https://) when shopping online
+• Monitor your statements regularly for unauthorized charges
+• Set up account alerts for transactions and payments
+• Cover your PIN when entering it in public
+• Don't store card info on shared or public computers
+• Report lost or stolen cards immediately
+• Use contactless payments when possible
+• Be cautious with public WiFi for financial transactions
+
+If you notice suspicious activity, contact your card issuer immediately. Most banks offer zero liability protection for fraudulent charges.`,
+};
+
+// Investing Accounts Content
+export const INVESTING_ACCOUNTS_CONTENT = {
+  "Roth IRA": `A Roth IRA (Individual Retirement Account) is a retirement savings account that offers tax-free growth and tax-free withdrawals in retirement. Here's what you need to know:
 
 KEY FEATURES
 
@@ -81,11 +83,9 @@ GETTING STARTED
 3. Invest in low-cost index funds or target-date funds
 4. Let compound growth work its magic over decades
 
-Remember: Time is your greatest asset. Starting early, even with small contributions, can lead to substantial tax-free wealth in retirement.`
-    },
-    'Traditional IRA': {
-      title: 'Traditional IRA - Tax-Deferred Growth',
-      content: `A Traditional IRA is an individual retirement account that offers upfront tax deductions and tax-deferred growth. It's a powerful tool for building retirement savings on your own terms.
+Remember: Time is your greatest asset. Starting early, even with small contributions, can lead to substantial tax-free wealth in retirement.`,
+
+  "Traditional IRA": `A Traditional IRA is an individual retirement account that offers upfront tax deductions and tax-deferred growth. It's a powerful tool for building retirement savings on your own terms.
 
 KEY FEATURES
 
@@ -146,11 +146,9 @@ CONTRIBUTION DEADLINE
 
 You can contribute for the previous tax year until Tax Day (April 15). This means you have extra time to maximize contributions and reduce your tax bill.
 
-PRO TIP: If you're eligible for both traditional and Roth IRAs, consider splitting contributions between them for tax diversification in retirement.`
-    },
-    '401(k)': {
-      title: '401(k) - Employer-Sponsored Retirement',
-      content: `A 401(k) is an employer-sponsored retirement plan that offers tax advantages, higher contribution limits, and often includes employer matching contributions. It's one of the most powerful wealth-building tools available.
+PRO TIP: If you're eligible for both traditional and Roth IRAs, consider splitting contributions between them for tax diversification in retirement.`,
+
+  "401(k)": `A 401(k) is an employer-sponsored retirement plan that offers tax advantages, higher contribution limits, and often includes employer matching contributions. It's one of the most powerful wealth-building tools available.
 
 KEY FEATURES
 
@@ -245,11 +243,9 @@ MAXIMIZING YOUR 401(K)
 • Never cash out early
 • Consider Roth 401(k) if young and in lower tax bracket
 
-Remember: Your 401(k) is likely your most powerful tool for building wealth. Maximize employer match first, then work toward maxing out contributions as your income grows.`
-    },
-    'Margin Account': {
-      title: 'Margin Account - Advanced Trading',
-      content: `A margin account is a specialized brokerage account that allows you to borrow money from your broker to invest, using leverage to amplify potential gains (and losses). This is an advanced investing tool that requires experience and risk tolerance.
+Remember: Your 401(k) is likely your most powerful tool for building wealth. Maximize employer match first, then work toward maxing out contributions as your income grows.`,
+
+  "Margin Account": `A margin account is a specialized brokerage account that allows you to borrow money from your broker to invest, using leverage to amplify potential gains (and losses). This is an advanced investing tool that requires experience and risk tolerance.
 
 WHAT IS A MARGIN ACCOUNT?
 
@@ -397,11 +393,9 @@ Most professional traders avoid margin or use it very sparingly. Warren Buffett 
 
 Margin trading is not investing - it's speculation with borrowed money. The vast majority of individual investors should never use margin accounts. Stick with cash accounts and build wealth through consistent, long-term investing in diversified, low-cost index funds.
 
-If you must use margin, treat it like a tool that can cut your hand off. Use it rarely, carefully, and always with a healthy respect for what can go wrong.`
-    },
-    'ETFs': {
-      title: 'ETFs - Exchange-Traded Funds',
-      content: `Exchange-Traded Funds (ETFs) are one of the best investment vehicles for building long-term wealth. They combine the diversification of mutual funds with the flexibility of stocks, all while keeping costs low.
+If you must use margin, treat it like a tool that can cut your hand off. Use it rarely, carefully, and always with a healthy respect for what can go wrong.`,
+
+  ETFs: `Exchange-Traded Funds (ETFs) are one of the best investment vehicles for building long-term wealth. They combine the diversification of mutual funds with the flexibility of stocks, all while keeping costs low.
 
 WHAT IS AN ETF?
 
@@ -591,11 +585,9 @@ KEY TAKEAWAYS
 • Avoid active management and high fees
 • Simple three-fund portfolio beats complex strategies
 
-Remember: The best ETF portfolio is one you can stick with through market ups and downs. Keep it simple, keep costs low, and stay invested for the long term.`
-    },
-    'Mutual Funds': {
-      title: 'Mutual Funds - Professional Management',
-      content: `Mutual funds are professionally managed investment portfolios that pool money from many investors to purchase a diversified mix of stocks, bonds, or other securities. They've been the foundation of retirement investing for decades.
+Remember: The best ETF portfolio is one you can stick with through market ups and downs. Keep it simple, keep costs low, and stay invested for the long term.`,
+
+  "Mutual Funds": `Mutual funds are professionally managed investment portfolios that pool money from many investors to purchase a diversified mix of stocks, bonds, or other securities. They've been the foundation of retirement investing for decades.
 
 WHAT IS A MUTUAL FUND?
 
@@ -845,11 +837,9 @@ Whether you choose mutual funds or ETFs, the most important factors are:
 4. Long-term holding
 5. Ignoring short-term market noise
 
-Most investors will do well with a simple portfolio of low-cost index mutual funds, contributing regularly, and staying invested through market ups and downs. It's not exciting, but it works.`
-    },
-    'Investment Strategies': {
-      title: 'Investment Strategies for Success',
-      content: `Building wealth through investing requires understanding key strategies and principles. Here's your guide to smart investing across all account types.
+Most investors will do well with a simple portfolio of low-cost index mutual funds, contributing regularly, and staying invested through market ups and downs. It's not exciting, but it works.`,
+
+  "Investment Strategies": `Building wealth through investing requires understanding key strategies and principles. Here's your guide to smart investing across all account types.
 
 FUNDAMENTAL PRINCIPLES
 
@@ -939,118 +929,8 @@ STAYING THE COURSE
 • Increase contributions when possible
 • Stay invested through downturns (they're buying opportunities)
 
-Remember: Investing is a marathon, not a sprint. Consistency, discipline, and patience are more important than trying to find the "perfect" investment or timing.`
-    }
-  };
-  return content[accountType as keyof typeof content] || { title: accountType, content: 'Information not available.' };
+Remember: Investing is a marathon, not a sprint. Consistency, discipline, and patience are more important than trying to find the "perfect" investment or timing.`,
 };
 
-export default function InvestingLiteracyScreen() {
-  const [isModalVisible, setIsModalVisible] = useState(false);
-  const [selectedContent, setSelectedContent] = useState({ title: '', content: '' });
-
-  const handleGoBack = () => {
-    router.back();
-  };
-
-  const handleReadMore = (accountType: string) => {
-    const content = getExpandedContent(accountType);
-    setSelectedContent(content);
-    setIsModalVisible(true);
-  };
-
-  const closeModal = () => {
-    setIsModalVisible(false);
-  };
-
-  return (
-    <PageLayout title="Investing Accounts">
-      <ScrollView
-        className="flex-1"
-        showsVerticalScrollIndicator={false}
-        contentContainerStyle={{ flexGrow: 1 }}
-      >
-        <View className="py-6 flex-1">
-          {/* Guide Cards Grid */}
-          <View className="gap-4 flex-1">
-            <GuideCard
-              icon={<PiggyBank size={40} color="#dc2626" />}
-              iconBgColor="bg-red-100"
-              title="Roth IRA"
-              description="Tax-free growth and withdrawals"
-              onPress={() => handleReadMore('Roth IRA')}
-            />
-            <GuideCard
-              icon={<TrendingUp size={40} color="#db2777" />}
-              iconBgColor="bg-pink-100"
-              title="Traditional IRA"
-              description="Tax-deferred individual retirement"
-              onPress={() => handleReadMore('Traditional IRA')}
-            />
-            <GuideCard
-              icon={<Building2 size={40} color="#ea580c" />}
-              iconBgColor="bg-orange-100"
-              title="401(k)"
-              description="Employer-sponsored retirement plan"
-              onPress={() => handleReadMore('401(k)')}
-            />
-            <GuideCard
-              icon={<BarChart3 size={40} color="#0891b2" />}
-              iconBgColor="bg-cyan-100"
-              title="ETFs"
-              description="Low-cost diversified investing"
-              onPress={() => handleReadMore('ETFs')}
-            />
-            <GuideCard
-              icon={<FolderOpen size={40} color="#8b5cf6" />}
-              iconBgColor="bg-violet-100"
-              title="Mutual Funds"
-              description="Professional portfolio management"
-              onPress={() => handleReadMore('Mutual Funds')}
-            />
-            <GuideCard
-              icon={<Wallet size={40} color="#1e40af" />}
-              iconBgColor="bg-blue-100"
-              title="Margin Account"
-              description="Advanced trading with leverage"
-              onPress={() => handleReadMore('Margin Account')}
-            />
-            <GuideCard
-              icon={<LineChart size={40} color="#059669" />}
-              iconBgColor="bg-emerald-100"
-              title="Investment Strategies"
-              description="Build wealth over time"
-              onPress={() => handleReadMore('Investment Strategies')}
-            />
-          </View>
-        </View>
-      </ScrollView>
-
-      {/* Modal for expanded content */}
-      <Modal isOpen={isModalVisible} onClose={closeModal}>
-        <ModalBackdrop />
-        <ModalContent className="max-w-[90%] max-h-[80%] rounded-xl">
-          <ModalHeader>
-            <Heading size="lg">{selectedContent.title}</Heading>
-            <ModalCloseButton />
-          </ModalHeader>
-          <ModalBody>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <Text className="text-base text-gray-700 leading-6 text-left">{selectedContent.content}</Text>
-            </ScrollView>
-          </ModalBody>
-          <ModalFooter>
-            <TextButton
-              label="Close"
-              onPress={closeModal}
-              variant="secondary"
-            // className="bg-red-600"
-            />
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
-    </PageLayout>
-  );
-}
-
-
+Object.freeze(CREDIT_CARDS_CONTENT);
+Object.freeze(INVESTING_ACCOUNTS_CONTENT);

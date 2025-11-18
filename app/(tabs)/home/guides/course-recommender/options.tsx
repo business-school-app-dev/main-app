@@ -5,8 +5,25 @@ import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useState, useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View } from 'react-native';
+
+type Course = {
+  course_id: string;
+  name: string;
+  credits?: string | number;
+  department?: string;
+  description?: string;
+  semester?: string;
+  // older recommendation shape might have restrictions at top level
+  restrictions?: string | null;
+  // new "all courses" shape
+  relationships?: {
+    restrictions?: string | null;
+    [key: string]: any;
+  };
+  [key: string]: any;
+};
 
 const CourseOptionsScreen = () => {
   const [searchText, setSearchText] = useState('');
@@ -17,22 +34,34 @@ const CourseOptionsScreen = () => {
       max_credits?: string;
     }>();
 
-  // 👇 turn the JSON string back into an array
-  const allCourses = recommendations ? JSON.parse(recommendations) : [];
+  // safely parse the JSON string into an array
+  let courses_list: Course[] = [];
+  if (recommendations) {
+    try {
+      const parsed = JSON.parse(recommendations);
+      courses_list = Array.isArray(parsed) ? parsed : [];
+    } catch (e) {
+      console.error('Failed to parse recommendations param:', e);
+      courses_list = [];
+    }
+  }
 
   // 👇 filter courses based on search text
   const courses = useMemo(() => {
     if (!searchText.trim()) {
-      return allCourses;
+      return courses_list;
     }
-
+  
     const lowerSearch = searchText.toLowerCase();
-    return allCourses.filter((course: any) =>
+    return courses_list.filter((course: Course) =>
       course.name?.toLowerCase().includes(lowerSearch) ||
       course.course_id?.toLowerCase().includes(lowerSearch) ||
       course.description?.toLowerCase().includes(lowerSearch)
     );
-  }, [allCourses, searchText]);
+  }, [courses_list, searchText]);
+  
+
+  const isAllCoursesMode = comfort_level === 'all';
 
   return (
     <PageLayout title="Recommended Courses">
@@ -47,18 +76,27 @@ const CourseOptionsScreen = () => {
           className="text-md"
         />
       </Input>
+      <Heading size="xl" className="text-gray-900">
+        {isAllCoursesMode ? 'All Courses' : 'Recommended Courses'}
+      </Heading>
 
-      {comfort_level && (
+      {/* Subtitle / metadata row */}
+      {comfort_level && !isAllCoursesMode && (
         <Text size="xs" className="text-gray-600 mt-1">
           Comfort level: {comfort_level} · Max credits per course: {max_credits}
         </Text>
       )}
 
+      {isAllCoursesMode && (
+        <Text size="xs" className="text-gray-600 mt-1">
+          Showing all available courses.
+        </Text>
+      )}
+
       <VStack space="md" className="mt-8">
         {courses.length === 0 ? (
-          <Text className="text-gray-600">No recommendations found.</Text>
+          <Text className="text-gray-600">There is no course available!</Text>
         ) : (
-          // 👇 THIS is how you “display the JSON”
           courses.map((course: any) => (
             <View
               key={course.course_id}

@@ -1,8 +1,8 @@
 import FormSelect from '@/components/inputs/form-select';
+import HelpButton from '@/components/inputs/help-button';
 import TextButton from '@/components/inputs/text-button';
 import PageLayout from '@/components/layouts/page-layout';
 import { Heading } from '@/components/ui/heading';
-import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { router } from "expo-router";
 import React, { createContext, useContext, useState } from 'react';
@@ -170,18 +170,22 @@ const CourseRecommenderScreen = () => {
         setComfortLevel,
       }}
     >
-      <PageLayout title="Course Recommender">
-        <VStack space="md">
-          <Heading size="xl" className="text-gray-900">
-            Financial Course Recommender
-          </Heading>
-          <Text size="xs" className="text-gray-600">
-            Tell us about yourself and we'll recommend the perfect courses for your financial literacy journey
-          </Text>
-        </VStack>
 
+      <PageLayout
+        title="Course Recommender"
+        rightView={
+          <HelpButton
+            title="Financial Course Recommender"
+            content="Tell us about yourself and we'll recommend the perfect courses for your financial literacy journey. Select your current credits, major(s), minor(s), and comfort level to get personalized course recommendations."
+            variant="link"
+            color="white"
+          />
+        }
+      >
+        {/* Section Title */}
+        <Heading size="md" className="mb-6">Student Details</Heading>
         {/* Form Inputs Section */}
-        <VStack space="xs" className="mt-6">
+        <VStack space="xs">
           <FormSelect
             label="Credits"
             placeholder="Select option"
@@ -239,7 +243,7 @@ const CourseRecommenderScreen = () => {
           * If user has selected a real credit OR a real comfort level → show "Get Course Recommendations"
           * Otherwise (both empty or N/A) → show only "View all Courses"
         */}
-        <VStack space="lg" className="mt-6">
+        <VStack space="lg" className="mt-12">
           {canShowRecommendations ? (
             // ✅ Show recommendations when at least one filter is real
             <TextButton

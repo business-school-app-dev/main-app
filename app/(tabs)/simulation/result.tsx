@@ -275,16 +275,17 @@ export default function SimulationResult() {
         <VStack space="sm">
           <LineChart
             data={chartData}
-            // width={0}
             height={chartHeight}
+            width={screenWidth - 130}
             color={PRIMARY_COLORS[600]}
             thickness={3}
+            endSpacing={0}
             startFillColor={`${PRIMARY_COLORS[500]}33`}
             endFillColor={`${PRIMARY_COLORS[500]}33`}
             startOpacity={0.9}
             endOpacity={0.1}
-            initialSpacing={5}
-            spacing={8}
+            initialSpacing={4}
+            spacing={7.5}
             noOfSections={4}
             yAxisColor={GRAY_COLORS[200]}
             xAxisColor={GRAY_COLORS[200]}

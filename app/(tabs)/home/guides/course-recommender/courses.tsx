@@ -51,7 +51,7 @@ const CourseOptionsScreen = () => {
     if (!searchText.trim()) {
       return courses_list;
     }
-  
+
     const lowerSearch = searchText.toLowerCase();
     return courses_list.filter((course: Course) =>
       course.name?.toLowerCase().includes(lowerSearch) ||
@@ -59,7 +59,7 @@ const CourseOptionsScreen = () => {
       course.description?.toLowerCase().includes(lowerSearch)
     );
   }, [courses_list, searchText]);
-  
+
 
   const isAllCoursesMode = comfort_level === 'all';
 
@@ -76,26 +76,9 @@ const CourseOptionsScreen = () => {
           className="text-md"
         />
       </Input>
-      <Heading size="xl" className="text-gray-900">
-        {isAllCoursesMode ? 'All Courses' : 'Recommended Courses'}
-      </Heading>
-
-      {/* Subtitle / metadata row */}
-      {comfort_level && !isAllCoursesMode && (
-        <Text size="xs" className="text-gray-600 mt-1">
-          Comfort level: {comfort_level} · Max credits per course: {max_credits}
-        </Text>
-      )}
-
-      {isAllCoursesMode && (
-        <Text size="xs" className="text-gray-600 mt-1">
-          Showing all available courses.
-        </Text>
-      )}
-
-      <VStack space="md" className="mt-8">
+      <VStack space="md" className="mt-8 h-full w-full">
         {courses.length === 0 ? (
-          <Text className="text-gray-600">There is no course available!</Text>
+          <Text className="mx-auto my-auto text-gray-600">There are no courses available!</Text>
         ) : (
           courses.map((course: any) => (
             <View

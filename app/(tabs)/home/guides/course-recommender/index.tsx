@@ -59,34 +59,34 @@ const CourseRecommenderScreen = () => {
   const majors = ["N/A", "Accounting", "Agricultural and Resource Economics", "American Studies", "Animal and Avian Sciences", "Anthropology", "Applied Mathematics and Scientific Computation", "Arabic Studies", "Art History", "Astronomy", "Atmospheric and Oceanic Science", "Biochemistry", "Biological Sciences", "Chemistry", "Chinese Studies", "Cinema and Media Studies", "Civil Engineering", "Communication", "Computer Science", "Criminology and Criminal Justice", "Economics", "Electrical Engineering", "English Language and Literature", "Environmental Science and Policy", "Finance", "Geography", "Geology", "Government and Politics", "History", "Information Science", "International Business", "Journalism", "Linguistics", "Management", "Marketing", "Mathematics", "Mechanical Engineering", "Neuroscience", "Nursing", "Philosophy", "Physics", "Political Science", "Psychology", "Public Health Science", "Sociology", "Spanish Language and Literature", "Statistics", "Theatre", "Women's Studies"];
   const minors = ["N/A", "African American Studies", "Arabic Studies", "Art History", "Asian American Studies", "Black Women\’s Studies", "Business Analytics", "Business Administration", "Chinese Studies", "Classics", "Communication", "Computer Science", "Creative Writing", "Criminology and Criminal Justice", "Dance", "Digital Studies", "East Asian Studies", "Economics", "Education", "English", "Environmental Science and Policy", "Film Studies", "French Studies", "Geographic Information Science", "German Studies", "Global Poverty", "History", "Human Development", "Information Science", "International Business", "Jewish Studies", "Journalism", "Latin American Studies", "Linguistics", "Management", "Marketing", "Philosophy", "Physics", "Political Science", "Psychology", "Public Health", "Sociology", "Spanish Studies", "Statistics", "Theatre", "Women\’s Studies"];
 
-  const creditHours = ["N/A", "1","2","3","4"];
+  const creditHours = ["N/A", "1", "2", "3", "4"];
 
   const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
 
   const allCourses = async () => {
     console.log("Button pressed → allCourses running");
-  
+
     setIsLoading(true);
-  
+
     try {
       const url = `${API_BASE_URL}/courses/all`;
       const response = await fetch(url);
-  
+
       if (!response.ok) {
         throw new Error(`Request failed with status ${response.status}`);
       }
-  
-      const data = await response.json(); 
+
+      const data = await response.json();
       // data is an ARRAY of courses based on your sample JSON
-  
+
       router.navigate({
-        pathname: "/home/guides/course-recommender/options",
+        pathname: "/home/guides/course-recommender/courses",
         params: {
           // send the course array as JSON
           recommendations: JSON.stringify(data),
-  
+
           // these do not exist in this endpoint but must be sent to screen
-          comfort_level: "all", 
+          comfort_level: "all",
           max_credits: "all",
         },
       });
@@ -96,20 +96,20 @@ const CourseRecommenderScreen = () => {
       setIsLoading(false);
     }
   };
-  
+
 
 
   const handleGetRecommendations = async () => {
     setIsLoading(true);
-  
+
     try {
       const url = `${API_BASE_URL}/recommend?comfort=${comfortLevel.toLowerCase()}&max_credits=${credit}`;
       const response = await fetch(url);
-  
+
       if (!response.ok) {
         // even if status is bad, we'll treat as "no courses" instead of crashing
         router.navigate({
-          pathname: "/home/guides/course-recommender/options",
+          pathname: "/home/guides/course-recommender/courses",
           params: {
             recommendations: JSON.stringify([]),
             comfort_level: comfortLevel,
@@ -118,16 +118,16 @@ const CourseRecommenderScreen = () => {
         });
         return;
       }
-  
+
       // 👇 tell TS what this shape is
       const data = (await response.json()) as RecommendationResponse;
-  
+
       const recs = Array.isArray(data.recommendations)
         ? data.recommendations
         : [];
-  
+
       router.navigate({
-        pathname: "/home/guides/course-recommender/options",
+        pathname: "/home/guides/course-recommender/courses",
         params: {
           recommendations: JSON.stringify(recs),
           comfort_level: data.comfort_level ?? comfortLevel,
@@ -136,10 +136,10 @@ const CourseRecommenderScreen = () => {
       });
     } catch (error) {
       console.error("Error fetching recommendations:", error);
-  
+
       // on any error, navigate with empty list
       router.navigate({
-        pathname: "/home/guides/course-recommender/options",
+        pathname: "/home/guides/course-recommender/courses",
         params: {
           recommendations: JSON.stringify([]),
           comfort_level: comfortLevel,
@@ -150,8 +150,8 @@ const CourseRecommenderScreen = () => {
       setIsLoading(false);
     }
   };
-  
-  
+
+
 
   return (
     <CourseContext.Provider
@@ -239,7 +239,7 @@ const CourseRecommenderScreen = () => {
           />
         </VStack>
 
-                  {/* Submit Buttons 
+        {/* Submit Buttons 
           * If user has selected a real credit OR a real comfort level → show "Get Course Recommendations"
           * Otherwise (both empty or N/A) → show only "View all Courses"
         */}

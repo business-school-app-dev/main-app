@@ -9,10 +9,9 @@ import PageLayout from '@/components/layouts/page-layout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LineChart } from 'react-native-gifted-charts';
 import { router } from 'expo-router';
-import { CloseIcon, Icon } from '@/components/ui/icon';
-import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@/components/ui/modal';
+import { Icon } from '@/components/ui/icon';
 import IconButton from '@/components/inputs/icon-button';
-import { Heading } from '@/components/ui/heading';
+import HelpButton from '@/components/inputs/help-button';
 import COLORS, { GRAY_COLORS, PRIMARY_COLORS, SECONDARY_COLORS } from '@/constants/colors';
 import { Briefcase, MapPin, Baby, Laptop, Heart, DollarSign, GraduationCap, Building2, Users, Home, TreePine } from 'lucide-react-native';
 import LabeledSlider from '@/components/inputs/labeled-slider';
@@ -27,7 +26,6 @@ export interface UserResponses {
 export default function SimulationResult() {
   const [userResponses, setUserResponses] = useState<UserResponses | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showModal, setShowModal] = useState(false);
 
   // Simulation parameters (adjustable with sliders)
   const [savingsRate, setSavingsRate] = useState(15);
@@ -202,7 +200,7 @@ export default function SimulationResult() {
     },
   ]
 
-  const assumptions =  [
+  const assumptions = [
     {
       label: 'Best Case (75th percentile)',
       value: stats.percentile75,
@@ -232,12 +230,11 @@ export default function SimulationResult() {
         />
       }
       rightView={
-        <IconButton
-          iconName="help-circle"
-          variant="link"
-          color="white"
-          onPress={() => setShowModal(true)}
-        />}
+        <HelpButton
+          title="What is Monte Carlo?"
+          content="Monte Carlo simulation runs thousands of scenarios with random market returns to show the range of possible outcomes for your financial future. This helps you understand both the best and worst-case scenarios."
+        />
+      }
     >
       {/* User Profile Summary */}
       <VStack space="md">
@@ -394,28 +391,6 @@ export default function SimulationResult() {
           suffix=""
         />
       </VStack>
-
-      {/* Help Modal */}
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="md">
-        <ModalBackdrop />
-        <ModalContent className="rounded-xl">
-          <ModalHeader>
-            <Heading size="lg">
-              What is Monte Carlo?
-            </Heading>
-            <ModalCloseButton>
-              <Icon as={CloseIcon} />
-            </ModalCloseButton>
-          </ModalHeader>
-          <ModalBody scrollEnabled={false}>
-            <Text className="text-base text-gray-700 leading-6">
-              Monte Carlo simulation runs thousands of scenarios with random market
-              returns to show the range of possible outcomes for your financial future.
-              This helps you understand both the best and worst-case scenarios.
-            </Text>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
     </PageLayout>
   );
 }

@@ -33,7 +33,7 @@ const currentUser = {
 
 export default function Leaderboard() {
   // TODO: Replace with actual authentication check
-  const [isSignedIn, setIsSignedIn] = useState(false); // Change this to true to test signed-in state
+  const [isSignedIn, setIsSignedIn] = useState(true); // Change this to true to test signed-in state
 
   const cardFadeAnim = useRef(new Animated.Value(1)).current;
   const cardScaleAnim = useRef(new Animated.Value(1)).current;

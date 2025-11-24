@@ -7,7 +7,23 @@ import { VStack } from '@/components/ui/vstack';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useState } from 'react';
 import { View } from 'react-native';
-import Course from '@/types/Course';
+
+type Course = {
+  course_id: string;
+  name: string;
+  credits?: string | number;
+  department?: string;
+  description?: string;
+  semester?: string;
+  // older recommendation shape might have restrictions at top level
+  restrictions?: string | null;
+  // new "all courses" shape
+  relationships?: {
+    restrictions?: string | null;
+    [key: string]: any;
+  };
+  [key: string]: any;
+};
 
 export default function CourseOptionsScreen() {
   const [searchText, setSearchText] = useState('');
@@ -57,36 +73,82 @@ export default function CourseOptionsScreen() {
           className="text-md"
         />
       </Input>
-      <VStack space="md" className="mt-8 h-full w-full">
+
+      {/* Subtitle / metadata row */}
+      {comfort_level && !isAllCoursesMode && (
+        <Text size="xs" className="text-gray-600 mt-1">
+          Comfort level: {comfort_level} · Max credits per course: {max_credits}
+        </Text>
+      )}
+
+      {isAllCoursesMode && (
+        <Text size="xs" className="text-gray-600 mt-1">
+          Showing all available courses.
+        </Text>
+      )}
+
+      <VStack space="md" className="mt-8">
         {courses.length === 0 ? (
-          <Text className="mx-auto my-auto text-gray-600">There are no courses available!</Text>
+          <Text className="text-gray-600">No courses found.</Text>
         ) : (
-          courses.map((course: any) => (
-            <View
-              key={course.course_id}
-              className="rounded-xl mb-3 p-4 border border-gray-200 bg-white"
-            >
-              <Heading size="md" className="text-gray-900 mb-1">
-                {course.name} ({course.course_id})
-              </Heading>
+          courses.map((course) => {
+            // Handle both shapes: top-level restrictions or nested in relationships
+            const restrictions =
+              course.restrictions ?? course.relationships?.restrictions ?? null;
 
-              <Text className="text-gray-600 mb-1">
-                <Text className="font-bold">Credits:</Text> {course.credits}
-              </Text>
+            return (
+              <View
+                key={course.course_id}
+                className="rounded-xl mb-3 p-4 border border-gray-200 bg-white"
+              >
+                <Heading size="md" className="text-gray-900 mb-1">
+                  {course.name} ({course.course_id})
+                </Heading>
 
-              {course.restrictions && (
+                {/* Department / credits row */}
                 <Text className="text-gray-600 mb-1">
-                  <Text className="font-bold">Restrictions:</Text> {course.restrictions}
+                  {course.department && (
+                    <>
+                      <Text className="font-bold">Department: </Text>
+                      {course.department}
+                      {'  ·  '}
+                    </>
+                  )}
+                  {course.credits && (
+                    <>
+                      <Text className="font-bold">Credits: </Text>
+                      {course.credits}
+                    </>
+                  )}
                 </Text>
-              )}
 
-              {course.description && (
-                <Text className="text-gray-600">{course.description}</Text>
-              )}
-            </View>
-          ))
+                {/* Optional semester */}
+                {course.semester && (
+                  <Text className="text-gray-600 mb-1">
+                    <Text className="font-bold">Semester: </Text>
+                    {course.semester}
+                  </Text>
+                )}
+
+                {/* Optional restrictions */}
+                {restrictions && (
+                  <Text className="text-gray-600 mb-1">
+                    <Text className="font-bold">Restrictions: </Text>
+                    {restrictions}
+                  </Text>
+                )}
+
+                {/* Description */}
+                {course.description && (
+                  <Text className="text-gray-600">{course.description}</Text>
+                )}
+              </View>
+            );
+          })
         )}
       </VStack>
     </PageLayout>
   );
 };
+
+export default CourseOptionsScreen;

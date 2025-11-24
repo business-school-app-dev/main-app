@@ -11,6 +11,7 @@ import IconButton from '@/components/inputs/icon-button';
 import { SelectionCard } from '@/components/views/selection-card';
 import ProgressView from '@/components/views/progress-view';
 import { useCallback } from 'react';
+import { fetchJobsByCategory } from '@/services/api/careers';
 
 // Types
 interface Question {
@@ -20,7 +21,8 @@ interface Question {
 }
 
 export interface UserResponses {
-  career: string;
+  careerCategory: string;
+  specificJob: string;
   location: string;
   children: number;
 }
@@ -28,16 +30,34 @@ export interface UserResponses {
 // Questions data
 const QUESTIONS: Question[] = [
   {
-    id: 'career',
-    question: 'What is your career field?',
+    id: 'careerCategory',
+    question: 'What is your career field? (Scroll down for more choices)',
     options: [
-      { label: 'Technology', value: 'tech' },
+      { label: 'Management', value: 'management' },
+      { label: 'Business/Finance', value: 'business_finance' },
+      { label: 'Math and Computers', value: 'math_computers' },
+      { label: 'Architecture/Engineering', value: 'architecture_engineering' },
+      { label: 'Life, Physical, and Social Science', value: 'science' },
+      { label: 'Public Service', value: 'public_service' },
+      { label: 'Legal Occupations', value: 'legal' },
+      { label: 'Educational Instruction and Library Occupations', value: 'education' },
+      { label: 'Arts, Design, Entertainment, Sports, and Media Occupations', value: 'arts_media' },
       { label: 'Healthcare', value: 'healthcare' },
-      { label: 'Finance', value: 'finance' },
-      { label: 'Education', value: 'education' },
-      { label: 'Business', value: 'business' },
-      { label: 'Other', value: 'other' },
+      { label: 'Protective Service', value: 'protective_service' },
+      { label: 'Food Preparation', value: 'food_preparation' },
+      { label: 'Personal Care and Service', value: 'personal_care' },
+      { label: 'Sales', value: 'sales' },
+      { label: 'Office and Administrative Support', value: 'office_admin' },
+      { label: 'Construction and Extraction', value: 'construction' },
+      { label: 'Installation, Maintenance', value: 'installation_maintenance' },
+      { label: 'Production Operations', value: 'production' },
+      { label: 'Transportation', value: 'transportation' },
     ],
+  },
+  {
+    id: 'specificJob',
+    question: 'What is your specific job?',
+    options: [], // Will be populated dynamically from API
   },
   {
     id: 'location',
@@ -70,6 +90,8 @@ export default function SimulationSetup() {
   const [fadeAnim] = useState(new Animated.Value(1));
   const [slideAnim] = useState(new Animated.Value(0));
   const [animationDirection, setAnimationDirection] = useState<'forward' | 'backward'>('forward');
+  const [jobOptions, setJobOptions] = useState<{ label: string; value: string | number }[]>([]);
+  const [isLoadingJobs, setIsLoadingJobs] = useState(false);
 
   useEffect(() => {
     checkExistingSetup();
@@ -113,7 +135,31 @@ export default function SimulationSetup() {
         useNativeDriver: true,
       }),
     ]).start();
+
+    // Fetch jobs when reaching the job selection question
+    if (currentQuestionIndex === 1 && responses.careerCategory) {
+      loadJobs(responses.careerCategory as string);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentQuestionIndex]);
+
+  const loadJobs = async (category: string) => {
+    setIsLoadingJobs(true);
+    try {
+      const response = await fetchJobsByCategory(category);
+      const jobOpts = response.jobs.map(job => ({
+        label: job.title,
+        value: job.value,
+      }));
+      setJobOptions(jobOpts);
+    } catch (error) {
+      console.error('Error loading jobs:', error);
+      // Fallback to empty options if API fails
+      setJobOptions([]);
+    } finally {
+      setIsLoadingJobs(false);
+    }
+  };
 
   const checkExistingSetup = async () => {
     try {
@@ -263,14 +309,24 @@ export default function SimulationSetup() {
         </VStack>
 
         {/* Options */}
-        <View className="mb-8">
-          <SelectionCard
-            options={currentQuestion.options}
-            selectedValue={selectedOption}
-            onSelect={handleOptionSelect}
-            spacing="md"
-          />
-        </View>
+        <ScrollView
+          className="mb-8 flex-1"
+          showsVerticalScrollIndicator={true}
+          nestedScrollEnabled={true}
+        >
+          {isLoadingJobs && currentQuestionIndex === 1 ? (
+            <View className="flex-1 items-center justify-center py-8">
+              <Text className="text-gray-500">Loading jobs...</Text>
+            </View>
+          ) : (
+            <SelectionCard
+              options={currentQuestionIndex === 1 ? jobOptions : currentQuestion.options}
+              selectedValue={selectedOption}
+              onSelect={handleOptionSelect}
+              spacing="md"
+            />
+          )}
+        </ScrollView>
 
         {/* Navigation Buttons */}
         <View className="mt-auto">

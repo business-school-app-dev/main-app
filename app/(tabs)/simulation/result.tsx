@@ -18,7 +18,8 @@ import LabeledSlider from '@/components/inputs/labeled-slider';
 
 // Types
 export interface UserResponses {
-  career: string;
+  careerCategory: string;
+  specificJob: string;
   location: string;
   children: number;
 }
@@ -184,9 +185,9 @@ export default function SimulationResult() {
 
   const profile = [
     {
-      icon: getCareerIcon(userResponses.career),
-      value: formatText(userResponses.career),
-      label: 'Career',
+      icon: getCareerIcon(userResponses.careerCategory),
+      value: formatText(userResponses.specificJob),
+      label: 'Job',
     },
     {
       icon: getLocationIcon(userResponses.location),

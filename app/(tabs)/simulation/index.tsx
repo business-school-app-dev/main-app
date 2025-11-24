@@ -12,6 +12,7 @@ import { SelectionCard } from '@/components/views/selection-card';
 import ProgressView from '@/components/views/progress-view';
 import { useCallback } from 'react';
 import { fetchJobsByCategory } from '@/services/api/careers';
+import FormSelect from '@/components/inputs/form-select';
 
 // Types
 interface Question {
@@ -63,10 +64,57 @@ const QUESTIONS: Question[] = [
     id: 'location',
     question: 'Where do you plan to live?',
     options: [
-      { label: 'Major City (High Cost)', value: 'high_cost' },
-      { label: 'Suburban Area (Medium Cost)', value: 'medium_cost' },
-      { label: 'Small Town (Low Cost)', value: 'low_cost' },
-      { label: 'Rural Area (Very Low Cost)', value: 'very_low_cost' },
+      { label: 'Alabama', value: 'AL' },
+      { label: 'Alaska', value: 'AK' },
+      { label: 'Arizona', value: 'AZ' },
+      { label: 'Arkansas', value: 'AR' },
+      { label: 'California', value: 'CA' },
+      { label: 'Colorado', value: 'CO' },
+      { label: 'Connecticut', value: 'CT' },
+      { label: 'Delaware', value: 'DE' },
+      { label: 'District of Columbia', value: 'DC' },
+      { label: 'Florida', value: 'FL' },
+      { label: 'Georgia', value: 'GA' },
+      { label: 'Hawaii', value: 'HI' },
+      { label: 'Idaho', value: 'ID' },
+      { label: 'Illinois', value: 'IL' },
+      { label: 'Indiana', value: 'IN' },
+      { label: 'Iowa', value: 'IA' },
+      { label: 'Kansas', value: 'KS' },
+      { label: 'Kentucky', value: 'KY' },
+      { label: 'Louisiana', value: 'LA' },
+      { label: 'Maine', value: 'ME' },
+      { label: 'Maryland', value: 'MD' },
+      { label: 'Massachusetts', value: 'MA' },
+      { label: 'Michigan', value: 'MI' },
+      { label: 'Minnesota', value: 'MN' },
+      { label: 'Mississippi', value: 'MS' },
+      { label: 'Missouri', value: 'MO' },
+      { label: 'Montana', value: 'MT' },
+      { label: 'Nebraska', value: 'NE' },
+      { label: 'Nevada', value: 'NV' },
+      { label: 'New Hampshire', value: 'NH' },
+      { label: 'New Jersey', value: 'NJ' },
+      { label: 'New Mexico', value: 'NM' },
+      { label: 'New York', value: 'NY' },
+      { label: 'North Carolina', value: 'NC' },
+      { label: 'North Dakota', value: 'ND' },
+      { label: 'Ohio', value: 'OH' },
+      { label: 'Oklahoma', value: 'OK' },
+      { label: 'Oregon', value: 'OR' },
+      { label: 'Pennsylvania', value: 'PA' },
+      { label: 'Rhode Island', value: 'RI' },
+      { label: 'South Carolina', value: 'SC' },
+      { label: 'South Dakota', value: 'SD' },
+      { label: 'Tennessee', value: 'TN' },
+      { label: 'Texas', value: 'TX' },
+      { label: 'Utah', value: 'UT' },
+      { label: 'Vermont', value: 'VT' },
+      { label: 'Virginia', value: 'VA' },
+      { label: 'Washington', value: 'WA' },
+      { label: 'West Virginia', value: 'WV' },
+      { label: 'Wisconsin', value: 'WI' },
+      { label: 'Wyoming', value: 'WY' },
     ],
   },
   {
@@ -309,24 +357,45 @@ export default function SimulationSetup() {
         </VStack>
 
         {/* Options */}
-        <ScrollView
-          className="mb-8 flex-1"
-          showsVerticalScrollIndicator={true}
-          nestedScrollEnabled={true}
-        >
-          {isLoadingJobs && currentQuestionIndex === 1 ? (
-            <View className="flex-1 items-center justify-center py-8">
-              <Text className="text-gray-500">Loading jobs...</Text>
-            </View>
-          ) : (
-            <SelectionCard
-              options={currentQuestionIndex === 1 ? jobOptions : currentQuestion.options}
-              selectedValue={selectedOption}
-              onSelect={handleOptionSelect}
-              spacing="md"
+        {currentQuestionIndex === 2 ? (
+          // Location question - use dropdown
+          <View className="mb-8">
+            <FormSelect
+              label=""
+              placeholder="Select a state"
+              options={currentQuestion.options.map(opt => opt.label)}
+              value={currentQuestion.options.find(opt => opt.value === selectedOption)?.label}
+              onValueChange={(label) => {
+                const option = currentQuestion.options.find(opt => opt.label === label);
+                if (option) {
+                  handleOptionSelect(option.value);
+                }
+              }}
+              isScrollable={true}
+              maxHeight={400}
             />
-          )}
-        </ScrollView>
+          </View>
+        ) : (
+          // Other questions - use SelectionCard
+          <ScrollView
+            className="mb-8 flex-1"
+            showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
+          >
+            {isLoadingJobs && currentQuestionIndex === 1 ? (
+              <View className="flex-1 items-center justify-center py-8">
+                <Text className="text-gray-500">Loading jobs...</Text>
+              </View>
+            ) : (
+              <SelectionCard
+                options={currentQuestionIndex === 1 ? jobOptions : currentQuestion.options}
+                selectedValue={selectedOption}
+                onSelect={handleOptionSelect}
+                spacing="md"
+              />
+            )}
+          </ScrollView>
+        )}
 
         {/* Navigation Buttons */}
         <View className="mt-auto">

@@ -10,17 +10,8 @@ import TextButton from '@/components/inputs/text-button';
 import { SelectionCard } from '@/components/views/selection-card';
 import ProgressView from '@/components/views/progress-view';
 
-const API_BASE_URL = 'http://127.0.0.1:5000/api/v1/';
-
-interface Question {
-  id: number;
-  text: string;
-  difficulty: number;
-  options: string[];
-  correctAnswer?: number;
-
-}
-
+import { fetchQuestions, submitAllAnswers } from '@/api/quiz';
+import { Question } from '@/types/quiz';
 
 export default function QuizModal() {
   const [selectedOption, setSelectedOption] = useState<string>("");
@@ -38,69 +29,22 @@ export default function QuizModal() {
   const shakeAnim = useRef(new Animated.Value(0)).current;
 
   useEffect(() => {
-    fetchQuestions();
+    loadQuestions();
   }, []);
 
-  const fetchQuestions = async () => {
+  const loadQuestions = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`${API_BASE_URL}/challenges/questions`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      });
-      if (!response.ok) {
-        throw new Error('Failed to fetch questions');
-      }
-      const data = await response.json();
-      if (data.success) {
-        const transformedQuestions = data.questions.map((q: any) => ({
-          id: q.id,
-          text: q.text,
-          difficulty: q.difficulty,
-          options: q.options,
-          correctAnswer: q.correct_answer,
-        }));
-        setQuestions(transformedQuestions);
-      } else {
-        throw new Error('API returned unsuccessful response');
-      }
-    } catch (err) {
-      console.error('Error fetching questions:', err);
-      setError('Failed to load questions. Please try again.');
+      const fetchedQuestions = await fetchQuestions();
+      setQuestions(fetchedQuestions);
+    } catch (err: any) {
+      setError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
-  const submitAllAnswers = async (userAnswers: { questionId: number, answer: number, isCorrect: boolean }[]) => {
-    try {
-      const userId = 0;
-      const response = await fetch(`${API_BASE_URL}/challenges/submit-batch`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          user_id: userId,
-          answers: userAnswers,
-        }),
-      });
 
-      if (!response.ok) {
-        throw new Error('Failed to submit answers');
-      }
-
-      const data = await response.json();
-      return data;
-
-
-    } catch (err) {
-      console.error('Error submitting answers:', err);
-      return null;
-    }
-  };
 
   const currentQ = questions[Math.min(currentQuestion - 1, questions.length - 1)];
   const progress = (currentQuestion / questions.length) * 100;
@@ -235,7 +179,7 @@ export default function QuizModal() {
           {/* Try Again Button */}
           <TextButton
             label="Try Again"
-            onPress={fetchQuestions}
+            onPress={loadQuestions}
             variant="secondary"
             size="lg"
           />

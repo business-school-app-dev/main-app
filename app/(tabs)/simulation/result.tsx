@@ -15,14 +15,8 @@ import HelpButton from '@/components/inputs/help-button';
 import COLORS, { GRAY_COLORS, PRIMARY_COLORS, SECONDARY_COLORS } from '@/constants/colors';
 import { Briefcase, MapPin, Baby, Laptop, Heart, DollarSign, GraduationCap, Building2, Users, Home, TreePine } from 'lucide-react-native';
 import LabeledSlider from '@/components/inputs/labeled-slider';
+import { UserResponses } from '@/types/Question';
 
-// Types
-export interface UserResponses {
-  careerCategory: string;
-  specificJob: string;
-  location: string;
-  children: number;
-}
 
 export default function SimulationResult() {
   const [userResponses, setUserResponses] = useState<UserResponses | null>(null);
@@ -141,7 +135,7 @@ export default function SimulationResult() {
 
   const formatText = (text: string) => {
     // Replace underscores with spaces and capitalize first letter of each word
-    return text
+    return text === undefined ? text : text
       .split('_')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');

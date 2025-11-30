@@ -4,7 +4,7 @@ import { Animated } from "react-native";
 import { UserResponses, QUESTIONS } from "@/types/Question";
 import { JobsResponse } from "@/types/Job";
 
-const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
+const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
 
 export const loadJobs = async (
   category: string,
@@ -19,6 +19,14 @@ export const loadJobs = async (
   setIsLoadingJobs(true);
   try {
     const response = await fetchJobsByCategory(category);
+
+    // Validate response has jobs array
+    if (!response || !response.jobs || !Array.isArray(response.jobs)) {
+      console.error("Invalid response structure:", response);
+      setJobOptions([]);
+      return;
+    }
+
     const jobOpts = response.jobs.map((job) => ({
       label: job.title,
       value: job.value,
@@ -155,9 +163,18 @@ export async function fetchJobsByCategory(
   category: string
 ): Promise<JobsResponse> {
   try {
-    console.log(`${API_BASE_URL}/jobs/${category}`);
-    const response = await fetch(`${API_BASE_URL}/jobs/${category}`);
+    const url = `${API_BASE_URL}/jobs/${category}`;
+    console.log("Fetching jobs from:", url);
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
     const data = await response.json();
+    console.log("Received data:", data);
+
     return data as JobsResponse;
   } catch (error) {
     console.error("Error fetching jobs:", error);

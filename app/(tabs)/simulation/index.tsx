@@ -30,7 +30,7 @@ export default function SimulationSetup() {
   const [isLoadingJobs, setIsLoadingJobs] = useState(false);
 
   const currentQuestion = QUESTIONS[currentQuestionIndex];
-  const progress = (currentQuestionIndex + 1) / QUESTIONS.length;
+  const progress = ((currentQuestionIndex + 1) / QUESTIONS.length) * 100;
 
   const handleOptionSelect = (value: string | number) => setSelectedOption(value);
 

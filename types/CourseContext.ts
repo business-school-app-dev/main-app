@@ -1,3 +1,5 @@
+import { createContext } from "react";
+
 export type CourseContextType = {
   credit: string;
   major1: string;
@@ -12,3 +14,8 @@ export type CourseContextType = {
   setMinor2: (value: string) => void;
   setComfortLevel: (value: string) => void;
 };
+
+// Create the context
+export const CourseContext = createContext<CourseContextType | undefined>(
+  undefined
+);

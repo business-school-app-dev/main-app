@@ -1,7 +1,7 @@
 import {
   handleAllCourses,
   handleGetRecommendations,
-} from "@/api/courseRecommender";
+} from "@/api/course-recommender";
 import FormSelect from "@/components/inputs/form-select";
 import HelpButton from "@/components/inputs/help-button";
 import TextButton from "@/components/inputs/text-button";
@@ -11,7 +11,7 @@ import { VStack } from "@/components/ui/vstack";
 import { creditHours, majors, minors } from "@/constants/student";
 import { router } from "expo-router";
 import React, { useState } from "react";
-import { CourseContext } from "@/contexts/CourseContext";
+import { CourseContext } from "@/types/CourseContext";
 
 
 export default function CourseRecommenderScreen() {

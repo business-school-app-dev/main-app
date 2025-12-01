@@ -22,16 +22,13 @@ export default function CourseOptionsScreen() {
     max_credits?: string;
   }>();
 
-  // --- API FETCH EFFECT ---
   useEffect(() => {
     const fetchRecommendations = async () => {
       setLoading(true);
       setError(null);
 
-      // Build the query URL using parameters from the previous screen (local search params)
       const comfort = comfort_level || 'n/a';
       const credits = max_credits || 'n/a';
-      
       const endpoint = `${API_BASE_URL}recommend?comfort=${comfort}&max_credits=${credits}`;
       
       try {
@@ -39,7 +36,6 @@ export default function CourseOptionsScreen() {
         const data = await response.json();
 
         if (!response.ok) {
-          // Handle HTTP errors or messages like "No suitable courses found." (404)
           setError(data.message || `Failed to fetch: ${response.status}`);
           setFetchedCourses([]);
           return;

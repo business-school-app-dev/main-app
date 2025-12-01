@@ -11,56 +11,12 @@ import IconButton from '@/components/inputs/icon-button';
 import { SelectionCard } from '@/components/views/selection-card';
 import ProgressView from '@/components/views/progress-view';
 import { useCallback } from 'react';
+import { fetchJobsByCategory } from '@/services/api/careers';
+import FormSelect from '@/components/inputs/form-select';
+import { UserResponses } from '@/types/Question';
+import { QUESTIONS } from '@/types/Question';
+import { checkExistingSetup, handleBack, handleNext, loadJobs } from '@/api/simulation';
 
-// Types
-interface Question {
-  id: string;
-  question: string;
-  options: { label: string; value: string | number }[];
-}
-
-export interface UserResponses {
-  career: string;
-  location: string;
-  children: number;
-}
-
-// Questions data
-const QUESTIONS: Question[] = [
-  {
-    id: 'career',
-    question: 'What is your career field?',
-    options: [
-      { label: 'Technology', value: 'tech' },
-      { label: 'Healthcare', value: 'healthcare' },
-      { label: 'Finance', value: 'finance' },
-      { label: 'Education', value: 'education' },
-      { label: 'Business', value: 'business' },
-      { label: 'Other', value: 'other' },
-    ],
-  },
-  {
-    id: 'location',
-    question: 'Where do you plan to live?',
-    options: [
-      { label: 'Major City (High Cost)', value: 'high_cost' },
-      { label: 'Suburban Area (Medium Cost)', value: 'medium_cost' },
-      { label: 'Small Town (Low Cost)', value: 'low_cost' },
-      { label: 'Rural Area (Very Low Cost)', value: 'very_low_cost' },
-    ],
-  },
-  {
-    id: 'children',
-    question: 'How many children do you plan to have?',
-    options: [
-      { label: 'None', value: 0 },
-      { label: '1 child', value: 1 },
-      { label: '2 children', value: 2 },
-      { label: '3 children', value: 3 },
-      { label: '4+ children', value: 4 },
-    ],
-  },
-];
 
 export default function SimulationSetup() {
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -70,9 +26,16 @@ export default function SimulationSetup() {
   const [fadeAnim] = useState(new Animated.Value(1));
   const [slideAnim] = useState(new Animated.Value(0));
   const [animationDirection, setAnimationDirection] = useState<'forward' | 'backward'>('forward');
+  const [jobOptions, setJobOptions] = useState<{ label: string; value: string | number }[]>([]);
+  const [isLoadingJobs, setIsLoadingJobs] = useState(false);
+
+  const currentQuestion = QUESTIONS[currentQuestionIndex];
+  const progress = ((currentQuestionIndex + 1) / QUESTIONS.length) * 100;
+
+  const handleOptionSelect = (value: string | number) => setSelectedOption(value);
 
   useEffect(() => {
-    checkExistingSetup();
+    checkExistingSetup(setIsLoading);
   }, []);
 
   useFocusEffect(
@@ -89,7 +52,7 @@ export default function SimulationSetup() {
           setIsLoading(false);
           setAnimationDirection('forward');
         } else {
-          checkExistingSetup();
+          checkExistingSetup(setIsLoading);
         }
       };
       resetCheck();
@@ -113,106 +76,15 @@ export default function SimulationSetup() {
         useNativeDriver: true,
       }),
     ]).start();
+
+    // Fetch jobs when reaching the job selection question
+    if (currentQuestionIndex === 1 && responses.careerCategory) {
+      loadJobs(responses.careerCategory as string, setIsLoadingJobs, setJobOptions);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentQuestionIndex]);
 
-  const checkExistingSetup = async () => {
-    try {
-      const resetFlag = await AsyncStorage.getItem('@simulation_reset');
-      if (resetFlag === 'true') {
-        // Coming from reset, clear the flag and show first question
-        await AsyncStorage.removeItem('@simulation_reset');
-        setIsLoading(false);
-        return;
-      }
 
-      const setupData = await AsyncStorage.getItem('@simulation_setup');
-      if (setupData) {
-        // If setup exists, navigate to results
-        router.replace('/(tabs)/simulation/result');
-      } else {
-        setIsLoading(false);
-      }
-    } catch (error) {
-      console.error('Error loading setup data:', error);
-      setIsLoading(false);
-    }
-  };
-
-  const currentQuestion = QUESTIONS[currentQuestionIndex];
-  const progress = ((currentQuestionIndex + 1) / QUESTIONS.length) * 100;
-
-  const handleOptionSelect = (value: string | number) => {
-    setSelectedOption(value);
-  };
-
-  const handleNext = async () => {
-    if (selectedOption !== null) {
-      const newResponses = {
-        ...responses,
-        [currentQuestion.id]: selectedOption,
-      };
-      setResponses(newResponses);
-
-      // Set direction for next animation
-      setAnimationDirection('forward');
-
-      // Animate out before transitioning
-      await Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: -30,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
-      if (currentQuestionIndex < QUESTIONS.length - 1) {
-        setCurrentQuestionIndex(currentQuestionIndex + 1);
-        setSelectedOption(null);
-      } else {
-        // All questions answered - save and navigate to results
-        try {
-          await AsyncStorage.setItem('@simulation_setup', JSON.stringify(newResponses));
-          router.push('/(tabs)/simulation/result');
-        } catch (error) {
-          console.error('Error saving setup data:', error);
-        }
-      }
-    }
-  };
-
-  const handleBack = async () => {
-    if (currentQuestionIndex > 0) {
-      // Set direction for backward animation (slide in from left)
-      setAnimationDirection('backward');
-
-      // Animate out to the right (sliding left to right)
-      await Animated.parallel([
-        Animated.timing(fadeAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(slideAnim, {
-          toValue: 100, // Slide far to the right
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
-
-      // Reset to first question
-      setCurrentQuestionIndex(0);
-      setResponses({});
-      setSelectedOption(null);
-    } else {
-      // On first question, go back to previous page
-      router.back();
-    }
-  };
 
   if (isLoading) {
     return (
@@ -231,7 +103,7 @@ export default function SimulationSetup() {
         currentQuestionIndex > 0 ? (
           <IconButton
             iconName="arrow-back"
-            onPress={handleBack}
+            onPress={async () => await handleBack(currentQuestionIndex, fadeAnim, slideAnim, setAnimationDirection, setCurrentQuestionIndex, setResponses, setSelectedOption)}
           />
         ) : undefined
       }
@@ -242,7 +114,7 @@ export default function SimulationSetup() {
           opacity: fadeAnim,
           transform: [{ translateX: slideAnim }],
         }}
-        className="min-h-full"
+        className="flex-1"
       >
         {/* Progress Bar */}
         <ProgressView
@@ -263,16 +135,46 @@ export default function SimulationSetup() {
         </VStack>
 
         {/* Options */}
-        <View className="mb-8">
-          <SelectionCard
-            options={currentQuestion.options}
-            selectedValue={selectedOption}
-            onSelect={handleOptionSelect}
-            spacing="md"
-          />
-        </View>
+        {currentQuestionIndex === 2 ? (
+          // Location question - use dropdown
+          <View className="mb-8">
+            <FormSelect
+              label=""
+              placeholder="Select a state"
+              options={currentQuestion.options.map(opt => opt.label)}
+              value={currentQuestion.options.find(opt => opt.value === selectedOption)?.label}
+              onValueChange={(label) => {
+                const option = currentQuestion.options.find(opt => opt.label === label);
+                if (option) {
+                  handleOptionSelect(option.value);
+                }
+              }}
+              isScrollable={true}
+              maxHeight={400}
+            />
+          </View>
+        ) : (
+          // Other questions - use SelectionCard
+          <ScrollView
+            className="mb-8 flex-1"
+            showsVerticalScrollIndicator={true}
+            nestedScrollEnabled={true}
+          >
+            {isLoadingJobs && currentQuestionIndex === 1 ? (
+              <View className="flex-1 items-center justify-center py-8">
+                <Text className="text-gray-500">Loading jobs...</Text>
+              </View>
+            ) : (
+              <SelectionCard
+                options={currentQuestionIndex === 1 ? jobOptions : currentQuestion.options}
+                selectedValue={selectedOption}
+                onSelect={handleOptionSelect}
+                spacing="md"
+              />
+            )}
+          </ScrollView>
+        )}
 
-        {/* Navigation Buttons */}
         <View className="mt-auto">
           <TextButton
             label={
@@ -282,7 +184,7 @@ export default function SimulationSetup() {
             }
             variant="secondary"
             size="lg"
-            onPress={handleNext}
+            onPress={async () => await handleNext(selectedOption, responses, currentQuestionIndex, fadeAnim, slideAnim, setResponses, setAnimationDirection, setCurrentQuestionIndex, setSelectedOption)}
             disabled={selectedOption === null}
           />
         </View>

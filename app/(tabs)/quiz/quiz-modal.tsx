@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { View, StatusBar, ScrollView, Animated } from 'react-native';
-import { Text } from '@/components/ui/text';
-import { Pressable } from '@/components/ui/pressable';
-import { Icon } from '@/components/ui/icon';
-import { X } from 'lucide-react-native';
-import { router } from 'expo-router';
-import { SafeAreaView } from 'react-native-safe-area-context';
 import TextButton from '@/components/inputs/text-button';
-import { SelectionCard } from '@/components/views/selection-card';
+import { Icon } from '@/components/ui/icon';
+import { Pressable } from '@/components/ui/pressable';
+import { Text } from '@/components/ui/text';
 import ProgressView from '@/components/views/progress-view';
+import { SelectionCard } from '@/components/views/selection-card';
+import { router } from 'expo-router';
+import { X } from 'lucide-react-native';
+import React, { useRef, useState } from 'react';
+import { Animated, StatusBar, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function QuizModal() {
   const [selectedOption, setSelectedOption] = useState<string>("");
@@ -128,7 +128,9 @@ export default function QuizModal() {
       setIsCorrect(false);
     } else {
       // Quiz completed
-      router.back();
+      router.push("/quiz/quiz-completed");
+      console.log("quiz is completed")
+
     }
   };
 

@@ -4,7 +4,7 @@ import { Animated } from "react-native";
 import { UserResponses, QUESTIONS } from "@/types/Question";
 import { JobsResponse } from "@/types/Job";
 
-const API_BASE_URL = "http://127.0.0.1:8000/api/v1";
+const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
 
 export const loadJobs = async (
   category: string,

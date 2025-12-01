@@ -33,8 +33,8 @@ const currentUser = {
 
 export default function Leaderboard() {
   // TODO: Replace with actual authentication check
-  const [isSignedIn, setIsSignedIn] = useState(false); // Change this to true to test signed-in state
-
+  const [isSignedIn, setIsSignedIn] = useState(true); // Change this to true to test signed-in state
+  const [submittedQuiz, setIsSubmittedQuiz] = useState(false);
   const cardFadeAnim = useRef(new Animated.Value(1)).current;
   const cardScaleAnim = useRef(new Animated.Value(1)).current;
   const quizButtonFadeAnim = useRef(new Animated.Value(0)).current;
@@ -156,29 +156,13 @@ export default function Leaderboard() {
               </Box>
             </Box>
           ) : (
-            <Pressable
-              className="bg-primary-500 rounded-xl p-4 border border-gray-200 active:bg-primary-600"
-              onPress={() => {
-                setIsSignedIn(true);
-                router.push({
-                  pathname: '/webview-modal',
-                  params: {
-                    url: 'https://terpengage.umd.edu/community/s/change-major',
-                    title: 'Sign In'
-                  }
-                });
-              }}
-            >
-              <Box className="flex-row items-center justify-center py-4">
-                <Text className="text-xl font-bold text-white">Sign In</Text>
-              </Box>
-            </Pressable>
+            <View />
           )}
         </Animated.View>
       </Box>
 
       {/* Daily Quiz Button - Only show if signed in */}
-      {isSignedIn && (
+      {!submittedQuiz && (
         <Box className="pt-4 pb-2">
           <Animated.View
             style={{

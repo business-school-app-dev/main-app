@@ -6,7 +6,7 @@ import { VStack } from '@/components/ui/vstack';
 import PageLayout from '@/components/layouts/page-layout';
 import TextButton from '@/components/inputs/text-button';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { router, useFocusEffect } from 'expo-router';
+import { useFocusEffect } from 'expo-router';
 import IconButton from '@/components/inputs/icon-button';
 import { SelectionCard } from '@/components/views/selection-card';
 import ProgressView from '@/components/views/progress-view';
@@ -143,13 +143,10 @@ export default function SimulationSetup() {
               options={currentQuestion.options.map(opt => opt.label)}
               value={currentQuestion.options.find(opt => opt.value === selectedOption)?.label}
               onValueChange={(label) => {
-                const option = currentQuestion.options.find(opt => opt.label === label);
-                if (option) {
-                  handleOptionSelect(option.value);
-                }
+                const option = currentQuestion.options.find(opt => opt.label === label)!;
+                handleOptionSelect(option.value);
               }}
               isScrollable={true}
-              maxHeight={400}
             />
           </View>
         ) : (

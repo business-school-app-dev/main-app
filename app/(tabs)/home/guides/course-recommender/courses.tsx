@@ -5,44 +5,76 @@ import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useMemo, useState } from 'react';
-import { View } from 'react-native';
+import React, { useMemo, useState, useEffect } from 'react';
+import { View, ActivityIndicator } from 'react-native';
 import Course from '@/types/Course';
+
+const API_BASE_URL = 'http://127.0.0.1:5000/api/v1/'; 
 
 export default function CourseOptionsScreen() {
   const [searchText, setSearchText] = useState('');
-  const { recommendations, comfort_level, max_credits } =
-    useLocalSearchParams<{
-      recommendations?: string;
-      comfort_level?: string;
-      max_credits?: string;
-    }>();
+  const [fetchedCourses, setFetchedCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  
+  const { comfort_level, max_credits } = useLocalSearchParams<{
+    comfort_level?: string;
+    max_credits?: string;
+  }>();
 
-  // safely parse the JSON string into an array
-  let courses_list: Course[] = [];
-  if (recommendations) {
-    try {
-      const parsed = JSON.parse(recommendations);
-      courses_list = Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      console.error('Failed to parse recommendations param:', e);
-      courses_list = [];
-    }
-  }
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      setLoading(true);
+      setError(null);
+
+      const comfort = comfort_level || 'n/a';
+      const credits = max_credits || 'n/a';
+      const endpoint = `${API_BASE_URL}recommend?comfort=${comfort}&max_credits=${credits}`;
+      
+      try {
+        const response = await fetch(endpoint);
+        const data = await response.json();
+
+        if (!response.ok) {
+          setError(data.message || `Failed to fetch: ${response.status}`);
+          setFetchedCourses([]);
+          return;
+        }
+
+        if (data.recommendations && Array.isArray(data.recommendations)) {
+          setFetchedCourses(data.recommendations);
+        } else {
+          setError("API returned data in an unexpected format.");
+          setFetchedCourses([]);
+        }
+
+      } catch (e) {
+        console.error('Network Error:', e);
+        setError("Network error: Could not connect to the server.");
+        setFetchedCourses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecommendations();
+  }, [comfort_level, max_credits]); // Re-run when parameters change
 
   // 👇 filter courses based on search text
   const courses = useMemo(() => {
     if (!searchText.trim()) {
-      return courses_list;
+      return fetchedCourses; // Use fetchedCourses instead of courses_list
     }
 
     const lowerSearch = searchText.toLowerCase();
-    return courses_list.filter((course: Course) =>
+    return fetchedCourses.filter((course: Course) =>
       course.name?.toLowerCase().includes(lowerSearch) ||
       course.course_id?.toLowerCase().includes(lowerSearch) ||
       course.description?.toLowerCase().includes(lowerSearch)
     );
-  }, [courses_list, searchText]);
+  }, [fetchedCourses, searchText]);
+
+  // --- RENDER LOGIC ---
 
   return (
     <PageLayout title="Recommended Courses">
@@ -57,9 +89,17 @@ export default function CourseOptionsScreen() {
           className="text-md"
         />
       </Input>
+      
       <VStack space="md" className="mt-8 h-full w-full">
-        {courses.length === 0 ? (
-          <Text className="mx-auto my-auto text-gray-600">There are no courses available!</Text>
+        {loading ? (
+          <View className="flex-1 justify-center items-center">
+            <ActivityIndicator size="large" color="#E11932" />
+            <Text className="mt-4 text-gray-600">Finding recommendations...</Text>
+          </View>
+        ) : error ? (
+          <Text className="mx-auto my-auto text-red-600 text-center">{error}</Text>
+        ) : courses.length === 0 ? (
+          <Text className="mx-auto my-auto text-gray-600">There are no courses matching your criteria!</Text>
         ) : (
           courses.map((course: any) => (
             <View

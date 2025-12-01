@@ -11,7 +11,6 @@ import IconButton from '@/components/inputs/icon-button';
 import { SelectionCard } from '@/components/views/selection-card';
 import ProgressView from '@/components/views/progress-view';
 import { useCallback } from 'react';
-import { fetchJobsByCategory } from '@/services/api/careers';
 import FormSelect from '@/components/inputs/form-select';
 import { UserResponses } from '@/types/Question';
 import { QUESTIONS } from '@/types/Question';

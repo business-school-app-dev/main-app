@@ -52,8 +52,8 @@ export const handleAllCourses = async (
       pathname: "/home/guides/course-recommender/courses",
       params: {
         recommendations: JSON.stringify(data),
-        comfort_level: "all",
-        max_credits: "all",
+        comfort_level: "n/a",
+        max_credits: "n/a",
       },
     });
   } catch (error) {

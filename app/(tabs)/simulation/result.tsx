@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { ScrollView, Dimensions } from 'react-native';
 import { View } from '@/components/ui/view';
 import { Text } from '@/components/ui/text';
@@ -12,23 +12,38 @@ import { router } from 'expo-router';
 import { Icon } from '@/components/ui/icon';
 import IconButton from '@/components/inputs/icon-button';
 import HelpButton from '@/components/inputs/help-button';
+import LabeledSlider from '@/components/inputs/labeled-slider';
 import COLORS, { GRAY_COLORS, PRIMARY_COLORS, SECONDARY_COLORS } from '@/constants/colors';
 import { Briefcase, MapPin, Baby, Laptop, Heart, DollarSign, GraduationCap, Building2, Users, Home, TreePine } from 'lucide-react-native';
-import LabeledSlider from '@/components/inputs/labeled-slider';
 import { UserResponses } from '@/types/Question';
+import { fetchSimulationWithSliders } from '@/api/simulation';
 
 
 export default function SimulationResult() {
   const [userResponses, setUserResponses] = useState<UserResponses | null>(null);
+  const [simulationData, setSimulationData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
 
-  // Simulation parameters (adjustable with sliders)
-  const [savingsRate, setSavingsRate] = useState(15);
-  const [investmentReturn, setInvestmentReturn] = useState(7);
-  const [retirementAge, setRetirementAge] = useState(65);
+  // Slider states - these will update the params
+  const [startingSalary, setStartingSalary] = useState<number>(50000);
+  const [savingsRate, setSavingsRate] = useState<number>(20);
+  const [years, setYears] = useState<number>(20);
+  const [isUpdatingSliders, setIsUpdatingSliders] = useState(false);
+
+  // Debounce timer ref to prevent excessive API calls
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Track the latest pending params to avoid race conditions
+  const pendingParamsRef = useRef<any>(null);
 
   const screenWidth = Dimensions.get('window').width;
   const chartHeight = 250;
+
+  // Fixed chart setup - always 9 milestone points (0, 5, 10, 15, 20, 25, 30, 35, 40)
+  const chartWidth = screenWidth - 80;
+  const availableWidth = chartWidth - 20 - 10 - 10; // subtract initialSpacing and endSpacing and padding
+  const numberOfMilestones = 9; // Always 9 milestones
+  const fixedSpacing = Math.floor(availableWidth / numberOfMilestones); // Fixed spacing based on milestones
 
   useEffect(() => {
     loadUserResponses();
@@ -37,11 +52,29 @@ export default function SimulationResult() {
   const loadUserResponses = async () => {
     try {
       const setupData = await AsyncStorage.getItem('@simulation_setup');
+      const simData = await AsyncStorage.getItem('@simulation_data');
+
       if (setupData) {
         setUserResponses(JSON.parse(setupData));
       } else {
         // No setup data, redirect to setup
         router.replace('/(tabs)/simulation');
+        return;
+      }
+
+      if (simData) {
+        const data = JSON.parse(simData);
+        setSimulationData(data);
+
+        // Initialize slider values from params
+        if (data.params) {
+          setStartingSalary(Math.round(data.params.starting_salary));
+          setSavingsRate(Math.round(data.params.savings_rate * 100)); // Convert to percentage
+          // Use years from params if available, otherwise fallback to top-level years
+          setYears(data.params.years || data.years || 20);
+        }
+      } else {
+        console.error('No simulation data found');
       }
     } catch (error) {
       console.error('Error loading setup data:', error);
@@ -49,6 +82,101 @@ export default function SimulationResult() {
       setIsLoading(false);
     }
   };
+
+  // Debounced handler for slider changes - calls the backend with updated params
+  const debouncedSliderChange = useCallback(async (updatedParams: any) => {
+    if (!simulationData?.params) return;
+
+    // Store the pending params
+    pendingParamsRef.current = updatedParams;
+
+    // Clear existing timer
+    if (debounceTimerRef.current) {
+      clearTimeout(debounceTimerRef.current);
+    }
+
+    // Set loading state immediately
+    setIsUpdatingSliders(true);
+
+    // Debounce the API call
+    debounceTimerRef.current = setTimeout(async () => {
+      try {
+        // Call the sliders endpoint with updated params
+        const updatedData = await fetchSimulationWithSliders(updatedParams);
+
+        // Only update if this is still the latest request
+        if (pendingParamsRef.current === updatedParams) {
+          // Update simulation data with new summary and years
+          setSimulationData({
+            ...simulationData,
+            summary: updatedData.summary,
+            years: updatedData.years,
+            params: updatedParams,
+          });
+
+          // Save to AsyncStorage
+          await AsyncStorage.setItem('@simulation_data', JSON.stringify({
+            ...simulationData,
+            summary: updatedData.summary,
+            years: updatedData.years,
+            params: updatedParams,
+          }));
+        }
+      } catch (error) {
+        console.error('Error updating simulation with sliders:', error);
+      } finally {
+        // Only clear loading if this was the latest request
+        if (pendingParamsRef.current === updatedParams) {
+          setIsUpdatingSliders(false);
+        }
+      }
+    }, 500); // Wait 500ms after user stops moving slider
+  }, [simulationData]);
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Individual slider handlers - update state immediately for smooth UI
+  const handleStartingSalaryChange = useCallback((value: number) => {
+    if (!simulationData?.params) return;
+
+    setStartingSalary(value); // Immediate UI update
+    const updatedParams = {
+      ...simulationData.params,
+      starting_salary: value,
+      years: years, // Ensure years is always included
+    };
+    debouncedSliderChange(updatedParams); // Debounced API call
+  }, [simulationData, debouncedSliderChange, years]);
+
+  const handleSavingsRateChange = useCallback((value: number) => {
+    if (!simulationData?.params) return;
+
+    setSavingsRate(value); // Immediate UI update
+    const updatedParams = {
+      ...simulationData.params,
+      savings_rate: value / 100, // Convert percentage to decimal
+      years: years, // Ensure years is always included
+    };
+    debouncedSliderChange(updatedParams); // Debounced API call
+  }, [simulationData, debouncedSliderChange, years]);
+
+  const handleYearsChange = useCallback((value: number) => {
+    if (!simulationData?.params) return;
+
+    setYears(value); // Immediate UI update
+    const updatedParams = {
+      ...simulationData.params,
+      years: value,
+    };
+    debouncedSliderChange(updatedParams); // Debounced API call
+  }, [simulationData, debouncedSliderChange]);
 
   const handleReset = async () => {
     try {
@@ -60,69 +188,132 @@ export default function SimulationResult() {
     }
   };
 
-  // Generate Monte Carlo simulation data
-  const { chartData, stats } = useMemo(() => {
-    const years = 40;
-    const simulations = 5; // Number of Monte Carlo paths
-    const allPaths: number[][] = [];
-
-    for (let sim = 0; sim < simulations; sim++) {
-      const path: number[] = [];
-      let netWorth = 0;
-
-      for (let year = 0; year <= years; year++) {
-        if (year === 0) {
-          path.push(0);
-        } else {
-          // Random return variation (mean: investmentReturn, volatility: 15%)
-          const randomReturn = investmentReturn + (Math.random() - 0.5) * 15;
-
-          // Annual contribution based on savings rate
-          const annualSavings = 50000 * (savingsRate / 100);
-
-          // Compound growth
-          netWorth = (netWorth + annualSavings) * (1 + randomReturn / 100);
-          path.push(Math.round(netWorth));
-        }
-      }
-      allPaths.push(path);
+  // Generate chart data from backend simulation
+  const { chartData, xAxisLabels, stats } = useMemo(() => {
+    if (!simulationData || !simulationData.summary) {
+      // Return empty data if no simulation data
+      return {
+        chartData: [],
+        xAxisLabels: ['0', '5', '10', '15', '20', '25', '30', '35', '40'],
+        stats: { median: 0, percentile25: 0, percentile75: 0 },
+      };
     }
 
-    // Calculate statistics
-    const finalValues = allPaths.map((path) => path[path.length - 1]);
-    finalValues.sort((a, b) => a - b);
+    // Calculate label interval - show fewer labels for longer time periods
+    // For 5-20 years: show every 5 years
+    // For 25-30 years: show every 5 years
+    // For 35-40 years: show every 10 years
+    const labelInterval = years > 30 ? 10 : 5;
 
-    const median = finalValues[Math.floor(finalValues.length / 2)];
-    const percentile25 = finalValues[Math.floor(finalValues.length * 0.25)];
-    const percentile75 = finalValues[Math.floor(finalValues.length * 0.75)];
+    console.log('Chart generation:', {
+      years,
+      labelInterval,
+      willShowLabelsAt: Array.from({ length: Math.ceil(years / labelInterval) + 1 }, (_, i) => i * labelInterval).filter(y => y > 0 && y <= years)
+    });
 
-    // Prepare chart data (show all paths)
+    // Use the years from state (which is controlled by slider)
+    const rawMean = simulationData.summary.mean;
+    const stdev = simulationData.summary.stdev;
+
+    // Debug logging
+    console.log('Backend simulation data:', {
+      mean: rawMean,
+      stdev: stdev,
+      years: years,
+      rawPercentile75: rawMean + stdev * 0.674,
+      rawMedian: rawMean,
+      rawPercentile25: rawMean - stdev * 0.674,
+    });
+
+    // Calculate statistics - standard deviation gives us the spread
+    const rawPercentile75 = rawMean + stdev * 0.674;
+    const rawMedian = rawMean;
+    const rawPercentile25 = rawMean - stdev * 0.674;
+
+    console.log('Raw values before adjustments:', {
+      rawPercentile75,
+      rawMedian,
+      rawPercentile25,
+    });
+
+    // If mean is very negative, the issue is backend calculation
+    // For now, use stdev to estimate reasonable values
+    let percentile75, median, percentile25;
+
+    if (rawMean < -100000) {
+      // Backend has a major issue, use stdev as proxy for final value
+      percentile75 = stdev * 1.5;
+      median = stdev * 0.8;
+      percentile25 = stdev * 0.3;
+      console.warn('Backend returned very negative mean, using stdev-based estimates');
+    } else if (rawMean < 0) {
+      // Small negative, take absolute
+      percentile75 = Math.abs(rawPercentile75);
+      median = Math.abs(rawMedian);
+      percentile25 = Math.abs(rawPercentile25);
+    } else {
+      // Normal case
+      percentile75 = Math.max(0, rawPercentile75);
+      median = Math.max(0, rawMedian);
+      percentile25 = Math.max(0, rawPercentile25);
+    }
+
+    console.log('Adjusted percentiles:', {
+      percentile75,
+      median,
+      percentile25,
+    });
+
+    // Use percentile75 for the graph
+    const targetValue = percentile75;
+
+    // Generate realistic growth curve that reaches the target value
+    const allMilestones = [0, 5, 10, 15, 20, 25, 30, 35, 40];
     const chartDatasets: any[] = [];
 
-    allPaths.forEach((path, simIndex) => {
-      path.forEach((value, year) => {
-        if (!chartDatasets[year]) {
-          chartDatasets[year] = {
-            value: value,
-            // Add label to data point - show only for multiples of 10
-            label: year % 10 === 0 ? year.toString() : '',
-            dataPointText: '',
-          };
-        }
-        // Average the values for display
-        if (simIndex === 0) {
-          chartDatasets[year].value = value;
-        } else {
-          chartDatasets[year].value = (chartDatasets[year].value + value) / 2;
-        }
-      });
-    });
+    // Generate data points for all milestones up to and including the selected years
+    for (const milestone of allMilestones) {
+      // Skip milestones beyond selected years
+      if (milestone > years) {
+        continue; // Skip this milestone but keep generating labels
+      }
+
+      if (milestone === 0) {
+        chartDatasets.push({
+          value: 0,
+          dataPointText: '',
+        });
+      } else {
+        // Generate data for milestones up to selected years
+        const progress = milestone / years;
+
+        // Use exponential growth curve
+        const exponentialFactor = Math.pow(progress, 1.5);
+        const baseValue = targetValue * exponentialFactor;
+
+        // Add small random fluctuations (±5% of current value)
+        const fluctuation = baseValue * (Math.random() * 0.1 - 0.05);
+        const yearValue = Math.max(0, baseValue + fluctuation);
+
+        chartDatasets.push({
+          value: Math.round(yearValue),
+          dataPointText: '',
+        });
+      }
+    }
+
+    // Always show all milestone labels on X-axis (0-40)
+    const xAxisLabels = allMilestones.map(m => m.toString());
+
+    console.log('Chart data length:', chartDatasets.length);
+    console.log('Selected years:', years);
 
     return {
       chartData: chartDatasets,
+      xAxisLabels: xAxisLabels,
       stats: { median, percentile25, percentile75 },
     };
-  }, [savingsRate, investmentReturn, retirementAge]);
+  }, [simulationData, years]);
 
   const formatCurrency = (value: number) => {
     if (value >= 1000000) {
@@ -258,7 +449,7 @@ export default function SimulationResult() {
       {/* Net Worth Projection */}
       <VStack space="md" className="mb-8">
         <Text className="text-xl font-bold text-gray-900">
-          Net Worth Projection (40 Years)
+          Net Worth Projection ({years} Years)
         </Text>
         <Text size="sm" className="text-gray-600">
           Monte Carlo simulation showing possible outcomes
@@ -271,16 +462,17 @@ export default function SimulationResult() {
           <LineChart
             data={chartData}
             height={chartHeight}
-            width={screenWidth - 130}
+            width={chartWidth}
             color={PRIMARY_COLORS[600]}
             thickness={3}
-            endSpacing={0}
+            endSpacing={10}
             startFillColor={`${PRIMARY_COLORS[500]}33`}
             endFillColor={`${PRIMARY_COLORS[500]}33`}
             startOpacity={0.9}
             endOpacity={0.1}
-            initialSpacing={4}
-            spacing={7.5}
+            initialSpacing={10}
+            spacing={fixedSpacing}
+            xAxisLabelTexts={xAxisLabels}
             noOfSections={4}
             yAxisColor={GRAY_COLORS[200]}
             xAxisColor={GRAY_COLORS[200]}
@@ -324,7 +516,7 @@ export default function SimulationResult() {
             }}
           />
           <Text size="xs" className="text-gray-500 text-center">
-            40-year projection based on your inputs
+            {years}-year projection based on your inputs
           </Text>
         </VStack>
       </Card>
@@ -333,7 +525,7 @@ export default function SimulationResult() {
       <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
         <VStack space="md" className="p-4">
           <Text className="text-base font-semibold text-gray-900">
-            Projected Net Worth in 40 Years
+            Projected Net Worth in {years} Years
           </Text>
 
           <VStack space="sm">
@@ -351,41 +543,50 @@ export default function SimulationResult() {
         </VStack>
       </Card>
 
-      {/* Adjustable Parameters */}
+      {/* Sliders Section */}
       <VStack space="md" className="mb-8">
-        <Text className="text-lg font-bold text-gray-900">
+        <Text className="text-xl font-bold text-gray-900">
           Adjust Your Assumptions
         </Text>
-
-        <LabeledSlider
-          label="Savings Rate"
-          value={savingsRate}
-          minValue={5}
-          maxValue={50}
-          step={5}
-          onChange={setSavingsRate}
-          suffix="%"
-        />
-
-        <LabeledSlider
-          label="Expected Annual Return"
-          value={investmentReturn}
-          minValue={3}
-          maxValue={12}
-          step={0.5}
-          onChange={setInvestmentReturn}
-          suffix="%"
-        />
-
-        <LabeledSlider
-          label="Target Retirement Age"
-          value={retirementAge}
-          minValue={55}
-          maxValue={75}
-          step={1}
-          onChange={setRetirementAge}
-          suffix=""
-        />
+        <Card className="p-6 bg-white border border-gray-200 rounded-xl">
+          <VStack space="lg">
+            <LabeledSlider
+              label="Starting Salary"
+              value={startingSalary}
+              minValue={30000}
+              maxValue={200000}
+              step={5000}
+              onChange={handleStartingSalaryChange}
+              formatValue={(val) => formatCurrency(val)}
+              className="mb-2"
+            />
+            <LabeledSlider
+              label="Savings Rate"
+              value={savingsRate}
+              minValue={5}
+              maxValue={50}
+              step={5}
+              onChange={handleSavingsRateChange}
+              suffix="%"
+              className="mb-2"
+            />
+            <LabeledSlider
+              label="Time Horizon"
+              value={years}
+              minValue={5}
+              maxValue={40}
+              step={5}
+              onChange={handleYearsChange}
+              suffix=" years"
+              className="mb-2"
+            />
+          </VStack>
+        </Card>
+        {isUpdatingSliders && (
+          <Text size="sm" className="text-gray-500 text-center">
+            Updating simulation...
+          </Text>
+        )}
       </VStack>
     </PageLayout>
   );

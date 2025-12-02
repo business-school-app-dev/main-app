@@ -32,20 +32,19 @@ export const fetchQuestions = async (): Promise<Question[]> => {
   }
 };
 
-export const submitAllAnswers = async (
-  userAnswers: { questionId: number; answer: number; isCorrect: boolean }[]
-) => {
+//CHANGED: TAKING IN username + ANSWERS (as backend expects)
+export const submitAllAnswers = async (payload: {
+  username: string;
+  answers: { questionId: number; answer: number; timeTaken: number }[];
+}) => {
   try {
-    const userId = 0;
     const response = await fetch(`${API_BASE_URL}/challenges/submit-batch`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        user_id: userId,
-        answers: userAnswers,
-      }),
+      //CHANGED utilizing the structure sent from front end
+      body: JSON.stringify(payload),
     });
 
     if (!response.ok) {

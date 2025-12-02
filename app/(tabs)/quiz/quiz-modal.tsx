@@ -5,11 +5,12 @@ import ProgressView from '@/components/views/progress-view';
 import { SelectionCard } from '@/components/views/selection-card';
 import { router } from 'expo-router';
 import { X } from 'lucide-react-native';
-import { default as React, default as React, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, StatusBar, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { fetchQuestions, submitAllAnswers } from '@/api/quiz';
+import { Icon } from '@/components/ui/icon';
 import { Question } from '@/types/quiz';
 
 export default function QuizModal() {
@@ -137,12 +138,22 @@ export default function QuizModal() {
         isCorrect: isCorrect
       }];
 
-      const submissionResult = await submitAllAnswers(allAnswers);
+      //FIX: SENDING username + answers, isntead of just allAnswers
+      const payload = {
+        username: "test123", // DUMMY VALUE
+        answers: allAnswers.map(ans => ({
+          questionId: ans.questionId,
+          answer: ans.answer,
+          timeTaken: 5  // DUMMY VALUE
+        }))
+      };
+
+      const submissionResult = await submitAllAnswers(payload);
       if (submissionResult && submissionResult.success === true) {
         router.back();
-    } else {
+      } else {
         console.error("Final submission failed on server or returned unsuccessful status.");
-    }
+      }
 
     }
   };

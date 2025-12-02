@@ -3,7 +3,7 @@ import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
 import ProgressView from '@/components/views/progress-view';
 import { SelectionCard } from '@/components/views/selection-card';
-import { router } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { X } from 'lucide-react-native';
 import { useEffect, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, StatusBar, View } from 'react-native';
@@ -14,6 +14,9 @@ import { Icon } from '@/components/ui/icon';
 import { Question } from '@/types/quiz';
 
 export default function QuizModal() {
+  const { username: usernameParam } = useLocalSearchParams<{ username?: string }>();
+  const username = (Array.isArray(usernameParam) ? usernameParam[0] : usernameParam) || "guest4life123";
+
   const [selectedOption, setSelectedOption] = useState<string>("");
   const [currentQuestion, setCurrentQuestion] = useState(1);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
@@ -23,6 +26,8 @@ export default function QuizModal() {
   const [questions, setQuestions] = useState<Question[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const resultFadeAnim = useRef(new Animated.Value(0)).current;
   const resultSlideAnim = useRef(new Animated.Value(20)).current;
@@ -138,21 +143,29 @@ export default function QuizModal() {
         isCorrect: isCorrect
       }];
 
-      //FIX: SENDING username + answers, isntead of just allAnswers
-      const payload = {
-        username: "test123", // DUMMY VALUE
-        answers: allAnswers.map(ans => ({
-          questionId: ans.questionId,
-          answer: ans.answer,
-          timeTaken: 5  // DUMMY VALUE
-        }))
-      };
+      setSubmitting(true);
+      setSubmitError(null);
 
-      const submissionResult = await submitAllAnswers(payload);
-      if (submissionResult && submissionResult.success === true) {
-        router.back();
-      } else {
-        console.error("Final submission failed on server or returned unsuccessful status.");
+      try {
+        const payload = {
+          username,
+          answers: allAnswers.map(ans => ({
+            questionId: ans.questionId,
+            answer: ans.answer,
+            timeTaken: 5  // TODO: replace with real timing data
+          }))
+        };
+
+        const submissionResult = await submitAllAnswers(payload);
+        if (submissionResult && submissionResult.success === true) {
+          router.back();
+        } else {
+          setSubmitError(submissionResult?.error || "Final submission failed on server or returned unsuccessful status.");
+        }
+      } catch (err: any) {
+        setSubmitError(err.message || "Unexpected error submitting quiz.");
+      } finally {
+        setSubmitting(false);
       }
 
     }
@@ -279,11 +292,23 @@ export default function QuizModal() {
           />
         ) : (
           <TextButton
-            label={currentQuestion < questions.length ? "Continue" : "Complete Quiz"}
+            label={
+              submitting
+                ? "Submitting..."
+                : currentQuestion < questions.length
+                  ? "Continue"
+                  : "Complete Quiz"
+            }
             onPress={handleNext}
+            disabled={submitting}
             variant="secondary"
             size="lg"
           />
+        )}
+        {submitError && (
+          <Text className="mt-3 text-sm text-red-600 text-center">
+            {submitError}
+          </Text>
         )}
       </View>
     </SafeAreaView>

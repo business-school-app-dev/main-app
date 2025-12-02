@@ -1,6 +1,10 @@
 import { Question } from "@/types/quiz";
+import { Platform } from "react-native";
 
-const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
+const API_BASE_URL =
+  Platform.OS === "android"
+    ? "http://10.0.2.2:5000/api/v1" // Android emulator → host machine
+    : "http://127.0.0.1:5000/api/v1"; // iOS simulator / other
 
 export const fetchQuestions = async (): Promise<Question[]> => {
   try {

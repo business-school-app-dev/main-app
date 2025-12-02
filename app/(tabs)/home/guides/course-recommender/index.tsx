@@ -94,6 +94,7 @@ export default function CourseRecommenderScreen() {
         helpTitle="Financial Course Recommender"
         helpContent="Tell us about yourself and we'll recommend the perfect courses for your financial literacy journey. Select your current credits, major(s), minor(s), and comfort level to get personalized course recommendations."
         fields={fields}
+        canGoBack
         submitButton={{
           label: canShowRecommendations
             ? "Get Course Recommendations"

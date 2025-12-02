@@ -162,6 +162,7 @@ const LoanCalculatorContent = () => {
   return (
     <PageLayout
       title="Student Loans"
+      canGoBack
       rightView={
         <HelpButton
           title="Your Path to Financial Freedom"

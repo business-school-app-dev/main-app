@@ -165,7 +165,7 @@ export default function SimulationResult() {
 
   if (isLoading) {
     return (
-      <PageLayout title="Life Simulation">
+      <PageLayout title="Life Simulation" canGoBack>
         <View className="flex-1 items-center justify-center">
           <Text className="text-gray-500">Loading...</Text>
         </View>
@@ -230,6 +230,7 @@ export default function SimulationResult() {
   return (
     <PageLayout
       title="Life Simulation"
+      canGoBack
       leftView={
         <IconButton
           iconName="arrow-back"

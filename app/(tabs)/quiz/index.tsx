@@ -108,7 +108,7 @@ export default function Leaderboard() {
   }
 
   return (
-    <PageLayout title="Quiz" backButtonHidden>
+    <PageLayout title="Quiz">
       {/* Your Rank Card / Sign In Card */}
       <Box className="pt-4 pb-2">
         <Animated.View

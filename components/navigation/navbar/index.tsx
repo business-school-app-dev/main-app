@@ -11,14 +11,14 @@ import { X } from "lucide-react-native";
 
 export interface NavbarProps {
   title: string;
-  backButtonHidden?: boolean;
+  canGoBack?: boolean;
   rightView?: ReactNode;
   leftView?: ReactNode;
 }
 
 const Navbar: React.FC<NavbarProps> = ({
   title,
-  backButtonHidden: hideBackButton = false,
+  canGoBack = false,
   rightView,
   leftView,
 }) => {
@@ -57,10 +57,10 @@ const Navbar: React.FC<NavbarProps> = ({
     <View className="bg-primary pt-safe pb-2.5 px-5 flex-row justify-between items-center border-b border-primary-300">
       <StatusBar style="light" />
 
-      {hideBackButton ? (
-        EmptyView()
-      ) : (
+      {canGoBack ? (
         <View className="w-12 h-12">{leftView ? leftView : backButton}</View>
+      ) : (
+        EmptyView()
       )}
 
       <View className="flex-row items-center">

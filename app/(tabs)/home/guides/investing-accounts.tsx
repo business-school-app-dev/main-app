@@ -24,7 +24,7 @@ export default function InvestingLiteracyScreen() {
   };
 
   return (
-    <PageLayout title="Investing Accounts">
+    <PageLayout title="Investing Accounts" canGoBack>
       {/* Guide Cards Grid */}
       <View className="gap-4 flex-1">
         <GuideCard

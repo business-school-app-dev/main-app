@@ -77,7 +77,7 @@ export default function CourseOptionsScreen() {
   // --- RENDER LOGIC ---
 
   return (
-    <PageLayout title="Recommended Courses">
+    <PageLayout title="Recommended Courses" canGoBack>
       <Input className="bg-zinc-200 border-outline-100 rounded-lg">
         <InputSlot className="pl-3">
           <InputIcon as={SearchIcon} />

@@ -89,6 +89,7 @@ const WebViewModal = () => {
     <View className="pb-safe flex-1 bg-primary">
       <Navbar
         title={title || 'WebView'}
+        canGoBack
         rightView={
           <IconButton
             iconName="ellipsis-horizontal"

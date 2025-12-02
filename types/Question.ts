@@ -17,7 +17,7 @@ export type UserResponses = {
 export const QUESTIONS: Question[] = [
   {
     id: "careerCategory",
-    question: "What is your career field? (Scroll down for more choices)",
+    question: "What is your career field?",
     options: [
       { label: "Management", value: "management" },
       { label: "Business/Finance", value: "business_finance" },

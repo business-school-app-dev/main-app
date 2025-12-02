@@ -12,29 +12,12 @@ import TextInputField from "@/components/inputs/text-input-field";
 import PageLayout from "@/components/layouts/page-layout";
 import LabeledSlider from "@/components/inputs/labeled-slider";
 import HelpButton from "@/components/inputs/help-button";
-
-// --- Helper Functions ---
-const formatCurrency = (amount: number) => {
-  const value = Math.max(0, amount);
-  return new Intl.NumberFormat("en-US", {
-    style: "currency",
-    currency: "USD",
-    minimumFractionDigits: 0,
-    maximumFractionDigits: 2,
-  }).format(value);
-};
-
-const formatLargeCurrency = (amount: number) => {
-  const value = Math.max(0, amount);
-  if (value >= 1000000) {
-    return `$${(value / 1000000).toFixed(1)}M`;
-  } else if (value >= 1000) {
-    return `$${(value / 1000).toFixed(0)}K`;
-  }
-  return formatCurrency(value);
-};
-
-const formatPercentage = (value: number) => value.toFixed(0) + "%";
+import {
+  calculateLoanDetails,
+  formatCurrency,
+  formatLargeCurrency,
+  formatPercentage,
+} from "@/api/student-loans";
 
 // --- Main Calculator Content ---
 const LoanCalculatorContent = () => {
@@ -67,101 +50,30 @@ const LoanCalculatorContent = () => {
     return isNaN(parsed) ? 0 : parsed;
   }, [monthlyIncomeText]);
 
-  const retirementContribution = useMemo(() => {
-    const parsed = parseFloat(retirementContributionText);
-    return isNaN(parsed) ? 0 : parsed;
-  }, [retirementContributionText]);
-
   const {
     monthlyPayment,
     totalInterest,
     debtToIncome,
     availableDiscretionaryIncome,
+    effectiveDiscretionaryIncome,
+    extraLoanPayment,
+    retirementSavingsAllocation,
+    yearsSaved,
+    retirementProjection,
   } = useMemo(() => {
-    const principal = totalLoan;
-    const rate = interestRate / 100 / 12;
-    const termMonths = loanTerm * 12;
-
-    let calculatedPayment = 0;
-    if (rate > 0 && termMonths > 0 && principal > 0) {
-      calculatedPayment =
-        (principal * rate) / (1 - Math.pow(1 + rate, -termMonths));
-    } else if (termMonths > 0 && principal > 0) {
-      calculatedPayment = principal / termMonths;
-    }
-
-    const totalInterestPaid = calculatedPayment * termMonths - principal;
-    const dti = monthlyIncome > 0 ? (calculatedPayment / monthlyIncome) * 100 : 0;
-    const discretionary = monthlyIncome - calculatedPayment;
-
-    return {
-      monthlyPayment: calculatedPayment,
-      totalInterest: Math.max(0, totalInterestPaid),
-      debtToIncome: dti,
-      availableDiscretionaryIncome: discretionary,
-    };
-  }, [totalLoan, interestRate, loanTerm, monthlyIncome]);
-
-  const effectiveDiscretionaryIncome = Math.max(
-    0,
-    availableDiscretionaryIncome
-  );
-  const extraLoanPayment =
-    (effectiveDiscretionaryIncome * loanAllocationPercentage) / 100;
-  const retirementSavingsAllocation =
-    effectiveDiscretionaryIncome - extraLoanPayment;
-
-  // Calculate loan payoff time with extra payments
-  const { monthsToPayoff, yearsSaved } = useMemo(() => {
-    if (totalLoan <= 0 || monthlyPayment <= 0) {
-      return { monthsToPayoff: 0, yearsSaved: 0 };
-    }
-
-    const rate = interestRate / 100 / 12;
-    const totalPayment = monthlyPayment + extraLoanPayment;
-
-    if (totalPayment <= 0) {
-      return { monthsToPayoff: 0, yearsSaved: 0 };
-    }
-
-    let balance = totalLoan;
-    let months = 0;
-
-    // Calculate months to pay off with extra payment
-    while (balance > 0 && months < 360) { // Max 30 years
-      const interestCharge = balance * rate;
-      const principalPayment = totalPayment - interestCharge;
-      balance -= principalPayment;
-      months++;
-    }
-
-    const originalTermMonths = loanTerm * 12;
-    const monthsSaved = originalTermMonths - months;
-    const yearsSaved = monthsSaved / 12;
-
-    return { monthsToPayoff: months, yearsSaved: Math.max(0, yearsSaved) };
-  }, [totalLoan, monthlyPayment, extraLoanPayment, interestRate, loanTerm]);
-
-  // Calculate retirement savings projection (30 years with 7% average return)
-  const retirementProjection = useMemo(() => {
-    if (retirementSavingsAllocation <= 0) return 0;
-
-    const monthlyContribution = retirementSavingsAllocation;
-    const annualReturn = 0.07; // 7% average annual return
-    const monthlyReturn = annualReturn / 12;
-    const months = 30 * 12; // 30 years
-
-    // Future value of annuity formula: FV = PMT × [(1 + r)^n - 1] / r
-    const futureValue =
-      monthlyContribution *
-      ((Math.pow(1 + monthlyReturn, months) - 1) / monthlyReturn);
-
-    return futureValue;
-  }, [retirementSavingsAllocation]);
+    return calculateLoanDetails({
+      totalLoan,
+      interestRate,
+      loanTerm,
+      monthlyIncome,
+      loanAllocationPercentage,
+    });
+  }, [totalLoan, interestRate, loanTerm, monthlyIncome, loanAllocationPercentage]);
 
   return (
     <PageLayout
       title="Student Loans"
+      canGoBack
       rightView={
         <HelpButton
           title="Your Path to Financial Freedom"

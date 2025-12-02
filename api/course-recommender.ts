@@ -40,35 +40,49 @@ export const getRecommendations = async (
   return response.json();
 };
 
-export const handleAllCourses = async (
-  setIsLoading: (isLoading: boolean) => void
-) => {
+export const handleAllCourses = async () => {
   console.log("Button pressed → allCourses running");
-  setIsLoading(true);
+
+  // Navigate immediately with empty data
+  router.navigate({
+    pathname: "/home/guides/course-recommender/courses",
+    params: {
+      recommendations: JSON.stringify([]),
+      comfort_level: "n/a",
+      max_credits: "n/a",
+      loading: "true",
+    },
+  });
 
   try {
     const data = await fetchAllCourses();
-    router.navigate({
-      pathname: "/home/guides/course-recommender/courses",
-      params: {
-        recommendations: JSON.stringify(data),
-        comfort_level: "all",
-        max_credits: "all",
-      },
+    // Update the route with actual data
+    router.setParams({
+      recommendations: JSON.stringify(data),
+      loading: "false",
     });
   } catch (error) {
     console.error("Error fetching all courses:", error);
-  } finally {
-    setIsLoading(false);
+    router.setParams({
+      loading: "false",
+    });
   }
 };
 
 export const handleGetRecommendations = async (
-  setIsLoading: (isLoading: boolean) => void,
   comfortLevel: string,
   credit: string
 ) => {
-  setIsLoading(true);
+  // Navigate immediately with empty data
+  router.navigate({
+    pathname: "/home/guides/course-recommender/courses",
+    params: {
+      recommendations: JSON.stringify([]),
+      comfort_level: comfortLevel,
+      max_credits: credit,
+      loading: "true",
+    },
+  });
 
   try {
     const data = await getRecommendations(comfortLevel, credit);
@@ -76,25 +90,18 @@ export const handleGetRecommendations = async (
       ? data.recommendations
       : [];
 
-    router.navigate({
-      pathname: "/home/guides/course-recommender/courses",
-      params: {
-        recommendations: JSON.stringify(recs),
-        comfort_level: data.comfort_level ?? comfortLevel,
-        max_credits: String(data.max_credits ?? credit),
-      },
+    // Update the route with actual data
+    router.setParams({
+      recommendations: JSON.stringify(recs),
+      comfort_level: data.comfort_level ?? comfortLevel,
+      max_credits: String(data.max_credits ?? credit),
+      loading: "false",
     });
   } catch (error) {
     console.error("Error fetching recommendations:", error);
-    router.navigate({
-      pathname: "/home/guides/course-recommender/courses",
-      params: {
-        recommendations: JSON.stringify([]),
-        comfort_level: comfortLevel,
-        max_credits: credit,
-      },
+    router.setParams({
+      recommendations: JSON.stringify([]),
+      loading: "false",
     });
-  } finally {
-    setIsLoading(false);
   }
 };

@@ -4,15 +4,25 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import Navbar, { NavbarProps } from "@/components/navigation/navbar";
 
 
-function PageLayout(props: NavbarProps & { children: ReactNode } & { className?: string }) {
+function PageLayout(props: NavbarProps & { children: ReactNode } & { className?: string } & { scrollable?: boolean }) {
+  const { scrollable = true, ...navbarProps } = props;
+
   return (
     <SafeAreaView edges={["left", "right"]} className={"h-full w-full bg-background"}>
-      <Navbar {...props} />
-      <ScrollView className="flex-1 bg-gray-50 px-5" showsVerticalScrollIndicator={false}>
-        <View className={`py-6 ${props.className || ""}`}>
-          {props.children}
+      <Navbar {...navbarProps} />
+      {scrollable ? (
+        <ScrollView className="flex-1 bg-gray-50 px-5" showsVerticalScrollIndicator={false}>
+          <View className={`py-6 ${props.className || ""}`}>
+            {props.children}
+          </View>
+        </ScrollView>
+      ) : (
+        <View className="flex-1 bg-gray-50 px-5">
+          <View className={`flex-1 py-6 ${props.className || ""}`}>
+            {props.children}
+          </View>
         </View>
-      </ScrollView>
+      )}
     </SafeAreaView>
   );
 }

@@ -31,7 +31,7 @@ export default function App() {
 
 
   return (
-    <PageLayout title="Home" backButtonHidden className="-mt-6">
+    <PageLayout title="Home" className="-mt-6">
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1 -mx-5"

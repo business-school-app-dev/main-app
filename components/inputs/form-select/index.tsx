@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/select';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { View } from '@/components/ui/view';
 import React from 'react';
 import { ScrollView } from 'react-native';
 
@@ -42,7 +43,7 @@ const FormSelect: React.FC<FormSelectProps> = ({
 
   return (
     <VStack space="xs" className="mb-4">
-      <Text size="sm" className="text-gray-900 font-medium mb-1">
+      <Text size="md" className="text-gray-900 font-medium mb-1">
         {label}
       </Text>
       <Select onValueChange={onValueChange} selectedValue={value}>
@@ -51,7 +52,19 @@ const FormSelect: React.FC<FormSelectProps> = ({
           className="bg-white border-gray-300"
           style={{ height: triggerHeight }}
         >
-          <SelectInput placeholder={placeholder} className="flex-1" />
+          <View className="flex-1 flex-row items-center">
+            <SelectInput
+              placeholder={placeholder}
+              className="absolute opacity-0 w-full"
+            />
+            <Text
+              numberOfLines={1}
+              ellipsizeMode="tail"
+              className={`flex-1 px-3 ${value ? 'text-typography-900' : 'text-typography-500'}`}
+            >
+              {value || placeholder}
+            </Text>
+          </View>
           <SelectIcon className="mr-3" as={ChevronDownIcon} />
         </SelectTrigger>
 

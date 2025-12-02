@@ -20,7 +20,7 @@ export default function CreditCardsScreen() {
   };
 
   return (
-    <PageLayout title="Credit Cards">
+    <PageLayout title="Credit Cards" canGoBack>
       {/* Guide Cards Grid */}
       <View className="gap-4 flex-1">
         <GuideCard

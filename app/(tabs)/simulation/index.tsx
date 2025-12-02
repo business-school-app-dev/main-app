@@ -89,6 +89,7 @@ export default function SimulationSetup() {
       helpTitle="Life Simulation Setup"
       helpContent="Experience your financial future! Select your career path, preferred job, location, and comfort level to see a personalized simulation of your financial journey. This tool helps you understand how different career choices impact your financial life."
       fields={fields}
+      backButtonHidden
       submitButton={{
         label: 'View Simulation',
         onPress: async () => { await submitSimulationForm(responses, QUESTIONS.length); },

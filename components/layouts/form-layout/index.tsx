@@ -33,6 +33,7 @@ interface FormLayoutProps {
   };
   helpTitle?: string;
   helpContent?: string;
+  backButtonHidden?: boolean;
 }
 
 export default function FormLayout({
@@ -42,6 +43,7 @@ export default function FormLayout({
   submitButton,
   helpTitle,
   helpContent,
+  backButtonHidden,
 }: FormLayoutProps) {
   const rightViewContent = (helpTitle && helpContent) ? (
     <HelpButton
@@ -57,7 +59,7 @@ export default function FormLayout({
       title={title}
       rightView={rightViewContent}
       scrollable={false}
-      backButtonHidden
+      backButtonHidden={backButtonHidden}
     >
       <View className="flex-1">
         {heading && <Heading size="md" className="mb-6">{heading}</Heading>}

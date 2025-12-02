@@ -14,6 +14,7 @@ interface LabeledSliderProps {
   onChange: (value: number) => void;
   suffix?: string;
   className?: string;
+  formatValue?: (value: number) => string;
 }
 
 export default function LabeledSlider({
@@ -25,7 +26,10 @@ export default function LabeledSlider({
   onChange,
   suffix = '%',
   className = '',
+  formatValue,
 }: LabeledSliderProps) {
+  const displayValue = formatValue ? formatValue(value) : `${value}${suffix}`;
+
   return (
     <VStack space="xs" className={className}>
       <HStack className="justify-between items-center mb-2">
@@ -33,7 +37,7 @@ export default function LabeledSlider({
           {label}
         </Text>
         <Text size="md" className="text-primary-500 font-semibold">
-          {value}{suffix}
+          {displayValue}
         </Text>
       </HStack>
       <VStack space="sm">
@@ -54,10 +58,10 @@ export default function LabeledSlider({
         </View>
         <HStack className="justify-between items-center mt-1">
           <Text size="xs" className="text-gray-500">
-            {minValue}{suffix}
+            {formatValue ? formatValue(minValue) : `${minValue}${suffix}`}
           </Text>
           <Text size="xs" className="text-gray-500">
-            {maxValue}{suffix}
+            {formatValue ? formatValue(maxValue) : `${maxValue}${suffix}`}
           </Text>
         </HStack>
       </VStack>

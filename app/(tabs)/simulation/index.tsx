@@ -85,12 +85,12 @@ export default function SimulationSetup() {
   return (
     <FormLayout
       title="Life Simulation"
-      heading="Future Questionare"
+      heading="Set Up Your Simulation"
       helpTitle="Life Simulation Setup"
       helpContent="Experience your financial future! Select your career path, preferred job, location, and comfort level to see a personalized simulation of your financial journey. This tool helps you understand how different career choices impact your financial life."
       fields={fields}
       submitButton={{
-        label: 'View Simulation Result',
+        label: 'View Simulation',
         onPress: async () => { await submitSimulationForm(responses, QUESTIONS.length); },
         disabled: !isFormComplete,
       }}

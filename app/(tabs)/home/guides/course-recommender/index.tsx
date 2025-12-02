@@ -24,13 +24,6 @@ export default function CourseRecommenderScreen() {
 
   const fields = [
     {
-      id: 'credits',
-      label: 'Credits',
-      options: creditHours,
-      value: credit,
-      onValueChange: setCredit,
-    },
-    {
       id: 'major',
       label: 'Major',
       options: majors,
@@ -63,6 +56,13 @@ export default function CourseRecommenderScreen() {
       isScrollable: true,
     },
     {
+      id: 'credits',
+      label: 'Credits',
+      options: creditHours,
+      value: credit,
+      onValueChange: setCredit,
+    },
+    {
       id: 'comfortLevel',
       label: 'Comfort Level',
       options: ["N/A", "Beginner", "Intermediate", "Advanced"],
@@ -90,7 +90,7 @@ export default function CourseRecommenderScreen() {
     >
       <FormLayout
         title="Course Recommender"
-        heading="Student Details"
+        heading="Your Student Details and Preferences"
         helpTitle="Financial Course Recommender"
         helpContent="Tell us about yourself and we'll recommend the perfect courses for your financial literacy journey. Select your current credits, major(s), minor(s), and comfort level to get personalized course recommendations."
         fields={fields}

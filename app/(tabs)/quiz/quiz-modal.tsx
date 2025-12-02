@@ -141,9 +141,9 @@ export default function QuizModal() {
       const submissionResult = await submitAllAnswers(allAnswers);
       if (submissionResult && submissionResult.success === true) {
         router.back();
-    } else {
+      } else {
         console.error("Final submission failed on server or returned unsuccessful status.");
-    }
+      }
 
     }
   };
@@ -258,7 +258,7 @@ export default function QuizModal() {
       </View>
 
       {/* Bottom Button */}
-      <View className="px-6 pt-4 pb-4">
+      <View className="px-6 py-4">
         {!showResult ? (
           <TextButton
             label="Check Answer"

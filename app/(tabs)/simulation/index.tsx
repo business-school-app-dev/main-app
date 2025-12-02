@@ -98,6 +98,7 @@ export default function SimulationSetup() {
   return (
     <PageLayout
       title="Life Simulation Setup"
+      scrollable={currentQuestionIndex !== 2}
       leftView={
         currentQuestionIndex > 0 ? (
           <IconButton
@@ -133,10 +134,10 @@ export default function SimulationSetup() {
           </Text>
         </VStack>
 
-        {/* Options */}
-        {currentQuestionIndex === 2 ? (
-          // Location question - use dropdown
-          <View className="mb-8">
+        {/* Options - Scrollable if needed */}
+        <ScrollView className="flex-1 mb-8" showsVerticalScrollIndicator={false}>
+          {currentQuestionIndex === 2 ? (
+            // Location question - use dropdown
             <FormSelect
               label=""
               placeholder="Select a state"
@@ -148,30 +149,22 @@ export default function SimulationSetup() {
               }}
               isScrollable={true}
             />
-          </View>
-        ) : (
-          // Other questions - use SelectionCard
-          <ScrollView
-            className="mb-8 flex-1"
-            showsVerticalScrollIndicator={true}
-            nestedScrollEnabled={true}
-          >
-            {isLoadingJobs && currentQuestionIndex === 1 ? (
-              <View className="flex-1 items-center justify-center py-8">
-                <Text className="text-gray-500">Loading jobs...</Text>
-              </View>
-            ) : (
-              <SelectionCard
-                options={currentQuestionIndex === 1 ? jobOptions : currentQuestion.options}
-                selectedValue={selectedOption}
-                onSelect={handleOptionSelect}
-                spacing="md"
-              />
-            )}
-          </ScrollView>
-        )}
+          ) : isLoadingJobs && currentQuestionIndex === 1 ? (
+            <View className="items-center justify-center py-8">
+              <Text className="text-gray-500">Loading jobs...</Text>
+            </View>
+          ) : (
+            <SelectionCard
+              options={currentQuestionIndex === 1 ? jobOptions : currentQuestion.options}
+              selectedValue={selectedOption}
+              onSelect={handleOptionSelect}
+              spacing="md"
+            />
+          )}
+        </ScrollView>
 
-        <View className="mt-auto">
+        {/* Button fixed at bottom */}
+        <View className="p-auto">
           <TextButton
             label={
               currentQuestionIndex === QUESTIONS.length - 1

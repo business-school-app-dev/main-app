@@ -15,7 +15,7 @@ import HelpButton from '@/components/inputs/help-button';
 import COLORS, { GRAY_COLORS, PRIMARY_COLORS, SECONDARY_COLORS } from '@/constants/colors';
 import { Briefcase, MapPin, Baby, Laptop, Heart, DollarSign, GraduationCap, Building2, Users, Home, TreePine } from 'lucide-react-native';
 import LabeledSlider from '@/components/inputs/labeled-slider';
-import { UserResponses } from '@/types/Question';
+import { QUESTIONS, UserResponses } from '@/types/Question';
 
 
 export default function SimulationResult() {
@@ -177,6 +177,17 @@ export default function SimulationResult() {
     return null;
   }
 
+  const formatChildrenValue = (count: number) => {
+    if (count === 4) {
+      return '4+';
+    }
+    return count.toString();
+  };
+
+  const formatChildrenLabel = (count: number) => {
+    return count === 1 ? 'Child' : 'Children';
+  };
+
   const profile = [
     {
       icon: getCareerIcon(userResponses.careerCategory),
@@ -185,15 +196,18 @@ export default function SimulationResult() {
     },
     {
       icon: getLocationIcon(userResponses.location),
-      value: formatText(userResponses.location),
+      value: formatText(
+        QUESTIONS.find(q => q.id === "location")?.
+          options.find(option => option.value === userResponses.location)?.
+          label || userResponses.location),
       label: 'Location',
     },
     {
       icon: Baby,
-      value: userResponses.children.toString(),
-      label: 'Children',
+      value: formatChildrenValue(userResponses.children),
+      label: formatChildrenLabel(userResponses.children),
     },
-  ]
+  ];
 
   const assumptions = [
     {
@@ -243,7 +257,7 @@ export default function SimulationResult() {
                 <View className="w-16 h-16 rounded-full items-center justify-center bg-secondary">
                   <Icon as={item.icon} size="xl" className="text-gray-900" />
                 </View>
-                <Text size="xs" className="text-gray-900 font-semibold text-center">
+                <Text size="xs" numberOfLines={1} className="text-gray-900 font-semibold text-center">
                   {item.value}
                 </Text>
                 <Text size="2xs" className="text-gray-600">

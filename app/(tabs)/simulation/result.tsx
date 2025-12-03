@@ -1,10 +1,11 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { ScrollView, Dimensions } from 'react-native';
 import { View } from '@/components/ui/view';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { HStack } from '@/components/ui/hstack';
 import { Card } from '@/components/ui/card';
+import { Spinner } from '@/components/ui/spinner';
 import PageLayout from '@/components/layouts/page-layout';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LineChart } from 'react-native-gifted-charts';
@@ -12,43 +13,123 @@ import { router } from 'expo-router';
 import { Icon } from '@/components/ui/icon';
 import IconButton from '@/components/inputs/icon-button';
 import HelpButton from '@/components/inputs/help-button';
-import COLORS, { GRAY_COLORS, PRIMARY_COLORS, SECONDARY_COLORS } from '@/constants/colors';
-import { Briefcase, MapPin, Baby, Laptop, Heart, DollarSign, GraduationCap, Building2, Users, Home, TreePine } from 'lucide-react-native';
 import LabeledSlider from '@/components/inputs/labeled-slider';
-import { QUESTIONS, UserResponses } from '@/types/Question';
+import COLORS, { GRAY_COLORS, PRIMARY, PRIMARY_COLORS, SECONDARY_COLORS } from '@/constants/colors';
+import { Briefcase, MapPin, Baby, Laptop, Heart, DollarSign, GraduationCap, Building2, Users, Home, TreePine } from 'lucide-react-native';
+import { UserResponses, QUESTIONS } from '@/types/Question';
+import {
+  fetchSimulationWithSliders,
+  formatCurrency,
+  formatText,
+  formatChildrenValue,
+  formatChildrenLabel,
+  getCareerIcon,
+  getLocationIcon,
+  generateChartData,
+  ChartDataResult,
+  loadUserResponses as loadUserResponsesFromStorage,
+  createDebouncedSliderChange,
+  createStartingSalaryHandler,
+  createSavingsRateHandler,
+  createYearsHandler,
+  getJobTitleById,
+} from '@/api/simulation';
 
 
 export default function SimulationResult() {
   const [userResponses, setUserResponses] = useState<UserResponses | null>(null);
+  const [simulationData, setSimulationData] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [jobTitle, setJobTitle] = useState<string>('');
 
-  // Simulation parameters (adjustable with sliders)
-  const [savingsRate, setSavingsRate] = useState(15);
-  const [investmentReturn, setInvestmentReturn] = useState(7);
-  const [retirementAge, setRetirementAge] = useState(65);
+  // Slider states - these will update the params
+  const [startingSalary, setStartingSalary] = useState<number>(50000);
+  const [savingsRate, setSavingsRate] = useState<number>(20);
+  const [years, setYears] = useState<number>(20);
+  const [isUpdatingSliders, setIsUpdatingSliders] = useState(false);
+
+  // Debounce timer ref to prevent excessive API calls
+  const debounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Track the latest pending params to avoid race conditions
+  const pendingParamsRef = useRef<any>(null);
+
+  // Store previous chart data to show while waiting for backend update
+  const previousChartDataRef = useRef<ChartDataResult | null>(null);
 
   const screenWidth = Dimensions.get('window').width;
   const chartHeight = 250;
+  const chartWidth = screenWidth - 80;
 
   useEffect(() => {
-    loadUserResponses();
+    const loadData = async () => {
+      const { userResponses, simulationData, shouldRedirect } = await loadUserResponsesFromStorage();
+
+      if (shouldRedirect) {
+        return;
+      }
+
+      if (userResponses) {
+        setUserResponses(userResponses);
+
+        // Fetch job title based on job ID
+        const title = await getJobTitleById(userResponses.careerCategory, userResponses.specificJob);
+        setJobTitle(title);
+      }
+
+      if (simulationData) {
+        setSimulationData(simulationData);
+
+        // Initialize slider values from params
+        if (simulationData.params) {
+          setStartingSalary(Math.round(simulationData.params.starting_salary));
+          setSavingsRate(Math.round(simulationData.params.savings_rate * 100));
+          setYears(simulationData.params.years || simulationData.years || 20);
+        }
+      }
+
+      setIsLoading(false);
+    };
+
+    loadData();
   }, []);
 
-  const loadUserResponses = async () => {
-    try {
-      const setupData = await AsyncStorage.getItem('@simulation_setup');
-      if (setupData) {
-        setUserResponses(JSON.parse(setupData));
-      } else {
-        // No setup data, redirect to setup
-        router.replace('/(tabs)/simulation');
+  // Debounced handler for slider changes - calls the backend with updated params
+  const debouncedSliderChange = useCallback(
+    createDebouncedSliderChange(
+      debounceTimerRef,
+      pendingParamsRef,
+      setIsUpdatingSliders,
+      setSimulationData,
+      simulationData
+    ),
+    [simulationData]
+  );
+
+  // Cleanup debounce timer on unmount
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
       }
-    } catch (error) {
-      console.error('Error loading setup data:', error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
+    };
+  }, []);
+
+  // Individual slider handlers - update state immediately for smooth UI
+  const handleStartingSalaryChange = useCallback(
+    createStartingSalaryHandler(simulationData, years, setStartingSalary, debouncedSliderChange),
+    [simulationData, debouncedSliderChange, years]
+  );
+
+  const handleSavingsRateChange = useCallback(
+    createSavingsRateHandler(simulationData, years, setSavingsRate, debouncedSliderChange),
+    [simulationData, debouncedSliderChange, years]
+  );
+
+  const handleYearsChange = useCallback(
+    createYearsHandler(simulationData, setYears, debouncedSliderChange),
+    [simulationData, debouncedSliderChange]
+  );
 
   const handleReset = async () => {
     try {
@@ -60,108 +141,15 @@ export default function SimulationResult() {
     }
   };
 
-  // Generate Monte Carlo simulation data
-  const { chartData, stats } = useMemo(() => {
-    const years = 40;
-    const simulations = 5; // Number of Monte Carlo paths
-    const allPaths: number[][] = [];
+  // Generate chart data from backend simulation
+  const { chartData, xAxisLabels, stats, spacing, chartWidth: dynamicChartWidth } = useMemo(() => {
+    const result = generateChartData(simulationData, years, chartWidth, previousChartDataRef.current);
 
-    for (let sim = 0; sim < simulations; sim++) {
-      const path: number[] = [];
-      let netWorth = 0;
+    // Store this chart data for use during slider updates
+    previousChartDataRef.current = result;
 
-      for (let year = 0; year <= years; year++) {
-        if (year === 0) {
-          path.push(0);
-        } else {
-          // Random return variation (mean: investmentReturn, volatility: 15%)
-          const randomReturn = investmentReturn + (Math.random() - 0.5) * 15;
-
-          // Annual contribution based on savings rate
-          const annualSavings = 50000 * (savingsRate / 100);
-
-          // Compound growth
-          netWorth = (netWorth + annualSavings) * (1 + randomReturn / 100);
-          path.push(Math.round(netWorth));
-        }
-      }
-      allPaths.push(path);
-    }
-
-    // Calculate statistics
-    const finalValues = allPaths.map((path) => path[path.length - 1]);
-    finalValues.sort((a, b) => a - b);
-
-    const median = finalValues[Math.floor(finalValues.length / 2)];
-    const percentile25 = finalValues[Math.floor(finalValues.length * 0.25)];
-    const percentile75 = finalValues[Math.floor(finalValues.length * 0.75)];
-
-    // Prepare chart data (show all paths)
-    const chartDatasets: any[] = [];
-
-    allPaths.forEach((path, simIndex) => {
-      path.forEach((value, year) => {
-        if (!chartDatasets[year]) {
-          chartDatasets[year] = {
-            value: value,
-            // Add label to data point - show only for multiples of 10
-            label: year % 10 === 0 ? year.toString() : '',
-            dataPointText: '',
-          };
-        }
-        // Average the values for display
-        if (simIndex === 0) {
-          chartDatasets[year].value = value;
-        } else {
-          chartDatasets[year].value = (chartDatasets[year].value + value) / 2;
-        }
-      });
-    });
-
-    return {
-      chartData: chartDatasets,
-      stats: { median, percentile25, percentile75 },
-    };
-  }, [savingsRate, investmentReturn, retirementAge]);
-
-  const formatCurrency = (value: number) => {
-    if (value >= 1000000) {
-      return `$${(value / 1000000).toFixed(1)}M`;
-    } else if (value >= 1000) {
-      return `$${(value / 1000).toFixed(0)}K`;
-    }
-    return `$${value}`;
-  };
-
-  const formatText = (text: string) => {
-    // Replace underscores with spaces and capitalize first letter of each word
-    return text === undefined ? text : text
-      .split('_')
-      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
-      .join(' ');
-  };
-
-  const getCareerIcon = (career: string) => {
-    const iconMap: { [key: string]: any } = {
-      tech: Laptop,
-      healthcare: Heart,
-      finance: DollarSign,
-      education: GraduationCap,
-      business: Building2,
-      other: Briefcase,
-    };
-    return iconMap[career] || Briefcase;
-  };
-
-  const getLocationIcon = (location: string) => {
-    const iconMap: { [key: string]: any } = {
-      high_cost: Building2,
-      medium_cost: Home,
-      low_cost: Users,
-      very_low_cost: TreePine,
-    };
-    return iconMap[location] || MapPin;
-  };
+    return result;
+  }, [simulationData, years, chartWidth]);
 
   if (isLoading) {
     return (
@@ -177,21 +165,10 @@ export default function SimulationResult() {
     return null;
   }
 
-  const formatChildrenValue = (count: number) => {
-    if (count === 4) {
-      return '4+';
-    }
-    return count.toString();
-  };
-
-  const formatChildrenLabel = (count: number) => {
-    return count === 1 ? 'Child' : 'Children';
-  };
-
   const profile = [
     {
       icon: getCareerIcon(userResponses.careerCategory),
-      value: formatText(userResponses.specificJob),
+      value: jobTitle,
       label: 'Job',
     },
     {
@@ -271,11 +248,11 @@ export default function SimulationResult() {
       </VStack>
 
       {/* Net Worth Projection */}
-      <VStack space="md" className="mb-8">
+      <VStack space="md" className="mt-6">
         <Text className="text-xl font-bold text-gray-900">
-          Net Worth Projection (40 Years)
+          Net Worth Projection ({years} Years)
         </Text>
-        <Text size="sm" className="text-gray-600">
+        <Text size="sm" className="text-gray-600 mb-4">
           Monte Carlo simulation showing possible outcomes
         </Text>
       </VStack>
@@ -283,19 +260,25 @@ export default function SimulationResult() {
       {/* Chart */}
       <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
         <VStack space="sm">
+          {isUpdatingSliders && (
+            <View className="absolute inset-0 items-center justify-center z-10 bg-white/80 rounded-xl">
+              <Spinner color={PRIMARY} size="large" />
+            </View>
+          )}
           <LineChart
             data={chartData}
             height={chartHeight}
-            width={screenWidth - 130}
+            width={dynamicChartWidth}
             color={PRIMARY_COLORS[600]}
             thickness={3}
-            endSpacing={0}
+            endSpacing={10}
             startFillColor={`${PRIMARY_COLORS[500]}33`}
             endFillColor={`${PRIMARY_COLORS[500]}33`}
             startOpacity={0.9}
             endOpacity={0.1}
-            initialSpacing={4}
-            spacing={7.5}
+            initialSpacing={10}
+            spacing={spacing}
+            xAxisLabelTexts={xAxisLabels}
             noOfSections={4}
             yAxisColor={GRAY_COLORS[200]}
             xAxisColor={GRAY_COLORS[200]}
@@ -339,7 +322,7 @@ export default function SimulationResult() {
             }}
           />
           <Text size="xs" className="text-gray-500 text-center">
-            40-year projection based on your inputs
+            {years}-year projection based on your inputs
           </Text>
         </VStack>
       </Card>
@@ -347,9 +330,11 @@ export default function SimulationResult() {
       {/* Statistics */}
       <Card className="mb-8 p-4 bg-white border border-gray-200 rounded-xl">
         <VStack space="md" className="p-4">
-          <Text className="text-base font-semibold text-gray-900">
-            Projected Net Worth in 40 Years
-          </Text>
+          {isUpdatingSliders && (
+            <View className="absolute inset-0 items-center justify-center z-10 bg-white/80 rounded-xl">
+              <Spinner color={PRIMARY} size="large" />
+            </View>
+          )}
 
           <VStack space="sm">
             {assumptions.map((stat, index) => (
@@ -366,41 +351,45 @@ export default function SimulationResult() {
         </VStack>
       </Card>
 
-      {/* Adjustable Parameters */}
-      <VStack space="md" className="mb-8">
-        <Text className="text-lg font-bold text-gray-900">
+      {/* Sliders Section */}
+      <VStack space="md" className="mt-6">
+        <Text className="text-xl font-bold text-gray-900">
           Adjust Your Assumptions
         </Text>
-
-        <LabeledSlider
-          label="Savings Rate"
-          value={savingsRate}
-          minValue={5}
-          maxValue={50}
-          step={5}
-          onChange={setSavingsRate}
-          suffix="%"
-        />
-
-        <LabeledSlider
-          label="Expected Annual Return"
-          value={investmentReturn}
-          minValue={3}
-          maxValue={12}
-          step={0.5}
-          onChange={setInvestmentReturn}
-          suffix="%"
-        />
-
-        <LabeledSlider
-          label="Target Retirement Age"
-          value={retirementAge}
-          minValue={55}
-          maxValue={75}
-          step={1}
-          onChange={setRetirementAge}
-          suffix=""
-        />
+        <Card className="p-6 bg-white border border-gray-200 rounded-xl">
+          <VStack space="lg">
+            <LabeledSlider
+              label="Starting Salary"
+              value={startingSalary}
+              minValue={30000}
+              maxValue={200000}
+              step={5000}
+              onChange={handleStartingSalaryChange}
+              formatValue={(val) => formatCurrency(val)}
+              className="mb-2"
+            />
+            <LabeledSlider
+              label="Savings Rate"
+              value={savingsRate}
+              minValue={5}
+              maxValue={50}
+              step={5}
+              onChange={handleSavingsRateChange}
+              suffix="%"
+              className="mb-2"
+            />
+            <LabeledSlider
+              label="Time Horizon"
+              value={years}
+              minValue={5}
+              maxValue={40}
+              step={5}
+              onChange={handleYearsChange}
+              suffix=" years"
+              className="mb-2"
+            />
+          </VStack>
+        </Card>
       </VStack>
     </PageLayout>
   );

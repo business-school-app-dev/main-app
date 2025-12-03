@@ -64,8 +64,8 @@ export default function SelectionCardContent({
                 className={isSelected || isCorrectAnswer ? 'text-primary-500' : ''}
               />
             </RadioIndicator>
-            <RadioLabel>
-              <Text className={`text-base font-medium ${textColor}`}>
+            <RadioLabel className="flex-1">
+              <Text className={`text-base font-medium ${textColor} flex-shrink`} numberOfLines={0}>
                 {label}
               </Text>
             </RadioLabel>

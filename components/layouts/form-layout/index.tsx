@@ -1,5 +1,5 @@
 import React from 'react';
-import { View } from 'react-native';
+import { View, useWindowDimensions } from 'react-native';
 import { Text } from '@/components/ui/text';
 import PageLayout from '@/components/layouts/page-layout';
 import TextButton from '@/components/inputs/text-button';
@@ -45,6 +45,9 @@ export default function FormLayout({
   helpContent,
   canGoBack,
 }: FormLayoutProps) {
+  const { height } = useWindowDimensions();
+  const isLargePhone = height >= 900; // Threshold for large phones
+
   const rightViewContent = (helpTitle && helpContent) ? (
     <HelpButton
       title={helpTitle}
@@ -58,7 +61,7 @@ export default function FormLayout({
     <PageLayout
       title={title}
       rightView={rightViewContent}
-      scrollable={false}
+      scrollable={!isLargePhone}
       canGoBack={canGoBack}
     >
       <View className="flex-1">
@@ -100,7 +103,7 @@ export default function FormLayout({
         </View>
 
         {/* Submit Button */}
-        <View className="mt-auto pb-4">
+        <View className="mt-10 pb-4">
           <TextButton
             label={submitButton.label}
             variant="secondary"

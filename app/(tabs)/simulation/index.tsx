@@ -1,39 +1,47 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { View } from '@/components/ui/view';
 import { Text } from '@/components/ui/text';
 import FormLayout from '@/components/layouts/form-layout';
-import { useFocusEffect } from 'expo-router';
-import { useCallback } from 'react';
-import { UserResponses } from '@/types/Question';
-import { QUESTIONS } from '@/types/Question';
-import { initializeSimulationSetup, handleSimulationReset, loadJobOptionsForCategory, submitSimulationForm } from '@/api/simulation';
+import { useFocusEffect, router } from 'expo-router';
+import { UserResponses, QUESTIONS } from '@/types/Question';
+import { fetchJobsByCategory, fetchSimulationParams } from '@/api/simulation';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 export default function SimulationSetup() {
   const [responses, setResponses] = useState<Partial<UserResponses>>({});
-  const [isLoading, setIsLoading] = useState(true);
   const [jobOptions, setJobOptions] = useState<{ label: string; value: string | number }[]>([]);
-  const [isLoadingJobs, setIsLoadingJobs] = useState(false);
 
   useEffect(() => {
-    const initialize = async () => {
-      const result = await initializeSimulationSetup();
-      if (result.shouldLoad) {
-        setIsLoading(false);
-      }
-    };
-    initialize();
+    checkExistingSetup();
   }, []);
+
+  const checkExistingSetup = async () => {
+    try {
+      const resetFlag = await AsyncStorage.getItem('@simulation_reset');
+      if (resetFlag === 'true') {
+        await AsyncStorage.removeItem('@simulation_reset');
+        return;
+      }
+
+      const setupData = await AsyncStorage.getItem('@simulation_setup');
+      if (setupData) {
+        router.replace('/(tabs)/simulation/result');
+        return;
+      } else {
+      }
+    } catch (error) {
+      console.error('Error loading setup data:', error);
+    }
+  };
 
   useFocusEffect(
     useCallback(() => {
       const resetCheck = async () => {
-        const result = await handleSimulationReset();
-        if (result.shouldClearResponses) {
+        const resetFlag = await AsyncStorage.getItem('@simulation_reset');
+        if (resetFlag === 'true') {
+          await AsyncStorage.removeItem('@simulation_reset');
           setResponses({});
-        }
-        if (result.shouldLoad) {
-          setIsLoading(false);
         }
       };
       resetCheck();
@@ -43,10 +51,20 @@ export default function SimulationSetup() {
   useEffect(() => {
     const loadJobOptions = async () => {
       if (responses.careerCategory) {
-        setIsLoadingJobs(true);
-        const jobs = await loadJobOptionsForCategory(responses.careerCategory as string);
-        setJobOptions(jobs);
-        setIsLoadingJobs(false);
+        try {
+          const response = await fetchJobsByCategory(responses.careerCategory as string);
+          if (response && response.jobs && Array.isArray(response.jobs)) {
+            const jobs = response.jobs.map((job) => ({
+              label: job.title,
+              value: job.id,
+            }));
+            setJobOptions(jobs);
+          }
+        } catch (error) {
+          console.error('Error loading jobs:', error);
+          setJobOptions([]);
+        } finally {
+        }
       }
     };
     loadJobOptions();
@@ -70,17 +88,39 @@ export default function SimulationSetup() {
       }
     },
     isScrollable: true,
-    isLoading: index === 1 && isLoadingJobs,
-    loadingText: 'Loading jobs...',
+    // isLoading: index === 1 && isLoadingJobs,
+    // loadingText: 'Loading jobs...',
   }));
 
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-gray-500">Loading...</Text>
-      </View>
-    );
-  }
+  const handleSubmit = async () => {
+    if (isFormComplete) {
+      try {
+        // Save user responses
+        await AsyncStorage.setItem('@simulation_setup', JSON.stringify(responses));
+
+        // Fetch simulation data from backend
+        const simulationData = await fetchSimulationParams(responses as UserResponses);
+
+        // Save simulation data
+        await AsyncStorage.setItem('@simulation_data', JSON.stringify(simulationData));
+
+        // Navigate to results
+        router.push('/(tabs)/simulation/result');
+      } catch (error) {
+        console.error('Error submitting simulation:', error);
+        // Navigate anyway, let result page handle missing data
+        router.push('/(tabs)/simulation/result');
+      }
+    }
+  };
+
+  // if (isLoading) {
+  //   return (
+  //     <View className="flex-1 items-center justify-center">
+  //       <Text className="text-gray-500">Loading...</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <FormLayout
@@ -91,7 +131,7 @@ export default function SimulationSetup() {
       fields={fields}
       submitButton={{
         label: 'View Simulation',
-        onPress: async () => { await submitSimulationForm(responses, QUESTIONS.length); },
+        onPress: handleSubmit,
         disabled: !isFormComplete,
       }}
     />

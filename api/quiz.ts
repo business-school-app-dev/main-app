@@ -40,9 +40,7 @@ type SubmittedAnswer = {
 };
 
 export const submitAllAnswers = async (
-  userAnswers: SubmittedAnswer[],
-  username: string
-) => {
+userAnswers: SubmittedAnswer[], username: string, scoreFromParams: number, totalFromParams: number) => {
   try {
     const response = await fetch(`${API_BASE_URL}/challenges/submit-batch`, {
       method: "POST",

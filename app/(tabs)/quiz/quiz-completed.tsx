@@ -10,10 +10,11 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function QuizCompleted() {
   const [name, setName] = useState('');
+  // need to grab from back end
+  const [score, setScore] = useState(0);
   const [submitted, setSubmitted] = useState(false);
 
-  // Dummy values for now
-  const score = 2;
+  // total out of 3
   const total = 3;
 
   const handleSubmit = () => {

@@ -140,7 +140,7 @@ export default function QuizModal() {
 
       const submissionResult = await submitAllAnswers(allAnswers);
       if (submissionResult && submissionResult.success === true) {
-        router.back();
+        router.push('/(tabs)/quiz/quiz-completed');
       } else {
         console.error("Final submission failed on server or returned unsuccessful status.");
       }

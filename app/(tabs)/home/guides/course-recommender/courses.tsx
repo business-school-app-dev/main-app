@@ -4,19 +4,21 @@ import { SearchIcon } from '@/components/ui/icon';
 import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { Spinner } from '@/components/ui/spinner';
 import { useLocalSearchParams } from 'expo-router';
 import React, { useMemo, useState, useEffect } from 'react';
-import { View, ActivityIndicator } from 'react-native';
+import { View } from 'react-native';
 import Course from '@/types/Course';
+import { PRIMARY } from '@/constants/colors';
 
-const API_BASE_URL = 'http://127.0.0.1:5000/api/v1/'; 
+const API_BASE_URL = 'http://127.0.0.1:5000/api/v1/';
 
 export default function CourseOptionsScreen() {
   const [searchText, setSearchText] = useState('');
   const [fetchedCourses, setFetchedCourses] = useState<Course[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  
+
   const { comfort_level, max_credits } = useLocalSearchParams<{
     comfort_level?: string;
     max_credits?: string;
@@ -30,7 +32,7 @@ export default function CourseOptionsScreen() {
       const comfort = comfort_level || 'n/a';
       const credits = max_credits || 'n/a';
       const endpoint = `${API_BASE_URL}recommend?comfort=${comfort}&max_credits=${credits}`;
-      
+
       try {
         const response = await fetch(endpoint);
         const data = await response.json();
@@ -77,7 +79,7 @@ export default function CourseOptionsScreen() {
   // --- RENDER LOGIC ---
 
   return (
-    <PageLayout title="Recommended Courses" canGoBack>
+    <PageLayout title="Recommended Courses" scrollable={!loading && !error && courses.length > 0} canGoBack>
       <Input className="bg-zinc-200 border-outline-100 rounded-lg">
         <InputSlot className="pl-3">
           <InputIcon as={SearchIcon} />
@@ -89,17 +91,16 @@ export default function CourseOptionsScreen() {
           className="text-md"
         />
       </Input>
-      
-      <VStack space="md" className="mt-8 h-full w-full">
+
+      <VStack space="md" className={`${loading || error || courses.length === 0 ? "mt-0" : "mt-8"} h-full w-full`}>
         {loading ? (
           <View className="flex-1 justify-center items-center">
-            <ActivityIndicator size="large" color="#E11932" />
-            <Text className="mt-4 text-gray-600">Finding recommendations...</Text>
+            <Spinner size="large" color={PRIMARY} />
           </View>
         ) : error ? (
-          <Text className="mx-auto my-auto text-red-600 text-center">{error}</Text>
+          <Text className="mx-auto my-auto text-gray-600 text-center text-xl">{error}</Text>
         ) : courses.length === 0 ? (
-          <Text className="mx-auto my-auto text-gray-600">There are no courses matching your criteria!</Text>
+          <Text className="mx-auto my-auto text-gray-600 text-center text-xl">There are no courses matching your criteria!</Text>
         ) : (
           courses.map((course: any) => (
             <View

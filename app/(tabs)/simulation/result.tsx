@@ -36,14 +36,18 @@ export default function SimulationResult() {
   // Track the latest pending params to avoid race conditions
   const pendingParamsRef = useRef<any>(null);
 
+  // Store previous chart data to show while waiting for backend update
+  const previousChartDataRef = useRef<{
+    chartData: any[];
+    xAxisLabels: string[];
+    stats: { median: number; percentile25: number; percentile75: number };
+    spacing: number;
+    chartWidth: number;
+  } | null>(null);
+
   const screenWidth = Dimensions.get('window').width;
   const chartHeight = 250;
-
-  // Fixed chart setup - always 9 milestone points (0, 5, 10, 15, 20, 25, 30, 35, 40)
   const chartWidth = screenWidth - 80;
-  const availableWidth = chartWidth - 20 - 10 - 10; // subtract initialSpacing and endSpacing and padding
-  const numberOfMilestones = 9; // Always 9 milestones
-  const fixedSpacing = Math.floor(availableWidth / numberOfMilestones); // Fixed spacing based on milestones
 
   useEffect(() => {
     loadUserResponses();
@@ -106,11 +110,12 @@ export default function SimulationResult() {
 
         // Only update if this is still the latest request
         if (pendingParamsRef.current === updatedParams) {
-          // Update simulation data with new summary and years
+          // Update simulation data with new summary
+          // Use years from updatedParams (slider value), NOT from backend response
           setSimulationData({
             ...simulationData,
             summary: updatedData.summary,
-            years: updatedData.years,
+            years: updatedParams.years,
             params: updatedParams,
           });
 
@@ -118,7 +123,7 @@ export default function SimulationResult() {
           await AsyncStorage.setItem('@simulation_data', JSON.stringify({
             ...simulationData,
             summary: updatedData.summary,
-            years: updatedData.years,
+            years: updatedParams.years,
             params: updatedParams,
           }));
         }
@@ -189,13 +194,36 @@ export default function SimulationResult() {
   };
 
   // Generate chart data from backend simulation
-  const { chartData, xAxisLabels, stats } = useMemo(() => {
+  const { chartData, xAxisLabels, stats, spacing, chartWidth: dynamicChartWidth } = useMemo(() => {
     if (!simulationData || !simulationData.summary) {
       // Return empty data if no simulation data
       return {
         chartData: [],
         xAxisLabels: ['0', '5', '10', '15', '20', '25', '30', '35', '40'],
         stats: { median: 0, percentile25: 0, percentile75: 0 },
+        spacing: 40,
+        chartWidth: chartWidth,
+      };
+    }
+
+    // Don't regenerate chart if years slider has changed but backend hasn't responded yet
+    // This prevents showing mismatched data (e.g., 35 year chart with 20 year projections)
+    if (simulationData.years !== years) {
+      // Return previous chart data while waiting for backend
+      console.log('Waiting for backend to update:', { sliderYears: years, dataYears: simulationData.years });
+
+      // If we have previous chart data, return it to keep the chart visible
+      if (previousChartDataRef.current) {
+        return previousChartDataRef.current;
+      }
+
+      // Otherwise return empty data
+      return {
+        chartData: [],
+        xAxisLabels: ['0', '5', '10', '15', '20', '25', '30', '35', '40'],
+        stats: { median: 0, percentile25: 0, percentile75: 0 },
+        spacing: 40,
+        chartWidth: chartWidth,
       };
     }
 
@@ -286,13 +314,9 @@ export default function SimulationResult() {
         // Generate data for milestones up to selected years
         const progress = milestone / years;
 
-        // Use exponential growth curve
+        // Use exponential growth curve - reaches targetValue at the selected year
         const exponentialFactor = Math.pow(progress, 1.5);
-        const baseValue = targetValue * exponentialFactor;
-
-        // Add small random fluctuations (±5% of current value)
-        const fluctuation = baseValue * (Math.random() * 0.1 - 0.05);
-        const yearValue = Math.max(0, baseValue + fluctuation);
+        const yearValue = targetValue * exponentialFactor;
 
         chartDatasets.push({
           value: Math.round(yearValue),
@@ -307,12 +331,26 @@ export default function SimulationResult() {
     console.log('Chart data length:', chartDatasets.length);
     console.log('Selected years:', years);
 
-    return {
+    // Calculate spacing dynamically based on chart width and number of points
+    // This ensures the chart always uses full width and spreads points evenly
+    const availableWidth = chartWidth - 20 - 10 - 10; // subtract initialSpacing and endSpacing and padding
+    const calculatedSpacing = chartDatasets.length > 1
+      ? availableWidth / (chartDatasets.length - 1)
+      : 0;
+
+    const result = {
       chartData: chartDatasets,
       xAxisLabels: xAxisLabels,
       stats: { median, percentile25, percentile75 },
+      spacing: calculatedSpacing,
+      chartWidth: chartWidth, // Always use full chart width
     };
-  }, [simulationData, years]);
+
+    // Store this chart data for use during slider updates
+    previousChartDataRef.current = result;
+
+    return result;
+  }, [simulationData, years, chartWidth]);
 
   const formatCurrency = (value: number) => {
     if (value >= 1000000) {
@@ -476,7 +514,7 @@ export default function SimulationResult() {
           <LineChart
             data={chartData}
             height={chartHeight}
-            width={chartWidth}
+            width={dynamicChartWidth}
             color={PRIMARY_COLORS[600]}
             thickness={3}
             endSpacing={10}
@@ -485,7 +523,7 @@ export default function SimulationResult() {
             startOpacity={0.9}
             endOpacity={0.1}
             initialSpacing={10}
-            spacing={fixedSpacing}
+            spacing={spacing}
             xAxisLabelTexts={xAxisLabels}
             noOfSections={4}
             yAxisColor={GRAY_COLORS[200]}

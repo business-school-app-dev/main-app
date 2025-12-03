@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { View, StatusBar, ActivityIndicator, Animated } from 'react-native';
+import { View, StatusBar, Animated } from 'react-native';
 import { Text } from '@/components/ui/text';
 import { Pressable } from '@/components/ui/pressable';
 import { Icon } from '@/components/ui/icon';
+import { Spinner } from '@/components/ui/spinner';
 import { X } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,6 +13,7 @@ import ProgressView from '@/components/views/progress-view';
 
 import { fetchQuestions, submitAllAnswers } from '@/api/quiz';
 import { Question } from '@/types/quiz';
+import { PRIMARY } from '@/constants/colors';
 
 export default function QuizModal() {
   const [selectedOption, setSelectedOption] = useState<string>("");
@@ -148,19 +150,11 @@ export default function QuizModal() {
     }
   };
 
-  if (loading) {
-    return (
-      <SafeAreaView className="flex-1 items-center justify-center">
-        <ActivityIndicator size="large" color="#000" />
-        <Text className="mt-4 text-gray-600">Loading questions...</Text>
-      </SafeAreaView>
-    );
-  }
-
   // Error state: UPDATED CODE BLOCK
   if (error || questions.length === 0) {
     return (
       <SafeAreaView className="flex-1">
+        <StatusBar barStyle="dark-content" backgroundColor="white" translucent={false} />
         {/* New Header Container for the 'X' button */}
         <View className="px-6 pb-4">
           <Pressable
@@ -214,46 +208,54 @@ export default function QuizModal() {
 
       {/* Content */}
       <View className="flex-1 px-6">
-        {/* Question */}
-        <Animated.View
-          style={{
-            transform: [{ translateX: shakeAnim }],
-          }}
-        >
-          <Text className="text-2xl font-bold text-gray-900 mb-6 mt-4">
-            {currentQ.text}
-          </Text>
-        </Animated.View>
+        {loading ? (
+          <View className="flex-1 items-center justify-center">
+            <Spinner size="large" color={PRIMARY} />
+          </View>
+        ) : (
+          <>
+            {/* Question */}
+            <Animated.View
+              style={{
+                transform: [{ translateX: shakeAnim }],
+              }}
+            >
+              <Text className="text-2xl font-bold text-gray-900 mb-6 mt-4">
+                {currentQ.text}
+              </Text>
+            </Animated.View>
 
-        {/* Options */}
-        <SelectionCard
-          options={currentQ.options.map((option, index) => ({
-            label: option,
-            value: index
-          }))}
-          selectedValue={selectedAnswer}
-          onSelect={(value) => handleAnswerSelect(value as number)}
-          disabled={showResult}
-          showResult={showResult}
-          correctAnswer={currentQ.correctAnswer}
-          spacing="sm"
-        />
+            {/* Options */}
+            <SelectionCard
+              options={currentQ.options.map((option, index) => ({
+                label: option,
+                value: index
+              }))}
+              selectedValue={selectedAnswer}
+              onSelect={(value) => handleAnswerSelect(value as number)}
+              disabled={showResult}
+              showResult={showResult}
+              correctAnswer={currentQ.correctAnswer}
+              spacing="sm"
+            />
 
-        {/* Result Message */}
-        {showResult && (
-          <Animated.View
-            style={{
-              opacity: resultFadeAnim,
-              transform: [{ translateY: resultSlideAnim }],
-            }}
-            className={`p-4 rounded-xl mt-6 ${isCorrect ? 'bg-green-100' : 'bg-red-100'
-              }`}
-          >
-            <Text className={`text-center text-base ${isCorrect ? 'text-green-800' : 'text-red-800'
-              }`}>
-              {isCorrect ? "Correct!" : "Not quite right. Try again next time!"}
-            </Text>
-          </Animated.View>
+            {/* Result Message */}
+            {showResult && (
+              <Animated.View
+                style={{
+                  opacity: resultFadeAnim,
+                  transform: [{ translateY: resultSlideAnim }],
+                }}
+                className={`p-4 rounded-xl mt-6 ${isCorrect ? 'bg-green-100' : 'bg-red-100'
+                  }`}
+              >
+                <Text className={`text-center text-base ${isCorrect ? 'text-green-800' : 'text-red-800'
+                  }`}>
+                  {isCorrect ? "Correct!" : "Not quite right. Try again next time!"}
+                </Text>
+              </Animated.View>
+            )}
+          </>
         )}
       </View>
 

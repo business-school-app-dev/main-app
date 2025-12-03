@@ -11,8 +11,6 @@ import { View } from 'react-native';
 import Course from '@/types/Course';
 import { PRIMARY } from '@/constants/colors';
 
-const API_BASE_URL = 'http://127.0.0.1:5000/api/v1/';
-
 export default function CourseOptionsScreen() {
   const [searchText, setSearchText] = useState('');
   const [fetchedCourses, setFetchedCourses] = useState<Course[]>([]);
@@ -31,7 +29,7 @@ export default function CourseOptionsScreen() {
 
       const comfort = comfort_level || 'n/a';
       const credits = max_credits || 'n/a';
-      const endpoint = `${API_BASE_URL}recommend?comfort=${comfort}&max_credits=${credits}`;
+      const endpoint = `${process.env.EXPO_PUBLIC_API_URL}/recommend?comfort=${comfort}&max_credits=${credits}`;
 
       try {
         const response = await fetch(endpoint);

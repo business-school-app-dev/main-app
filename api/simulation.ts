@@ -15,8 +15,6 @@ import {
   MapPin,
 } from "lucide-react-native";
 
-const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
-
 // Formatting functions
 export const formatCurrency = (value: number) => {
   if (value >= 1000000) {
@@ -565,7 +563,7 @@ export async function fetchJobsByCategory(
   category: string
 ): Promise<JobsResponse> {
   try {
-    const url = `${API_BASE_URL}/jobs/${category}`;
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/jobs/${category}`;
     console.log("Fetching jobs from:", url);
 
     const response = await fetch(url);
@@ -588,7 +586,7 @@ export async function fetchSimulationParams(
   userResponses: UserResponses
 ): Promise<any> {
   try {
-    const url = `${API_BASE_URL}/simulation/run`;
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/simulation/run`;
     console.log("Fetching simulation params from:", url);
 
     // Convert state abbreviation to full name
@@ -635,7 +633,7 @@ export async function fetchSimulationParams(
 
 export async function fetchSimulationWithSliders(params: any): Promise<any> {
   try {
-    const url = `${API_BASE_URL}/simulation/sliders`;
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/simulation/sliders`;
     console.log("Fetching simulation with sliders from:", url);
     console.log("Full params object:", JSON.stringify(params, null, 2));
     console.log("Years in params:", params.years);

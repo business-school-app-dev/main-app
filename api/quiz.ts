@@ -1,15 +1,16 @@
 import { Question } from "@/types/quiz";
 
-const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
-
 export const fetchQuestions = async (): Promise<Question[]> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/challenges/questions`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/challenges/questions`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     if (!response.ok) {
       throw new Error("Failed to fetch questions");
     }
@@ -37,16 +38,19 @@ export const submitAllAnswers = async (
 ) => {
   try {
     const userId = 0;
-    const response = await fetch(`${API_BASE_URL}/challenges/submit-batch`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        user_id: userId,
-        answers: userAnswers,
-      }),
-    });
+    const response = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/challenges/submit-batch`,
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          user_id: userId,
+          answers: userAnswers,
+        }),
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Failed to submit answers");

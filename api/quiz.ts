@@ -32,19 +32,32 @@ export const fetchQuestions = async (): Promise<Question[]> => {
   }
 };
 
+type SubmittedAnswer = {
+  questionId: number;
+  answer: number;
+  isCorrect: boolean;
+  answerText?: string;
+};
+
 export const submitAllAnswers = async (
-  userAnswers: { questionId: number; answer: number; isCorrect: boolean }[]
+  userAnswers: SubmittedAnswer[],
+  username: string
 ) => {
   try {
-    const userId = 0;
     const response = await fetch(`${API_BASE_URL}/challenges/submit-batch`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        user_id: userId,
-        answers: userAnswers,
+        username,
+        // Backend expects questionId/answer fields as sent from the client
+        answers: userAnswers.map(({ questionId, answer, isCorrect, answerText }) => ({
+          questionId,
+          answer,
+          is_correct: isCorrect,
+          ...(answerText ? { answerText } : {}),
+        })),
       }),
     });
 

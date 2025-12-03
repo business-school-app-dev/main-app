@@ -2,24 +2,62 @@ import TextButton from '@/components/inputs/text-button';
 import { Icon } from '@/components/ui/icon';
 import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
-import { router } from 'expo-router';
+import { submitAllAnswers } from '@/api/quiz';
+import { router, useLocalSearchParams } from 'expo-router';
 import { X } from 'lucide-react-native';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { StatusBar, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 export default function QuizCompleted() {
+  const { score: scoreParam, total: totalParam, answers: answersParam } = useLocalSearchParams();
+  const { scoreFromParams, totalFromParams, answersFromParams } = useMemo(() => {
+    const parsedScore = parseInt(String(scoreParam ?? ''), 10);
+    const parsedTotal = parseInt(String(totalParam ?? ''), 10);
+    let parsedAnswers: { questionId: number; answer: number; isCorrect: boolean; answerText?: string }[] = [];
+    if (answersParam) {
+      try {
+        const maybe = JSON.parse(String(answersParam));
+        if (Array.isArray(maybe)) {
+          parsedAnswers = maybe;
+        }
+      } catch (e) {
+        parsedAnswers = [];
+      }
+    }
+    return {
+      scoreFromParams: Number.isFinite(parsedScore) ? parsedScore : 0,
+      totalFromParams: Number.isFinite(parsedTotal) ? parsedTotal : 0,
+      answersFromParams: parsedAnswers,
+    };
+  }, [scoreParam, totalParam, answersParam]);
+
   const [name, setName] = useState('');
-  // need to grab from back end
-  const [score, setScore] = useState(0);
   const [submitted, setSubmitted] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  // total out of 3
-  const total = 3;
-
-  const handleSubmit = () => {
-    setSubmitted(true);
-    // In the future: send name + score to backend leaderboard
+  const handleSubmit = async () => {
+    if (!name.trim()) return;
+    if (!answersFromParams.length) {
+      setSubmitError('No answers to submit. Please retake the quiz.');
+      return;
+    }
+    try {
+      setIsSubmitting(true);
+      setSubmitError(null);
+      await submitAllAnswers(
+        answersFromParams,
+        name.trim(),
+        scoreFromParams,
+        totalFromParams
+      );
+      setSubmitted(true);
+    } catch (err: any) {
+      setSubmitError(err?.message || 'Failed to submit leaderboard entry');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -41,15 +79,15 @@ export default function QuizCompleted() {
 
         {/* need to replace score/total with whatever score backend creates */}
       <View className="flex-1 px-6 mt-6">
-        {/* Score */}
-        <View className="bg-gray-100 rounded-2xl p-6 mb-8">
-          <Text className="text-center text-3xl font-bold text-gray-900">
-            {score}/{total}
-          </Text>
-          <Text className="text-center text-gray-600 mt-1">
-            Your Daily Quiz Score
-          </Text>
-        </View>
+          {/* Score */}
+          <View className="bg-gray-100 rounded-2xl p-6 mb-8">
+            <Text className="text-center text-3xl font-bold text-gray-900">
+            {scoreFromParams}/{totalFromParams}
+            </Text>
+            <Text className="text-center text-gray-600 mt-1">
+              Your Daily Quiz Score
+            </Text>
+          </View>
 
         {/* Name Input */}
         {!submitted ? (
@@ -66,13 +104,18 @@ export default function QuizCompleted() {
               placeholderTextColor="#9CA3AF"
             />
 
+            {submitError ? (
+              <Text className="text-red-600 mb-3 text-sm">
+                {submitError}
+              </Text>
+            ) : null}
 
             <TextButton
               label="Submit to Leaderboard"
               onPress={handleSubmit}
               variant="secondary"
               size="lg"
-              disabled={name.trim() === ''}
+              disabled={name.trim() === '' || isSubmitting}
             />
           </>
         ) : (

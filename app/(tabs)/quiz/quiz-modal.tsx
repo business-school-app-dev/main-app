@@ -4,13 +4,13 @@ import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
 import ProgressView from '@/components/views/progress-view';
 import { SelectionCard } from '@/components/views/selection-card';
-import { router } from 'expo-router';
+import { router, useFocusEffect } from 'expo-router';
 import { X } from 'lucide-react-native';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useRef, useState } from 'react';
 import { ActivityIndicator, Animated, StatusBar, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-import { fetchQuestions, submitAllAnswers } from '@/api/quiz';
+import { fetchQuestions } from '@/api/quiz';
 import { Question } from '@/types/quiz';
 
 export default function QuizModal() {
@@ -28,13 +28,19 @@ export default function QuizModal() {
   const resultSlideAnim = useRef(new Animated.Value(20)).current;
   const shakeAnim = useRef(new Animated.Value(0)).current;
 
-  useEffect(() => {
-    loadQuestions();
-  }, []);
-
-  const loadQuestions = async () => {
+  const loadQuestions = useCallback(async () => {
     try {
+      // Reset local quiz state before loading new questions
+      setError(null);
       setLoading(true);
+      setQuestions([]);
+      setCurrentQuestion(1);
+      setSelectedOption("");
+      setSelectedAnswer(null);
+      setShowResult(false);
+      setIsCorrect(false);
+      setUserAnswers([]);
+
       const fetchedQuestions = await fetchQuestions();
       setQuestions(fetchedQuestions);
     } catch (err: any) {
@@ -42,7 +48,14 @@ export default function QuizModal() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
+
+  // Fetch from backend each time the modal is opened/focused
+  useFocusEffect(
+    useCallback(() => {
+      loadQuestions();
+    }, [loadQuestions])
+  );
 
 
 
@@ -108,14 +121,15 @@ export default function QuizModal() {
     }
   };
 
-  const [userAnswers, setUserAnswers] = useState<{ questionId: number, answer: number, isCorrect: boolean }[]>([]);
+  const [userAnswers, setUserAnswers] = useState<{ questionId: number, answer: number, isCorrect: boolean, answerText?: string }[]>([]);
 
   const handleNext = async () => {
     if (selectedAnswer !== null && currentQ) {
       setUserAnswers([...userAnswers, {
         questionId: currentQ.id,
         answer: selectedAnswer,
-        isCorrect: isCorrect
+        isCorrect: isCorrect,
+        answerText: currentQ.options[selectedAnswer]
       }]);
     }
 
@@ -131,20 +145,27 @@ export default function QuizModal() {
       setShowResult(false);
       setIsCorrect(false);
     } else {
-      // Quiz completed
-      const allAnswers = [...userAnswers, {
-        questionId: currentQ.id,
-        answer: selectedAnswer!,
-        isCorrect: isCorrect
-      }];
+      // Quiz completed — navigate without submitting
+      const allAnswers = [
+        ...userAnswers,
+        {
+          questionId: currentQ.id,
+          answer: selectedAnswer!,
+          isCorrect: isCorrect,
+          answerText: currentQ.options[selectedAnswer!]
+        }
+      ];
+      const totalQuestions = questions.length;
+      const correctCount = allAnswers.filter((a) => a.isCorrect).length;
 
-      const submissionResult = await submitAllAnswers(allAnswers);
-      if (submissionResult && submissionResult.success === true) {
-        router.push('/(tabs)/quiz/quiz-completed');
-      } else {
-        console.error("Final submission failed on server or returned unsuccessful status.");
-      }
-
+      router.replace({
+        pathname: '/quiz/quiz-completed',
+        params: {
+          score: String(correctCount),
+          total: String(totalQuestions),
+          answers: JSON.stringify(allAnswers),
+        },
+      });
     }
   };
 

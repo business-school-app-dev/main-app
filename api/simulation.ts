@@ -144,54 +144,6 @@ export const handleSimulationReset = async () => {
       shouldLoad: false,
       shouldNavigate: true,
     };
-    setResponses(newResponses);
-
-    // Set direction for next animation
-    setAnimationDirection("forward");
-
-    // Animate out before transitioning
-    await Animated.parallel([
-      Animated.timing(fadeAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-      Animated.timing(slideAnim, {
-        toValue: -30,
-        duration: 200,
-        useNativeDriver: true,
-      }),
-    ]).start();
-
-    if (currentQuestionIndex < QUESTIONS.length - 1) {
-      setCurrentQuestionIndex(currentQuestionIndex + 1);
-      setSelectedOption(null);
-    } else {
-      // All questions answered - fetch simulation data and navigate to results
-      try {
-        // Save user responses
-        await AsyncStorage.setItem(
-          "@simulation_setup",
-          JSON.stringify(newResponses)
-        );
-
-        // Fetch simulation params from backend
-        const simulationData = await fetchSimulationParams(newResponses as UserResponses);
-
-        // Save simulation data for the results page
-        await AsyncStorage.setItem(
-          "@simulation_data",
-          JSON.stringify(simulationData)
-        );
-
-        router.push("/(tabs)/simulation/result");
-      } catch (error) {
-        console.error("Error saving setup data or fetching simulation:", error);
-        // Still navigate to results page even if API fails
-        // The results page can show an error or use fallback data
-        router.push("/(tabs)/simulation/result");
-      }
-    }
   }
   return {
     shouldClearResponses: false,
@@ -201,8 +153,14 @@ export const handleSimulationReset = async () => {
 };
 
 export const loadJobOptionsForCategory = async (category: string) => {
-  const jobs = await fetchJobs(category);
-  return jobs;
+  const response = await fetchJobsByCategory(category);
+  if (!response || !response.jobs || !Array.isArray(response.jobs)) {
+    return [];
+  }
+  return response.jobs.map((job) => ({
+    label: job.title,
+    value: job.id,
+  }));
 };
 
 export const submitSimulationForm = async (

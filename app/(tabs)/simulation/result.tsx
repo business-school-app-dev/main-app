@@ -15,7 +15,7 @@ import HelpButton from '@/components/inputs/help-button';
 import LabeledSlider from '@/components/inputs/labeled-slider';
 import COLORS, { GRAY_COLORS, PRIMARY_COLORS, SECONDARY_COLORS } from '@/constants/colors';
 import { Briefcase, MapPin, Baby, Laptop, Heart, DollarSign, GraduationCap, Building2, Users, Home, TreePine } from 'lucide-react-native';
-import { UserResponses } from '@/types/Question';
+import { UserResponses, QUESTIONS } from '@/types/Question';
 import { fetchSimulationWithSliders } from '@/api/simulation';
 
 
@@ -271,11 +271,10 @@ export default function SimulationResult() {
     const allMilestones = [0, 5, 10, 15, 20, 25, 30, 35, 40];
     const chartDatasets: any[] = [];
 
-    // Generate data points for all milestones up to and including the selected years
+    // Generate data points ONLY up to selected years
     for (const milestone of allMilestones) {
-      // Skip milestones beyond selected years
       if (milestone > years) {
-        continue; // Skip this milestone but keep generating labels
+        break; // Stop generating data beyond selected year
       }
 
       if (milestone === 0) {
@@ -302,8 +301,8 @@ export default function SimulationResult() {
       }
     }
 
-    // Always show all milestone labels on X-axis (0-40)
-    const xAxisLabels = allMilestones.map(m => m.toString());
+    // Generate x-axis labels only up to selected years
+    const xAxisLabels = allMilestones.filter(m => m <= years).map(m => m.toString());
 
     console.log('Chart data length:', chartDatasets.length);
     console.log('Selected years:', years);

@@ -220,53 +220,57 @@ const LoanCalculatorContent = () => {
             </Text>
           </Card>
         ) : (
-          <VStack space="md">
-            <Text size="sm" className="text-gray-700">
-              Based on your available discretionary income of{" "}
-              {formatCurrency(effectiveDiscretionaryIncome)}/month, decide how to
-              split between extra loan payments and retirement savings.
-            </Text>
+          <Card className="rounded-xl p-6 bg-white border border-gray-200">
+            <VStack space="lg">
+              <Text size="sm" className="text-gray-700">
+                Based on your available discretionary income of{" "}
+                <Text size="sm" className="text-primary-500 font-semibold">
+                  {formatCurrency(effectiveDiscretionaryIncome)}/month
+                </Text>
+                , decide how to split between extra loan payments and retirement savings.
+              </Text>
 
-            <LabeledSlider
-              label="Loan vs Retirement Split"
-              value={loanAllocationPercentage}
-              minValue={0}
-              maxValue={100}
-              step={1}
-              onChange={setLoanAllocationPercentage}
-              suffix="%"
-            />
+              <LabeledSlider
+                label="Loan vs Retirement Split"
+                value={loanAllocationPercentage}
+                minValue={0}
+                maxValue={100}
+                step={1}
+                onChange={setLoanAllocationPercentage}
+                suffix="%"
+              />
 
-            <HStack space="md" className="justify-between mt-4">
-              <Card className="rounded-xl flex-1 bg-white border border-gray-200">
-                <VStack space="xs" className="p-4 items-center">
-                  <Text size="xs" className="text-gray-600">
-                    Extra Loan Payment
-                  </Text>
-                  <Text size="xl" className="text-primary-500 font-bold">
-                    {formatPercentage(loanAllocationPercentage)}
-                  </Text>
-                  <Text size="sm" className="text-gray-900 font-semibold">
-                    {formatCurrency(extraLoanPayment)}/mo
-                  </Text>
-                </VStack>
-              </Card>
+              <HStack space="md" className="justify-between mt-2">
+                <Card className="rounded-xl flex-1 bg-white border border-gray-200">
+                  <VStack space="xs" className="p-4 items-center">
+                    <Text size="xs" className="text-gray-600">
+                      Extra Loan Payment
+                    </Text>
+                    <Text size="xl" className="text-primary-500 font-bold">
+                      {formatPercentage(loanAllocationPercentage)}
+                    </Text>
+                    <Text size="sm" className="text-gray-900 font-semibold">
+                      {formatCurrency(extraLoanPayment)}/mo
+                    </Text>
+                  </VStack>
+                </Card>
 
-              <Card className="rounded-xl flex-1 bg-white border border-gray-200">
-                <VStack space="xs" className="p-4 items-center">
-                  <Text size="xs" className="text-gray-600">
-                    Retirement Savings
-                  </Text>
-                  <Text size="xl" className="text-primary-500 font-bold">
-                    {formatPercentage(100 - loanAllocationPercentage)}
-                  </Text>
-                  <Text size="sm" className="text-gray-900 font-semibold">
-                    {formatCurrency(retirementSavingsAllocation)}/mo
-                  </Text>
-                </VStack>
-              </Card>
-            </HStack>
-          </VStack>
+                <Card className="rounded-xl flex-1 bg-white border border-gray-200">
+                  <VStack space="xs" className="p-4 items-center">
+                    <Text size="xs" className="text-gray-600">
+                      Retirement Savings
+                    </Text>
+                    <Text size="xl" className="text-primary-500 font-bold">
+                      {formatPercentage(100 - loanAllocationPercentage)}
+                    </Text>
+                    <Text size="sm" className="text-gray-900 font-semibold">
+                      {formatCurrency(retirementSavingsAllocation)}/mo
+                    </Text>
+                  </VStack>
+                </Card>
+              </HStack>
+            </VStack>
+          </Card>
         )}
       </VStack>
 

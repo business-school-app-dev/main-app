@@ -258,7 +258,7 @@ export default function QuizModal() {
       </View>
 
       {/* Bottom Button */}
-      <View className="px-6 py-4">
+      <View className="px-6 mb-10">
         {!showResult ? (
           <TextButton
             label="Check Answer"

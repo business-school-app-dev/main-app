@@ -13,7 +13,7 @@ import {
 } from "lucide-react-native";
 import { useState, useEffect } from "react";
 import { router } from "expo-router";
-import { fetchEvents, EventItem, formatDateTime } from "@/api/home";
+import { fetchEvents, EventItem, formatDateTime } from "@/api/events";
 
 export default function App() {
   const [events, setEvents] = useState<EventItem[]>([]);

@@ -335,7 +335,7 @@ export default function SimulationResult() {
               <Spinner color={PRIMARY} size="large" />
             </View>
           )}
-          <Text className="text-base font-semibold text-gray-900">
+          <Text className="text-lg font-semibold text-gray-900">
             Projected Net Worth in {years} Years
           </Text>
 

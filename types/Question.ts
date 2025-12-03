@@ -10,6 +10,7 @@ export type UserResponses = {
   specificJob: string;
   location: string;
   children: number;
+  spending: string;
 };
 
 // Questions data
@@ -116,6 +117,14 @@ export const QUESTIONS: Question[] = [
       { label: "2 children", value: 2 },
       { label: "3 children", value: 3 },
       { label: "4+ children", value: 4 },
+    ],
+  },
+  {
+    id: "spending",
+    question: "What is your spending style?",
+    options: [
+      { label: "Conservative - I prefer to save more", value: "conservative" },
+      { label: "Eager - I enjoy spending on lifestyle", value: "eager" },
     ],
   },
 ];

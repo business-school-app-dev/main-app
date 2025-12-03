@@ -248,11 +248,11 @@ export default function SimulationResult() {
       </VStack>
 
       {/* Net Worth Projection */}
-      <VStack space="md" className="mb-8">
+      <VStack space="md" className="mt-6">
         <Text className="text-xl font-bold text-gray-900">
           Net Worth Projection ({years} Years)
         </Text>
-        <Text size="sm" className="text-gray-600">
+        <Text size="sm" className="text-gray-600 mb-4">
           Monte Carlo simulation showing possible outcomes
         </Text>
       </VStack>
@@ -335,9 +335,6 @@ export default function SimulationResult() {
               <Spinner color={PRIMARY} size="large" />
             </View>
           )}
-          <Text className="text-lg font-semibold text-gray-900">
-            Projected Net Worth in {years} Years
-          </Text>
 
           <VStack space="sm">
             {assumptions.map((stat, index) => (
@@ -355,7 +352,7 @@ export default function SimulationResult() {
       </Card>
 
       {/* Sliders Section */}
-      <VStack space="md" className="mb-8">
+      <VStack space="md" className="mt-6">
         <Text className="text-xl font-bold text-gray-900">
           Adjust Your Assumptions
         </Text>

@@ -10,9 +10,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function SimulationSetup() {
   const [responses, setResponses] = useState<Partial<UserResponses>>({});
-  const [isLoading, setIsLoading] = useState(true);
   const [jobOptions, setJobOptions] = useState<{ label: string; value: string | number }[]>([]);
-  const [isLoadingJobs, setIsLoadingJobs] = useState(false);
 
   useEffect(() => {
     checkExistingSetup();
@@ -23,7 +21,6 @@ export default function SimulationSetup() {
       const resetFlag = await AsyncStorage.getItem('@simulation_reset');
       if (resetFlag === 'true') {
         await AsyncStorage.removeItem('@simulation_reset');
-        setIsLoading(false);
         return;
       }
 
@@ -32,11 +29,9 @@ export default function SimulationSetup() {
         router.replace('/(tabs)/simulation/result');
         return;
       } else {
-        setIsLoading(false);
       }
     } catch (error) {
       console.error('Error loading setup data:', error);
-      setIsLoading(false);
     }
   };
 
@@ -47,7 +42,6 @@ export default function SimulationSetup() {
         if (resetFlag === 'true') {
           await AsyncStorage.removeItem('@simulation_reset');
           setResponses({});
-          setIsLoading(false);
         }
       };
       resetCheck();
@@ -57,7 +51,6 @@ export default function SimulationSetup() {
   useEffect(() => {
     const loadJobOptions = async () => {
       if (responses.careerCategory) {
-        setIsLoadingJobs(true);
         try {
           const response = await fetchJobsByCategory(responses.careerCategory as string);
           if (response && response.jobs && Array.isArray(response.jobs)) {
@@ -71,7 +64,6 @@ export default function SimulationSetup() {
           console.error('Error loading jobs:', error);
           setJobOptions([]);
         } finally {
-          setIsLoadingJobs(false);
         }
       }
     };
@@ -96,8 +88,8 @@ export default function SimulationSetup() {
       }
     },
     isScrollable: true,
-    isLoading: index === 1 && isLoadingJobs,
-    loadingText: 'Loading jobs...',
+    // isLoading: index === 1 && isLoadingJobs,
+    // loadingText: 'Loading jobs...',
   }));
 
   const handleSubmit = async () => {
@@ -122,13 +114,13 @@ export default function SimulationSetup() {
     }
   };
 
-  if (isLoading) {
-    return (
-      <View className="flex-1 items-center justify-center">
-        <Text className="text-gray-500">Loading...</Text>
-      </View>
-    );
-  }
+  // if (isLoading) {
+  //   return (
+  //     <View className="flex-1 items-center justify-center">
+  //       <Text className="text-gray-500">Loading...</Text>
+  //     </View>
+  //   );
+  // }
 
   return (
     <FormLayout

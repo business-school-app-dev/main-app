@@ -207,7 +207,7 @@ const LoanCalculatorContent = () => {
       </Card>
 
       {/* Allocation Section */}
-      <VStack space="md" className="mt-12 mb-8">
+      <VStack space="md" className="mt-6 mb-8">
         <Text className="text-xl font-bold text-gray-900">
           Adjust Your Allocation
         </Text>

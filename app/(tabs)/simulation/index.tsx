@@ -98,17 +98,21 @@ export default function SimulationSetup() {
         // Save user responses
         await AsyncStorage.setItem('@simulation_setup', JSON.stringify(responses));
 
-        // Fetch simulation data from backend
-        const simulationData = await fetchSimulationParams(responses as UserResponses);
-
-        // Save simulation data
-        await AsyncStorage.setItem('@simulation_data', JSON.stringify(simulationData));
-
-        // Navigate to results
+        // Navigate immediately
         router.push('/(tabs)/simulation/result');
+
+        // Fetch simulation data in the background
+        fetchSimulationParams(responses as UserResponses)
+          .then(simulationData => {
+            // Save simulation data
+            AsyncStorage.setItem('@simulation_data', JSON.stringify(simulationData));
+          })
+          .catch(error => {
+            console.error('Error fetching simulation data:', error);
+          });
       } catch (error) {
         console.error('Error submitting simulation:', error);
-        // Navigate anyway, let result page handle missing data
+        // Navigate anyway
         router.push('/(tabs)/simulation/result');
       }
     }

@@ -1,7 +1,5 @@
 import { router } from "expo-router";
 
-const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
-
 export interface RecommendationResponse {
   recommendations?: any[];
   comfort_level?: string;
@@ -9,7 +7,7 @@ export interface RecommendationResponse {
 }
 
 export const fetchAllCourses = async (): Promise<any[]> => {
-  const url = `${API_BASE_URL}/courses/all`;
+  const url = `${process.env.EXPO_PUBLIC_API_URL}/courses/all`;
   const response = await fetch(url);
 
   if (!response.ok) {
@@ -24,7 +22,9 @@ export const getRecommendations = async (
   credit: string
 ): Promise<RecommendationResponse> => {
   console.log(`CREDIT: ${credit}, COMFORT LEVEL: ${comfortLevel}`);
-  const url = `${API_BASE_URL}/recommend?comfort=${comfortLevel.toLowerCase()}&max_credits=${credit}`;
+  const url = `${
+    process.env.EXPO_PUBLIC_API_URL
+  }/recommend?comfort=${comfortLevel.toLowerCase()}&max_credits=${credit}`;
   const response = await fetch(url);
 
   if (!response.ok) {

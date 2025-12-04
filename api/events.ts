@@ -1,10 +1,5 @@
 import { Platform } from "react-native";
 
-const API_BASE_URL =
-  Platform.OS === "android"
-    ? "http://10.0.2.2:5000" // Android emulator → host machine
-    : "http://127.0.0.1:5000"; // iOS simulator / other
-
 export interface EventItem {
   title: string;
   date: string; // e.g. "Monday, November 17, 2025"
@@ -15,7 +10,7 @@ export interface EventItem {
 
 export const fetchEvents = async (days: number): Promise<EventItem[]> => {
   const res = await fetch(
-    `${API_BASE_URL}/api/v1/scraping/events?days=${days}`
+    `${process.env.EXPO_PUBLIC_API_URL}/scraping/events?days=${days}`
   );
 
   if (!res.ok) {

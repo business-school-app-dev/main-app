@@ -153,9 +153,9 @@ export default function SimulationResult() {
 
   if (isLoading) {
     return (
-      <PageLayout title="Life Simulation" canGoBack>
-        <View className="flex-1 items-center justify-center">
-          <Text className="text-gray-500">Loading...</Text>
+      <PageLayout title="Life Simulation" scrollable={false} canGoBack>
+        <View className="flex-1 h-full items-center justify-center">
+          <Spinner size="large" color={PRIMARY} />
         </View>
       </PageLayout>
     );

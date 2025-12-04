@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, SafeAreaView, ActivityIndicator, Share, Linking, Platform } from 'react-native';
+import { View, Text, SafeAreaView, Share, Linking } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { WebView } from 'react-native-webview';
 import IconButton from '@/components/inputs/icon-button';

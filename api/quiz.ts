@@ -4,8 +4,6 @@ import { useMemo, useState, useCallback, useRef } from "react";
 import { useLocalSearchParams, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
-const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
-
 export type SubmittedAnswer = {
   questionId: number;
   answer: number;
@@ -24,7 +22,7 @@ export const checkQuizCooldown = async (
 ): Promise<CooldownStatus> => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/challenges/can-play?username=${encodeURIComponent(
+      `${process.env.EXPO_PUBLIC_API_URL}/challenges/can-play?username=${encodeURIComponent(
         username
       )}`,
       {
@@ -60,12 +58,15 @@ export const checkQuizCooldown = async (
 
 export const fetchQuestions = async (): Promise<Question[]> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/challenges/questions`, {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    const response = await fetch(
+      `${process.env.EXPO_PUBLIC_API_URL}/challenges/questions`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
     if (!response.ok) {
       throw new Error("Failed to fetch questions");
     }
@@ -175,7 +176,7 @@ export function useQuizCompletion() {
     username: string
   ) => {
     try {
-      const response = await fetch(`${API_BASE_URL}/challenges/submit-batch`, {
+      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/challenges/submit-batch`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

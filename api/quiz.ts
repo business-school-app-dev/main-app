@@ -381,7 +381,7 @@ export function useQuizLogic() {
       const totalQuestions = questions.length;
 
       router.replace({
-        pathname: "/quiz-modal/completed",
+        pathname: "/quiz/completed",
         params: buildCompletedParams(allAnswers, totalQuestions),
       });
     }

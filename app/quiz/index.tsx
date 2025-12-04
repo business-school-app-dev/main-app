@@ -4,7 +4,7 @@ import ProgressView from '@/components/views/progress-view';
 import { SelectionCard } from '@/components/views/selection-card';
 import { useFocusEffect, router } from 'expo-router';
 import React, { useCallback } from 'react';
-import { ActivityIndicator, Animated, View } from 'react-native';
+import { ActivityIndicator, Animated, useWindowDimensions, View } from 'react-native';
 import { useQuizLogic } from '@/api/quiz';
 import { VStack } from '@/components/ui/vstack';
 import PageLayout from '@/components/layouts/page-layout';
@@ -46,7 +46,10 @@ export default function QuizModal() {
     ? "Loading..."
     : error || questions.length === 0
       ? "Quiz Error"
-      : `Question #${currentQuestion}`;
+      : `Daily Quiz`;
+
+  const { height } = useWindowDimensions();
+  const isSmallPhone = height <= 670; // Threshold for small phones
 
   return (
     <PageLayout title={title} scrollable={false} leftView={<CloseButton />}>
@@ -112,11 +115,11 @@ export default function QuizModal() {
                 disabled={showResult}
                 showResult={showResult}
                 correctAnswer={currentQ.correctAnswer}
-                spacing="sm"
+                spacing="md"
               />
 
               {/* Result Message */}
-              {showResult && (
+              {showResult ? (
                 <Animated.View
                   style={{
                     opacity: resultFadeAnim,
@@ -132,12 +135,12 @@ export default function QuizModal() {
                     {isCorrect ? "Correct!" : "Not quite right. Try again next time!"}
                   </Text>
                 </Animated.View>
-              )}
+              ) : <View />}
             </Animated.View>
           </View>
 
           {/* Bottom Button */}
-          <View className="pb-4 mb-10">
+          <View className={`mt-auto ${isSmallPhone ? 'pb-2' : 'pb-14'}`}>
             {!showResult ? (
               <TextButton
                 label="Check Answer"

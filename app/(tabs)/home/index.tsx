@@ -101,7 +101,7 @@ export default function App() {
             <Pressable
               onPress={() => {
                 router.navigate({
-                  pathname: "/webview-modal",
+                  pathname: "/webview",
                   params: {
                     url: "https://www.rhsmith.umd.edu/centers-initiatives/financial-wellness/about-us",
                     title: "Schedule a Meeting",
@@ -136,7 +136,7 @@ export default function App() {
                   key={idx}
                   onPress={() => {
                     router.push({
-                      pathname: '/webview-modal',
+                      pathname: '/webview',
                       params: {
                         url: event.url,
                         title: "Upcoming Event"

@@ -27,7 +27,8 @@ export default function QuizCompleted() {
   } = useQuizCompletion();
 
   const { height } = useWindowDimensions();
-  const isSmallDevice = height < 625;
+  const isSmallDevice = height <= 625;
+  const isSmallPhone = height <= 670;
 
   const [modalState, setModalState] = useState<{
     isOpen: boolean;
@@ -67,9 +68,10 @@ export default function QuizCompleted() {
     setModalState((prev) => ({ ...prev, isOpen: false, isError: false }));
 
     if (submitted && !modalState.isError) {
-      router.replace("/(tabs)/quiz");
+      router.replace("/(tabs)/leaderboard");
     }
   }
+
 
   return (
     <>
@@ -117,8 +119,7 @@ export default function QuizCompleted() {
               await handleSubmit();
             }}
             variant="secondary"
-            className="mt-auto mb-10"
-            size="lg"
+            className={`mt-auto ${isSmallPhone ? 'mb-2' : 'mb-14'}`} size="lg"
             disabled={name.trim() === '' || isSubmitting}
           />
         </VStack>
@@ -130,7 +131,7 @@ export default function QuizCompleted() {
         onClose={handleClose}
         title={modalState.title}
         content={modalState.content}
-        size="sm"
+        size="md"
       />
     </>
   );

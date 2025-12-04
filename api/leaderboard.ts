@@ -80,11 +80,11 @@ export const handleQuizButtonPress = async (
     }
 
     // If can play, navigate to quiz
-    router.push("/quiz-modal");
+    router.push("/quiz");
   } catch (err) {
     console.error("Error checking cooldown:", err);
     // If error, allow playing
-    router.push("/quiz-modal");
+    router.push("/quiz");
   }
 };
 

@@ -38,6 +38,7 @@ export default function Leaderboard() {
   const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(true);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
   const [isLoadingCurrentUser, setIsLoadingCurrentUser] = useState(true);
+  const [refreshing, setRefreshing] = useState(false);
   const cardFadeAnim = useRef(new Animated.Value(1)).current;
   const cardScaleAnim = useRef(new Animated.Value(1)).current;
   const quizButtonFadeAnim = useRef(new Animated.Value(0)).current;
@@ -71,6 +72,12 @@ export default function Leaderboard() {
 
   const onQuizButtonPress = () => {
     handleQuizButtonPress(setShowCooldownModal, setCooldownMessage);
+  };
+
+  const onRefresh = async () => {
+    setRefreshing(true);
+    await Promise.all([loadLeaderboard(), loadCurrentUser()]);
+    setRefreshing(false);
   };
 
   useEffect(() => {
@@ -111,10 +118,15 @@ export default function Leaderboard() {
 
   const signOutButton = <IconButton iconName="log-out-outline" variant="primary" onPress={onSignOut} />
 
-
   return (
     <>
-      <PageLayout title="Quiz" rightView={currentUser ? signOutButton : null} scrollable={true}>
+      <PageLayout 
+        title="Leaderboard" 
+        rightView={currentUser ? signOutButton : null} 
+        scrollable={true}
+        onRefresh={onRefresh}
+        refreshing={refreshing}
+      >
         {/* Your Rank Card / Sign In Card */}
         <Box className="">
           {(currentUser || isAnimatingOut) && (

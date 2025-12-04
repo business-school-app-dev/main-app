@@ -12,14 +12,14 @@ export default function App() {
         }}
       >
         <Stack.Screen
-          name="webview-modal"
+          name="webview"
           options={{
             presentation: "containedModal",
             animation: "slide_from_bottom",
           }}
         />
         <Stack.Screen
-          name="quiz-modal"
+          name="quiz"
           options={{
             presentation: 'containedModal',
             animation: "slide_from_bottom",

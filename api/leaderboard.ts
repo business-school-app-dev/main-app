@@ -4,11 +4,9 @@ import { Animated } from "react-native";
 import { checkQuizCooldown } from "./quiz";
 import { router } from "expo-router";
 
-const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
-
 export const fetchLeaderboard = async (): Promise<User[]> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/topten`);
+    const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/topten`);
     if (!response.ok) {
       throw new Error("Failed to fetch leaderboard");
     }
@@ -35,9 +33,9 @@ export const fetchCurrentUser = async (
 ): Promise<User | null> => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/challenges/user-stats?username=${encodeURIComponent(
-        username
-      )}`
+      `${
+        process.env.EXPO_PUBLIC_API_URL
+      }/challenges/user-stats?username=${encodeURIComponent(username)}`
     );
 
     if (!response.ok) {

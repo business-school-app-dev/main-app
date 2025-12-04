@@ -2,6 +2,7 @@ import { Question } from "@/types/quiz";
 import { Animated } from "react-native";
 import { useMemo, useState, useCallback, useRef } from "react";
 import { useLocalSearchParams, router } from "expo-router";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const API_BASE_URL = "http://127.0.0.1:5000/api/v1";
 
@@ -10,6 +11,51 @@ export type SubmittedAnswer = {
   answer: number;
   isCorrect: boolean;
   answerText?: string;
+};
+
+export type CooldownStatus = {
+  canPlay: boolean;
+  nextAvailable: string | null;
+  message: string;
+};
+
+export const checkQuizCooldown = async (
+  username: string
+): Promise<CooldownStatus> => {
+  try {
+    const response = await fetch(
+      `${API_BASE_URL}/challenges/can-play?username=${encodeURIComponent(
+        username
+      )}`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    if (!response.ok) {
+      throw new Error("Failed to check cooldown status");
+    }
+    const data = await response.json();
+    if (data.success) {
+      return {
+        canPlay: data.can_play,
+        nextAvailable: data.next_available,
+        message: data.message,
+      };
+    } else {
+      throw new Error("API returned unsuccessful response");
+    }
+  } catch (err) {
+    console.error("Error checking cooldown:", err);
+    // If check fails, allow playing to avoid blocking users
+    return {
+      canPlay: true,
+      nextAvailable: null,
+      message: "Unable to check cooldown status",
+    };
+  }
 };
 
 export const fetchQuestions = async (): Promise<Question[]> => {
@@ -194,6 +240,8 @@ export function useQuizCompletion() {
       setIsSubmitting(true);
       setSubmitError(null);
       await submitAllAnswers(answersFromParams, name.trim());
+      // Save username to AsyncStorage for cooldown checking
+      await AsyncStorage.setItem("lastQuizUsername", name.trim());
       setSubmitted(true);
     } catch (err: any) {
       setSubmitError(err?.message || "Failed to submit leaderboard entry");

@@ -33,7 +33,7 @@ const Navbar: React.FC<NavbarProps> = ({
 
   return (
     <View className="bg-primary pt-safe pb-2.5 px-5 flex-row justify-between items-center border-b border-primary-300">
-      <StatusBar style="auto" />
+      <StatusBar style="light" />
 
       {canGoBack || leftView ? (
         <View className="w-12 h-12">{leftView ? leftView : backButton}</View>

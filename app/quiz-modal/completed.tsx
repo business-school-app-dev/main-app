@@ -8,9 +8,7 @@ import { View, useWindowDimensions } from 'react-native';
 import { VStack } from '@/components/ui/vstack';
 import PageLayout from '@/components/layouts/page-layout';
 import { Card } from '@/components/ui/card';
-import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from '@/components/ui/modal';
-import { Heading } from '@/components/ui/heading';
-import { Icon, CloseIcon } from '@/components/ui/icon';
+import InfoModal from '@/components/views/info-modal';
 import CircularProgress from '@/components/views/circular-progress';
 import { PRIMARY } from '@/constants/colors';
 import IconButton from '@/components/inputs/icon-button';
@@ -65,69 +63,26 @@ export default function QuizCompleted() {
     }
   }, [submitError]);
 
-  const content = (
-    <VStack space="md" className="pb-4 h-full">
-      {/* Score Display */}
-      <Card variant="outline" className="rounded-xl bg-white py-6 items-center">
-        <CircularProgress color={PRIMARY} score={scoreFromParams} total={totalFromParams} size={200} strokeWidth={12}>
-          <VStack space="xs" className="items-center">
-            <Text className="text-center text-3xl font-bold text-gray-900">
-              {scoreFromParams}/{totalFromParams}
-            </Text>
-            <Text className="text-center text-gray-600 text-lg">
-              Daily Quiz Scoregg
-            </Text>
-          </VStack>
-        </CircularProgress>
-      </Card>
+  const handleClose = () => {
+    setModalState((prev) => ({ ...prev, isOpen: false, isError: false }));
 
-      {/* Leaderboard Form */}
-      <Card variant="outline" className="bg-white rounded-xl p-4">
-        <VStack space="sm">
-          <Text className="text-base font-semibold text-gray-900">
-            Get featured on the leaderboard!
-          </Text>
-
-          <TextInputField
-            value={name}
-            onChangeText={setName}
-            placeholder="Your name"
-          />
-        </VStack>
-      </Card>
-
-      {/* Action Button */}
-      <TextButton
-        label="Submit to Leaderboard"
-        onPress={() => {
-          handleSubmit();
-          // setModalState({
-          //   isOpen: true,
-          //   title: 'Submitting...',
-          //   content: 'Please wait while we submit your score.',
-          //   isError: false,
-          // });
-        }}
-        variant="secondary"
-        className="mt-auto"
-        size="lg"
-        disabled={name.trim() === '' || isSubmitting}
-      />
-    </VStack>
-  );
+    if (submitted && !modalState.isError) {
+      router.replace("/(tabs)/quiz");
+    }
+  }
 
   return (
     <>
       <PageLayout title="Quiz Completed" scrollable={isSmallDevice} leftView={<CloseButton />}>
-        <VStack space="md" className="pb-4 h-full">
+        <VStack space="2xl" className="pb-4 h-full">
           {/* Score Display */}
           <Card variant="outline" className="rounded-xl bg-white py-6 items-center">
             <CircularProgress color={PRIMARY} score={scoreFromParams} total={totalFromParams} size={200} strokeWidth={12}>
-              <VStack space="xs" className="items-center">
-                <Text className="text-center text-3xl font-bold text-gray-900">
-                  {scoreFromParams}/{totalFromParams}
+              <VStack space="md" className="items-center">
+                <Text className="text-center text-4xl font-bold text-gray-900">
+                  {scoreFromParams} / {totalFromParams}
                 </Text>
-                <Text className="text-center text-gray-600 text-xs">
+                <Text className="text-center text-gray-600 text-md">
                   Daily Quiz Score
                 </Text>
               </VStack>
@@ -136,8 +91,8 @@ export default function QuizCompleted() {
 
           {/* Leaderboard Form */}
           <Card variant="outline" className="bg-white rounded-xl p-4">
-            <VStack space="sm">
-              <Text className="text-base font-semibold text-gray-900">
+            <VStack space="xl">
+              <Text className="text-lg font-semibold text-gray-900">
                 Get featured on the leaderboard!
               </Text>
 
@@ -152,14 +107,14 @@ export default function QuizCompleted() {
           {/* Action Button */}
           <TextButton
             label="Submit to Leaderboard"
-            onPress={() => {
-              handleSubmit();
-              // setModalState({
-              //   isOpen: true,
-              //   title: 'Submitting...',
-              //   content: 'Please wait while we submit your score.',
-              //   isError: false,
-              // });
+            onPress={async () => {
+              setModalState({
+                isOpen: true,
+                title: 'Submitting...',
+                content: 'Please wait while we submit your score.',
+                isError: false,
+              });
+              await handleSubmit();
             }}
             variant="secondary"
             className="mt-auto mb-10"
@@ -170,24 +125,13 @@ export default function QuizCompleted() {
       </PageLayout>
 
       {/* Unified Modal */}
-      <Modal isOpen={modalState.isOpen} onClose={() => setModalState((prev) => ({ ...prev, isOpen: false, isError: false }))} size="sm">
-        <ModalBackdrop />
-        <ModalContent className="rounded-xl">
-          <ModalHeader>
-            <Heading size="lg">
-              {modalState.title}
-            </Heading>
-            <ModalCloseButton>
-              <Icon as={CloseIcon} />
-            </ModalCloseButton>
-          </ModalHeader>
-          <ModalBody scrollEnabled={false}>
-            <Text className="text-base text-gray-700 leading-6">
-              {modalState.content}
-            </Text>
-          </ModalBody>
-        </ModalContent>
-      </Modal >
+      <InfoModal
+        isOpen={modalState.isOpen}
+        onClose={handleClose}
+        title={modalState.title}
+        content={modalState.content}
+        size="sm"
+      />
     </>
   );
 }

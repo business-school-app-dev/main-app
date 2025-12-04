@@ -11,170 +11,152 @@ import { HelpCircle } from 'lucide-react-native';
 import { router } from 'expo-router';
 import { Box } from '@/components/ui/box';
 import { View } from '@/components/ui/view';
-
-const leaderboardData = [
-  { rank: 1, name: "Sarah Chen", score: 2850, avatar: "SC", streak: 12, bgColor: "bg-white" },
-  { rank: 2, name: "Marcus Johnson", score: 2720, avatar: "MJ", streak: 10, bgColor: "bg-white" },
-  { rank: 3, name: "Emma Rodriguez", score: 2680, avatar: "ER", streak: 9, bgColor: "bg-white" },
-  { rank: 4, name: "Alex Kumar", score: 2540, avatar: "AK", streak: 8, bgColor: "bg-white" },
-  { rank: 5, name: "Jordan Lee", score: 2480, avatar: "JL", streak: 7, bgColor: "bg-white" },
-  { rank: 6, name: "Taylor Smith", score: 2320, avatar: "TS", streak: 6, bgColor: "bg-white" },
-]
-
-const currentUser = {
-  rank: 8,
-  name: "You",
-  score: 2150,
-  avatar: "YO",
-  streak: 5,
-  profilePic: "https://plus.unsplash.com/premium_photo-1756131939171-728118fbad4a?ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&q=80&w=774",
-}
-
+import { checkQuizCooldown } from '@/api/quiz';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import InfoModal from '@/components/views/info-modal';
+import { ActivityIndicator } from 'react-native';
+import { VStack } from '@/components/ui/vstack';
+import IconButton from '@/components/inputs/icon-button';
+import {
+  fetchLeaderboard,
+  fetchCurrentUser,
+  handleQuizButtonPress,
+  handleSignOut,
+  animateCardTransition,
+  animateQuizButton
+} from '@/api/leaderboard';
+import { User } from '@/types/User';
+import { Spinner } from '@/components/ui/spinner';
+import { HStack } from '@/components/ui/hstack';
 
 export default function Leaderboard() {
   // TODO: Replace with actual authentication check
-  const [isSignedIn, setIsSignedIn] = useState(true); // Change this to true to test signed-in state
-  const [submittedQuiz, setIsSubmittedQuiz] = useState(false);
+  const [isAnimatingOut, setIsAnimatingOut] = useState(false);
+  const [showCooldownModal, setShowCooldownModal] = useState(false);
+  const [cooldownMessage, setCooldownMessage] = useState('');
+  const [leaderboardData, setLeaderboardData] = useState<User[]>([]);
+  const [isLoadingLeaderboard, setIsLoadingLeaderboard] = useState(true);
+  const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [isLoadingCurrentUser, setIsLoadingCurrentUser] = useState(true);
   const cardFadeAnim = useRef(new Animated.Value(1)).current;
   const cardScaleAnim = useRef(new Animated.Value(1)).current;
   const quizButtonFadeAnim = useRef(new Animated.Value(0)).current;
   const quizButtonSlideAnim = useRef(new Animated.Value(-20)).current;
 
-  useEffect(() => {
-    // Animate card transition when isSignedIn changes
-    Animated.sequence([
-      // Fade out and scale down current card
-      Animated.parallel([
-        Animated.timing(cardFadeAnim, {
-          toValue: 0,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-        Animated.timing(cardScaleAnim, {
-          toValue: 0.95,
-          duration: 200,
-          useNativeDriver: true,
-        }),
-      ]),
-      // Fade in and scale up new card
-      Animated.parallel([
-        Animated.timing(cardFadeAnim, {
-          toValue: 1,
-          duration: 300,
-          useNativeDriver: true,
-        }),
-        Animated.spring(cardScaleAnim, {
-          toValue: 1,
-          tension: 50,
-          friction: 7,
-          useNativeDriver: true,
-        }),
-      ]),
-    ]).start();
 
-    // Animate quiz button appearance/disappearance
-    if (isSignedIn) {
-      quizButtonFadeAnim.setValue(0);
-      quizButtonSlideAnim.setValue(-20);
-      Animated.parallel([
-        Animated.timing(quizButtonFadeAnim, {
-          toValue: 1,
-          duration: 400,
-          delay: 200,
-          useNativeDriver: true,
-        }),
-        Animated.spring(quizButtonSlideAnim, {
-          toValue: 0,
-          tension: 50,
-          friction: 7,
-          delay: 200,
-          useNativeDriver: true,
-        }),
-      ]).start();
-    } else {
-      Animated.timing(quizButtonFadeAnim, {
-        toValue: 0,
-        duration: 200,
-        useNativeDriver: true,
-      }).start();
+  const loadLeaderboard = async () => {
+    setIsLoadingLeaderboard(true);
+    const data = await fetchLeaderboard();
+    setLeaderboardData(data);
+    setIsLoadingLeaderboard(false);
+  };
+
+  const loadCurrentUser = async () => {
+    setIsLoadingCurrentUser(true);
+    const lastUsername = await AsyncStorage.getItem('lastQuizUsername');
+
+    console.log("Last Username:", lastUsername);
+
+    if (!lastUsername) {
+      console.log("No saved username found");
+      setIsLoadingCurrentUser(false);
+      return;
     }
-  }, [isSignedIn]);
 
-  const getRankIcon = (rank: number) => {
-    if (rank === 1) return <Icon as={StarIcon} size="lg" color="gold" />
-    if (rank === 2) return <Icon as={StarIcon} size="lg" color="gray" />
-    if (rank === 3) return <Icon as={StarIcon} size="lg" color="orange" />
-    return null
-  }
+    const user = await fetchCurrentUser(lastUsername);
+    console.log("Fetched user:", user);
+    setCurrentUser(user);
+    setIsLoadingCurrentUser(false);
+  };
+
+  const onQuizButtonPress = () => {
+    handleQuizButtonPress(setShowCooldownModal, setCooldownMessage);
+  };
+
+  useEffect(() => {
+    loadLeaderboard();
+    loadCurrentUser();
+  }, []);
+
+  useEffect(() => {
+    if (!isAnimatingOut) {
+      animateCardTransition(cardFadeAnim, cardScaleAnim);
+      animateQuizButton(!!currentUser, quizButtonFadeAnim, quizButtonSlideAnim);
+    }
+  }, [currentUser, isAnimatingOut]);
+
+  const onSignOut = async () => {
+    setIsAnimatingOut(true);
+    // Animate out first
+    Animated.parallel([
+      Animated.timing(cardFadeAnim, {
+        toValue: 0,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+      Animated.timing(cardScaleAnim, {
+        toValue: 0.8,
+        duration: 300,
+        useNativeDriver: true,
+      }),
+    ]).start(async () => {
+      // After animation completes, handle sign out
+      await handleSignOut(setCurrentUser);
+      setIsAnimatingOut(false);
+      // Reset animation values for next time
+      cardFadeAnim.setValue(1);
+      cardScaleAnim.setValue(1);
+    });
+  };
+
+  const signOutButton = <IconButton iconName="log-out-outline" variant="primary" onPress={onSignOut} />
+
 
   return (
-    <PageLayout title="Quiz">
-      {/* Your Rank Card / Sign In Card */}
-      <Box className="pt-4 pb-2">
-        <Animated.View
-          style={{
-            opacity: cardFadeAnim,
-            transform: [{ scale: cardScaleAnim }],
-          }}
-        >
-          {isSignedIn ? (
-            <Box className="bg-primary-500 rounded-xl p-4 border border-gray-200">
-              <Box className="flex-row justify-between mb-3">
-                <Box className="flex-row items-center space-x-3">
-                  <Box className="w-12 h-12 rounded-full bg-white/20 items-center justify-center m-4">
-                    <Avatar size="lg">
-                      <AvatarFallbackText>{currentUser.name}</AvatarFallbackText>
-                      <AvatarImage
-                        source={{
-                          uri: currentUser.profilePic,
-                        }}
-                      />
-                      <AvatarBadge />
-                    </Avatar>
+    <>
+      <PageLayout title="Quiz" rightView={currentUser ? signOutButton : null} scrollable={true}>
+        {/* Your Rank Card / Sign In Card */}
+        <Box className="">
+          {(currentUser || isAnimatingOut) && (
+            <Animated.View
+              style={{
+                opacity: cardFadeAnim,
+                transform: [{ scale: cardScaleAnim }],
+              }}
+            >
+              <Box className="bg-primary-500 rounded-xl py-6">
+                {isLoadingCurrentUser ? (
+                  <Box className="py-8 items-center justify-center">
+                    <Spinner size="large" color="#ffffff" />
+                    <Text className="mt-4 text-white">Loading your stats...</Text>
                   </Box>
-                  <Box>
-                    <Text className="text-sm text-white/90 mb-0.5">Your Rank</Text>
-                    <Text className="text-2xl font-bold text-white">#{currentUser.rank}</Text>
-                  </Box>
-                </Box>
-                <Box className="items-end">
-                  <Text className="text-sm text-white/90 mb-0.5">Total Score</Text>
-                  <Text className="text-2xl font-bold text-white">{currentUser.score}</Text>
-                </Box>
+                ) : currentUser && (
+                  <HStack className="justify-between">
+                    <Box className="items-center w-[33%]">
+                      <Text className="text-lg font-bold text-white/90 mb-0.5">Your Rank</Text>
+                      <Text className="text-2xl font-bold text-white">#{currentUser.rank}</Text>
+                    </Box>
+                    <Box className="items-center w-[33%]">
+                      <Text className="text-lg font-bold text-white/90 mb-0.5">Your Name</Text>
+                      <Text className="text-2xl font-bold text-white" numberOfLines={1} ellipsizeMode="tail">{currentUser.name}</Text>
+                    </Box>
+                    <Box className="items-center w-[33%]">
+                      <Text className="text-lg font-bold text-white/90 mb-0.5">Total Score</Text>
+                      <Text className="text-2xl font-bold text-white">{currentUser.score}</Text>
+                    </Box>
+                  </HStack>
+                )}
               </Box>
-              <Box className="flex-row items-center justify-between mt-3 pt-3 border-t border-white/20">
-                <Box className="flex-row items-center space-x-2">
-                  <Icon as={Flame} size="sm" color="white" className="p-1" />
-                  <Text className="text-sm text-white p-1">{currentUser.streak} day streak </Text>
-                </Box>
-                <Pressable
-                  onPress={() => setIsSignedIn(false)}
-                  className="bg-white/20 px-4 py-2 rounded-full active:bg-white/30"
-                >
-                  <Text className="text-sm font-semibold text-white">Sign Out</Text>
-                </Pressable>
-              </Box>
-            </Box>
-          ) : (
-            <View />
+            </Animated.View>
           )}
-        </Animated.View>
-      </Box>
+        </Box>
 
-      {/* Daily Quiz Button - Only show if signed in */}
-      {!submittedQuiz && (
+        {/* Daily Quiz Button */}
         <Box className="pt-4 pb-2">
-          <Animated.View
-            style={{
-              opacity: quizButtonFadeAnim,
-              transform: [{ translateY: quizButtonSlideAnim }],
-            }}
-          >
+          <View>
             <Pressable
               className="bg-secondary-500 rounded-xl p-6 border border-secondary-300 active:bg-secondary-700"
-              onPress={() => {
-                router.push("/quiz-modal");
-              }}
+              onPress={onQuizButtonPress}
             >
               <Box className="flex-row items-center justify-between">
                 <Box className="flex-row items-center gap-4">
@@ -191,38 +173,50 @@ export default function Leaderboard() {
                 </Box>
               </Box>
             </Pressable>
-          </Animated.View>
+          </View>
         </Box>
-      )}
 
-      {/* Top Performers */}
-      <View className="pt-6">
-        <Text className="text-lg font-semibold text-gray-900 mb-4">Top Players</Text>
-        <View className="space-y-3">
-          {leaderboardData.map((user) => (
-            <View key={user.rank} className={`rounded-xl mb-3 p-4 border border-gray-200 flex-row justify-between items-center ${user.bgColor}`}>
-              <View className="flex-row items-center space-x-3">
-                <View className="relative">
-                  <View className="w-12 h-12 rounded-full bg-gray-400 items-center justify-center">
-                    <Text className="text-base font-semibold text-white">{user.avatar}</Text>
-                  </View>
-                </View>
-                <View className="p-1">
-                  <Text className="text-base font-medium text-gray-900 mb-1 p-1">{user.name}</Text>
-                  <View className="bg-gray-100 px-2 py-0.5 rounded self-start">
-                    <Text className="text-xs text-gray-600">{user.streak} day streak</Text>
-                  </View>
-                </View>
-              </View>
-              <View className="items-end">
-                <Text className="text-2xl font-bold text-gray-900">#{user.rank}</Text>
-                <Text className="text-sm text-gray-500 mt-0.5">{user.score} pts</Text>
-              </View>
+        {/* Top Performers */}
+        <View className="pt-6">
+          <Text className="text-lg font-semibold text-gray-900 mb-4">Top Players</Text>
+          {isLoadingLeaderboard ? (
+            <View className="py-8 items-center">
+              <ActivityIndicator size="large" color="#000" />
+              <Text className="mt-4 text-gray-600">Loading leaderboard...</Text>
             </View>
-          ))}
+          ) : leaderboardData.length === 0 ? (
+            <View className="py-8 items-center">
+              <Text className="text-gray-600">No scores yet. Be the first to play!</Text>
+            </View>
+          ) : (
+            <View className="space-y-3">
+              {leaderboardData.map((user) => (
+                <HStack key={user.rank} className={`rounded-xl mb-3 p-4 border border-gray-200 justify-between items-center bg-white`}>
+                  <View className="flex-row items-center space-x-3 w-[70%]">
+                    <View className="p-1">
+                      <Text className="text-base font-medium text-gray-900 p-2" numberOfLines={1} ellipsizeMode="tail">{user.name}</Text>
+                    </View>
+                  </View>
+                  <View className="items-end">
+                    <Text className="text-2xl font-bold text-gray-900">#{user.rank}</Text>
+                    <Text className="text-sm text-gray-500 mt-0.5">{user.score} pts</Text>
+                  </View>
+                </HStack>
+              ))}
+            </View>
+          )}
         </View>
-      </View>
 
-    </PageLayout>
+      </PageLayout>
+
+      {/* Cooldown Modal */}
+      <InfoModal
+        isOpen={showCooldownModal}
+        onClose={() => setShowCooldownModal(false)}
+        title="Come Back Tomorrow!"
+        content={cooldownMessage}
+        size="md"
+      />
+    </>
   );
 }

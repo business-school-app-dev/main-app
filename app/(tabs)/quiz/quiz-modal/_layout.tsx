@@ -5,10 +5,9 @@ export default function Layout() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Screen name="index" />
       <Stack.Screen
-        name="quiz-modal"
+        name="completed"
         options={{
-          presentation: 'fullScreenModal',
-          animation: "slide_from_bottom"
+          presentation: 'card',
         }}
       />
     </Stack>

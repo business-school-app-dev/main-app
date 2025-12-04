@@ -1,8 +1,5 @@
 import React, { useState } from 'react';
-import { Icon, CloseIcon } from '@/components/ui/icon';
-import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalCloseButton, ModalBody } from '@/components/ui/modal';
-import { Heading } from '@/components/ui/heading';
-import { Text } from '@/components/ui/text';
+import InfoModal from '@/components/views/info-modal';
 import IconButton from '@/components/inputs/icon-button';
 
 interface HelpButtonProps {
@@ -29,24 +26,13 @@ export default function HelpButton({
         onPress={() => setShowModal(true)}
       />
 
-      <Modal isOpen={showModal} onClose={() => setShowModal(false)} size="md">
-        <ModalBackdrop />
-        <ModalContent className="rounded-xl">
-          <ModalHeader>
-            <Heading size="lg">
-              {title}
-            </Heading>
-            <ModalCloseButton>
-              <Icon as={CloseIcon} />
-            </ModalCloseButton>
-          </ModalHeader>
-          <ModalBody scrollEnabled={false}>
-            <Text className="text-base text-gray-700 leading-6">
-              {content}
-            </Text>
-          </ModalBody>
-        </ModalContent>
-      </Modal>
+      <InfoModal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title={title}
+        content={content}
+        size="md"
+      />
     </>
   );
 }

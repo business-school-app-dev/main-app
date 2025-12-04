@@ -1,7 +1,7 @@
 import PageLayout from '@/components/layouts/page-layout';
+import TextInputField from '@/components/inputs/text-input-field';
 import { Heading } from '@/components/ui/heading';
 import { SearchIcon } from '@/components/ui/icon';
-import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
 import { Spinner } from '@/components/ui/spinner';
@@ -78,17 +78,12 @@ export default function CourseOptionsScreen() {
 
   return (
     <PageLayout title="Recommended Courses" scrollable={!loading && !error && courses.length > 0} canGoBack>
-      <Input className="bg-zinc-200 border-outline-100 rounded-lg">
-        <InputSlot className="pl-3">
-          <InputIcon as={SearchIcon} />
-        </InputSlot>
-        <InputField
-          onChangeText={(text) => setSearchText(text.toLowerCase())}
-          placeholder="Search..."
-          selectionColor="#E11932"
-          className="text-md"
-        />
-      </Input>
+      <TextInputField
+        value={searchText}
+        onChangeText={(text) => setSearchText(text)}
+        placeholder="Search..."
+        icon={SearchIcon}
+      />
 
       <VStack space="md" className={`${loading || error || courses.length === 0 ? "mt-0" : "mt-8"} h-full w-full`}>
         {loading ? (

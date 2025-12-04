@@ -22,9 +22,9 @@ export const checkQuizCooldown = async (
 ): Promise<CooldownStatus> => {
   try {
     const response = await fetch(
-      `${process.env.EXPO_PUBLIC_API_URL}/challenges/can-play?username=${encodeURIComponent(
-        username
-      )}`,
+      `${
+        process.env.EXPO_PUBLIC_API_URL
+      }/challenges/can-play?username=${encodeURIComponent(username)}`,
       {
         method: "GET",
         headers: {
@@ -176,24 +176,27 @@ export function useQuizCompletion() {
     username: string
   ) => {
     try {
-      const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/challenges/submit-batch`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          username,
-          // Backend expects questionId/answer fields as sent from the client
-          answers: userAnswers.map(
-            ({ questionId, answer, isCorrect, answerText }) => ({
-              questionId,
-              answer,
-              is_correct: isCorrect,
-              ...(answerText ? { answerText } : {}),
-            })
-          ),
-        }),
-      });
+      const response = await fetch(
+        `${process.env.EXPO_PUBLIC_API_URL}/challenges/submit-batch`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            username,
+            // Backend expects questionId/answer fields as sent from the client
+            answers: userAnswers.map(
+              ({ questionId, answer, isCorrect, answerText }) => ({
+                questionId,
+                answer,
+                is_correct: isCorrect,
+                ...(answerText ? { answerText } : {}),
+              })
+            ),
+          }),
+        }
+      );
 
       if (!response.ok) {
         setSubmitError("Failed to submit answers. Please try again.");
@@ -240,6 +243,15 @@ export function useQuizCompletion() {
     try {
       setIsSubmitting(true);
       setSubmitError(null);
+
+      const validName = await checkUserName(name.trim());
+
+      if (!validName) {
+        setSubmitError("Please choose a different name.");
+        setIsSubmitting(false);
+        return;
+      }
+
       await submitAllAnswers(answersFromParams, name.trim());
       // Save username to AsyncStorage for cooldown checking
       await AsyncStorage.setItem("lastQuizUsername", name.trim());
@@ -248,6 +260,22 @@ export function useQuizCompletion() {
       setSubmitError(err?.message || "Failed to submit leaderboard entry");
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const checkUserName = async (name: string) => {
+    try {
+      const res = await fetch("https://vector.profanity.dev", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: name }),
+      });
+
+      const data = await res.json();
+      return !data.isProfanity;
+    } catch (err) {
+      console.error("Error checking profanity:", err);
+      return false;
     }
   };
 

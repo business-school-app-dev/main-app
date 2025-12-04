@@ -9,6 +9,7 @@ import { useQuizLogic } from '@/api/quiz';
 import { VStack } from '@/components/ui/vstack';
 import PageLayout from '@/components/layouts/page-layout';
 import IconButton from '@/components/inputs/icon-button';
+import CloseButton from '@/components/inputs/close-button';
 
 export default function QuizModal() {
   const {
@@ -47,17 +48,8 @@ export default function QuizModal() {
       ? "Quiz Error"
       : `Question #${currentQuestion}`;
 
-  const rightView = (
-    <IconButton
-      iconName="close"
-      variant="transparent"
-      color="white"
-      onPress={router.back}
-    />
-  );
-
   return (
-    <PageLayout title={title} scrollable={false} rightView={rightView}>
+    <PageLayout title={title} scrollable={false} leftView={<CloseButton />}>
       {loading ? (
         // Loading State
         <View className="flex-1 items-center justify-center">
@@ -91,60 +83,61 @@ export default function QuizModal() {
           </VStack>
 
           {/* Content */}
-          <Animated.View
-            className="flex-1"
-            style={{
-              opacity: questionFadeAnim,
-              transform: [{ translateY: questionSlideAnim }],
-            }}
-          >
-            {/* Question */}
+          <View className="flex-1">
             <Animated.View
               style={{
-                transform: [{ translateX: shakeAnim }],
+                opacity: questionFadeAnim,
+                transform: [{ translateY: questionSlideAnim }],
               }}
             >
-              <Text className="text-2xl font-bold text-gray-900 mb-6 mt-4">
-                {currentQ.text}
-              </Text>
-            </Animated.View>
-
-            {/* Options */}
-            <SelectionCard
-              options={currentQ.options.map((option, index) => ({
-                label: option,
-                value: index
-              }))}
-              selectedValue={selectedAnswer}
-              onSelect={(value) => handleAnswerSelect(value as number)}
-              disabled={showResult}
-              showResult={showResult}
-              correctAnswer={currentQ.correctAnswer}
-              spacing="sm"
-            />
-          </Animated.View>
-
-          {/* Result Message */}
-          {showResult && (
-            <Animated.View
-              style={{
-                opacity: resultFadeAnim,
-                transform: [{ translateY: resultSlideAnim }],
-              }}
-              className={`p-4 rounded-xl mt-6 ${isCorrect ? 'bg-green-100' : 'bg-red-100'
-                }`}
-            >
-              <Text
-                className={`text-center text-base ${isCorrect ? 'text-green-800' : 'text-red-800'
-                  }`}
+              {/* Question */}
+              <Animated.View
+                style={{
+                  transform: [{ translateX: shakeAnim }],
+                }}
               >
-                {isCorrect ? "Correct!" : "Not quite right. Try again next time!"}
-              </Text>
+                <Text className="text-2xl font-bold text-gray-900 my-10">
+                  {currentQ.text}
+                </Text>
+              </Animated.View>
+
+              {/* Options */}
+              <SelectionCard
+                options={currentQ.options.map((option, index) => ({
+                  label: option,
+                  value: index
+                }))}
+                selectedValue={selectedAnswer}
+                onSelect={(value) => handleAnswerSelect(value as number)}
+                disabled={showResult}
+                showResult={showResult}
+                correctAnswer={currentQ.correctAnswer}
+                spacing="sm"
+              />
+
+              {/* Result Message */}
+              {showResult && (
+                <Animated.View
+                  style={{
+                    opacity: resultFadeAnim,
+                    transform: [{ translateY: resultSlideAnim }],
+                  }}
+                  className={`p-4 rounded-xl mt-6 ${isCorrect ? 'bg-green-100' : 'bg-red-100'
+                    }`}
+                >
+                  <Text
+                    className={`text-center text-base ${isCorrect ? 'text-green-800' : 'text-red-800'
+                      }`}
+                  >
+                    {isCorrect ? "Correct!" : "Not quite right. Try again next time!"}
+                  </Text>
+                </Animated.View>
+              )}
             </Animated.View>
-          )}
+          </View>
 
           {/* Bottom Button */}
-          <View className="pb-4">
+          <View className="pb-4 mb-10">
             {!showResult ? (
               <TextButton
                 label="Check Answer"

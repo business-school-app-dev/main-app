@@ -14,6 +14,7 @@ import { Icon, CloseIcon } from '@/components/ui/icon';
 import CircularProgress from '@/components/views/circular-progress';
 import { PRIMARY } from '@/constants/colors';
 import IconButton from '@/components/inputs/icon-button';
+import CloseButton from '@/components/inputs/close-button';
 
 export default function QuizCompleted() {
   const {
@@ -64,15 +65,6 @@ export default function QuizCompleted() {
     }
   }, [submitError]);
 
-  const rightView = (
-    <IconButton
-      iconName="close"
-      variant="transparent"
-      color="white"
-      onPress={() => router.back()}
-    />
-  );
-
   const content = (
     <VStack space="md" className="pb-4 h-full">
       {/* Score Display */}
@@ -82,8 +74,8 @@ export default function QuizCompleted() {
             <Text className="text-center text-3xl font-bold text-gray-900">
               {scoreFromParams}/{totalFromParams}
             </Text>
-            <Text className="text-center text-gray-600 text-xs">
-              Daily Quiz Score
+            <Text className="text-center text-gray-600 text-lg">
+              Daily Quiz Scoregg
             </Text>
           </VStack>
         </CircularProgress>
@@ -126,7 +118,7 @@ export default function QuizCompleted() {
 
   return (
     <>
-      <PageLayout title="Quiz Completed" scrollable={isSmallDevice} rightView={rightView}>
+      <PageLayout title="Quiz Completed" scrollable={isSmallDevice} leftView={<CloseButton />}>
         <VStack space="md" className="pb-4 h-full">
           {/* Score Display */}
           <Card variant="outline" className="rounded-xl bg-white py-6 items-center">
@@ -170,7 +162,7 @@ export default function QuizCompleted() {
               // });
             }}
             variant="secondary"
-            className="mt-auto"
+            className="mt-auto mb-10"
             size="lg"
             disabled={name.trim() === '' || isSubmitting}
           />

@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/actionsheet';
 import { PRIMARY } from '@/constants/colors';
 import { Spinner } from '@/components/ui/spinner';
+import CloseButton from '@/components/inputs/close-button';
 
 const WebViewModal = () => {
   const router = useRouter();
@@ -89,7 +90,7 @@ const WebViewModal = () => {
     <View className="pb-safe flex-1 bg-primary">
       <Navbar
         title={title || 'WebView'}
-        canGoBack
+        leftView={<CloseButton />}
         rightView={
           <IconButton
             iconName="ellipsis-horizontal"

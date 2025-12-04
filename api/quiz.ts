@@ -42,44 +42,6 @@ export const fetchQuestions = async (): Promise<Question[]> => {
   }
 };
 
-export const submitAllAnswers = async (
-  userAnswers: SubmittedAnswer[],
-  username: string,
-  scoreFromParams: number,
-  totalFromParams: number
-) => {
-  try {
-    const response = await fetch(`${API_BASE_URL}/challenges/submit-batch`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        username,
-        // Backend expects questionId/answer fields as sent from the client
-        answers: userAnswers.map(
-          ({ questionId, answer, isCorrect, answerText }) => ({
-            questionId,
-            answer,
-            is_correct: isCorrect,
-            ...(answerText ? { answerText } : {}),
-          })
-        ),
-      }),
-    });
-
-    if (!response.ok) {
-      throw new Error("Failed to submit answers");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (err) {
-    console.error("Error submitting answers:", err);
-    throw err;
-  }
-};
-
 // Animation helpers
 export const createResultAnimation = (
   fadeAnim: Animated.Value,
@@ -162,6 +124,44 @@ export function useQuizCompletion() {
     answers: answersParam,
   } = useLocalSearchParams();
 
+  const submitAllAnswers = async (
+    userAnswers: SubmittedAnswer[],
+    username: string
+  ) => {
+    try {
+      const response = await fetch(`${API_BASE_URL}/challenges/submit-batch`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          username,
+          // Backend expects questionId/answer fields as sent from the client
+          answers: userAnswers.map(
+            ({ questionId, answer, isCorrect, answerText }) => ({
+              questionId,
+              answer,
+              is_correct: isCorrect,
+              ...(answerText ? { answerText } : {}),
+            })
+          ),
+        }),
+      });
+
+      if (!response.ok) {
+        setSubmitError("Failed to submit answers. Please try again.");
+        throw new Error("Failed to submit answers");
+      }
+
+      const data = await response.json();
+      return data;
+    } catch (err) {
+      setSubmitError("Failed to submit answers. Please try again.");
+      console.error("Error submitting answers:", err);
+      throw err;
+    }
+  };
+
   const { scoreFromParams, totalFromParams, answersFromParams } =
     useMemo(() => {
       const parsedScore = parseInt(String(scoreParam ?? ""), 10);
@@ -193,12 +193,7 @@ export function useQuizCompletion() {
     try {
       setIsSubmitting(true);
       setSubmitError(null);
-      await submitAllAnswers(
-        answersFromParams,
-        name.trim(),
-        scoreFromParams,
-        totalFromParams
-      );
+      await submitAllAnswers(answersFromParams, name.trim());
       setSubmitted(true);
     } catch (err: any) {
       setSubmitError(err?.message || "Failed to submit leaderboard entry");
@@ -234,6 +229,8 @@ export function useQuizLogic() {
   const resultFadeAnim = useRef(new Animated.Value(0)).current;
   const resultSlideAnim = useRef(new Animated.Value(20)).current;
   const shakeAnim = useRef(new Animated.Value(0)).current;
+  const questionFadeAnim = useRef(new Animated.Value(1)).current;
+  const questionSlideAnim = useRef(new Animated.Value(0)).current;
 
   const loadQuestions = useCallback(async () => {
     try {
@@ -298,11 +295,30 @@ export function useQuizLogic() {
     if (currentQuestion < questions.length) {
       resetAnimations(resultFadeAnim, resultSlideAnim, shakeAnim);
 
+      // Animate question entrance
+      questionFadeAnim.setValue(0);
+      questionSlideAnim.setValue(30);
+
       setCurrentQuestion(currentQuestion + 1);
       setSelectedOption("");
       setSelectedAnswer(null);
       setShowResult(false);
       setIsCorrect(false);
+
+      // Start entrance animation
+      Animated.parallel([
+        Animated.timing(questionFadeAnim, {
+          toValue: 1,
+          duration: 400,
+          useNativeDriver: true,
+        }),
+        Animated.spring(questionSlideAnim, {
+          toValue: 0,
+          tension: 50,
+          friction: 7,
+          useNativeDriver: true,
+        }),
+      ]).start();
     } else {
       const allAnswers = [
         ...userAnswers,
@@ -316,7 +332,7 @@ export function useQuizLogic() {
       const totalQuestions = questions.length;
 
       router.replace({
-        pathname: "/(tabs)/quiz/quiz-modal/completed",
+        pathname: "/quiz-modal/completed",
         params: buildCompletedParams(allAnswers, totalQuestions),
       });
     }
@@ -334,6 +350,8 @@ export function useQuizLogic() {
     resultFadeAnim,
     resultSlideAnim,
     shakeAnim,
+    questionFadeAnim,
+    questionSlideAnim,
     loadQuestions,
     currentQ,
     progress,

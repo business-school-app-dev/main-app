@@ -18,23 +18,16 @@ const ProgressView: React.FC<ProgressViewProps> = ({
   totalSteps,
   progress,
   className = '',
-  leftElement,
 }) => {
   return (
-    <VStack space="md" className={className}>
-      <HStack className={`${leftElement ? 'justify-between' : 'justify-end'} items-center`}>
-        {leftElement && <View>{leftElement}</View>}
-        <Text size="sm" className="text-gray-600">
-          {currentStep} / {totalSteps}
-        </Text>
-      </HStack>
+    <View className={className}>
       <View className="w-full h-2 bg-gray-200 rounded-full overflow-hidden">
         <View
           className="h-full bg-primary-500 rounded-full"
           style={{ width: `${progress}%` }}
         />
       </View>
-    </VStack>
+    </View>
   );
 };
 

@@ -1,16 +1,15 @@
 import TextButton from '@/components/inputs/text-button';
-import { Icon } from '@/components/ui/icon';
-import { Pressable } from '@/components/ui/pressable';
 import { Text } from '@/components/ui/text';
 import ProgressView from '@/components/views/progress-view';
 import { SelectionCard } from '@/components/views/selection-card';
-import { router, useFocusEffect } from 'expo-router';
-import { X } from 'lucide-react-native';
+import { useFocusEffect } from 'expo-router';
 import React, { useCallback } from 'react';
 import { ActivityIndicator, Animated, StatusBar, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { useQuizLogic } from '@/api/quiz';
+import { VStack } from '@/components/ui/vstack';
+import QuizNavbar from '@/components/navigation/quiz-navbar';
 
 export default function QuizModal() {
   const {
@@ -54,14 +53,7 @@ export default function QuizModal() {
     return (
       <SafeAreaView className="flex-1">
         {/* New Header Container for the 'X' button */}
-        <View className="px-6 pb-4">
-          <Pressable
-            onPress={() => router.back()}
-            className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center active:bg-gray-200"
-          >
-            <Icon as={X} size="lg" color="black" />
-          </Pressable>
-        </View>
+        <QuizNavbar />
 
         {/* Content area centered below the header */}
         <View className="flex-1 items-center justify-center px-6 -mt-16">
@@ -83,29 +75,21 @@ export default function QuizModal() {
   // END OF UPDATED CODE BLOCK
 
   return (
-    <SafeAreaView className="flex-1">
+    <SafeAreaView className="px-5 flex-1">
       <StatusBar barStyle="dark-content" backgroundColor="white" translucent={false} />
 
       {/* Header */}
-      <View className="px-6 pb-4">
-        {/* Progress Bar */}
+      <VStack className="pb-4" space="2xl">
+        <QuizNavbar title={`Question #${currentQuestion}`} />
         <ProgressView
           currentStep={currentQuestion}
           totalSteps={questions.length}
           progress={progress}
-          leftElement={
-            <Pressable
-              onPress={() => router.back()}
-              className="w-10 h-10 rounded-full bg-gray-100 items-center justify-center active:bg-gray-200"
-            >
-              <Icon as={X} size="lg" color="black" />
-            </Pressable>
-          }
         />
-      </View>
+      </VStack>
 
       {/* Content */}
-      <View className="flex-1 px-6">
+      <View className="flex-1">
         {/* Question */}
         <Animated.View
           style={{
@@ -150,7 +134,7 @@ export default function QuizModal() {
       </View>
 
       {/* Bottom Button */}
-      <View className="px-6 mb-10">
+      <View className="mb-10">
         {!showResult ? (
           <TextButton
             label="Check Answer"

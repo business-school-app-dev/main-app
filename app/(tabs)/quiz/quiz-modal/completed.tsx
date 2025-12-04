@@ -8,6 +8,10 @@ import { X } from 'lucide-react-native';
 import React from 'react';
 import { StatusBar, TextInput, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { VStack } from '@/components/ui/vstack';
+import { HStack } from '@/components/ui/hstack';
+import IconButton from '@/components/inputs/icon-button';
+import QuizNavbar from '@/components/navigation/quiz-navbar';
 
 export default function QuizCompleted() {
   const {
@@ -22,23 +26,18 @@ export default function QuizCompleted() {
   } = useQuizCompletion();
 
   return (
-    <SafeAreaView className="flex-1 bg-white">
+    <SafeAreaView className="flex-1 bg-white px-5">
       <StatusBar barStyle="dark-content" />
 
       {/* Header */}
-      <View className="px-6 pb-4 pt-2 flex-row items-center justify-between">
-        <Pressable
-          onPress={() => router.back()}
-          className="w-10 h-10 bg-gray-100 rounded-full items-center justify-center"
-        >
-          <Icon as={X} size="lg" color="black" />
-        </Pressable>
+      <View className="pb-4 flex-row items-center justify-between">
+        <VStack className="pb-4 w-full" space="md">
+          <QuizNavbar title="Quiz Completed" />
+        </VStack>
 
-        <Text className="font-semibold text-gray-700">Quiz Completed</Text>
-        <View className="w-10" />
       </View>
 
-      <View className="flex-1 px-6 mt-6">
+      <View className="flex-1 mt-6">
         {/* Score Display */}
         <View className="bg-gray-100 rounded-2xl p-6 mb-8">
           <Text className="text-center text-3xl font-bold text-gray-900">
@@ -74,23 +73,26 @@ export default function QuizCompleted() {
               <Text className="text-red-600 mb-3 text-sm">{submitError}</Text>
             ) : null}
 
-            <TextButton
-              label="Submit to Leaderboard"
-              onPress={handleSubmit}
-              variant="secondary"
-              size="lg"
-              disabled={name.trim() === '' || isSubmitting}
-            />
+
           </>
         )}
 
-        <TextButton
-          label="Return Home"
-          onPress={() => router.replace('/')}
-          variant="primary"
-          size="lg"
-          className="mt-2"
-        />
+        <VStack space="md" className="mt-auto mb-10">
+          <TextButton
+            label="Submit to Leaderboard"
+            onPress={handleSubmit}
+            variant="secondary"
+            size="lg"
+            disabled={name.trim() === '' || isSubmitting}
+          />
+          <TextButton
+            label="Return Home"
+            onPress={() => router.replace('/')}
+            variant="secondary"
+            size="lg"
+            className="mt-2"
+          />
+        </VStack>
       </View>
     </SafeAreaView>
   );

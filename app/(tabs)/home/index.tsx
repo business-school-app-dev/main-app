@@ -4,7 +4,6 @@ import { Text } from "@/components/ui/text";
 import { Pressable } from "@/components/ui/pressable";
 import { Icon } from "@/components/ui/icon";
 import PageLayout from "@/components/layouts/page-layout";
-import { StatusBar } from "expo-status-bar";
 import {
   Calendar,
   CreditCard,
@@ -14,87 +13,25 @@ import {
 } from "lucide-react-native";
 import { useState, useEffect } from "react";
 import { router } from "expo-router";
-import { PRIMARY } from '@/constants/colors';
-
-type EventItem = {
-  title: string;
-  date: string;           // e.g. "Monday, November 17, 2025"
-  time?: string | null;   // e.g. "12:00 PM EST"
-  description?: string | null;
-  url: string;
-};
+import { fetchEvents, EventItem, formatDateTime } from "@/api/events";
 
 export default function App() {
-  // 🔄 Events now come from the API instead of being hard-coded
   const [events, setEvents] = useState<EventItem[]>([]);
-
-  const [modalVisible, setModalVisible] = useState(false);
-
-  const handleMeetClick = () => {
-    setModalVisible(true);
-  };
 
   // Fetch events from the backend API (Postgres-backed)
   useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const baseUrl =
-          Platform.OS === "android"
-            ? "http://10.0.2.2:5000" // Android emulator → host machine
-            : "http://127.0.0.1:5000"; // iOS simulator / other
-
-        const res = await fetch(
-          `${baseUrl}/api/v1/scraping/events?days=365`
-        );
-
-        if (!res.ok) {
-          console.error("Failed to fetch events", res.status);
-          return;
-        }
-
-        const data: EventItem[] = await res.json();
-        setEvents(data.slice(0, 10));
-      } catch (err) {
-        console.error("Error fetching events", err);
-      }
+    const loadEvents = async () => {
+      const data = await fetchEvents(365) ?? [];
+      setEvents(data.slice(0, 10));
     };
 
-    fetchEvents();
+    loadEvents();
   }, []);
 
-  const formatDateTime = (date: string, time?: string | null) => {
-    // Parse date string like "Monday, November 17, 2025" to MM/DD/YYYY
-    // Remove day of week and parse the rest
-    const dateMatch = date.match(/(\w+),\s+(\w+)\s+(\d+),\s+(\d+)/);
 
-    if (dateMatch) {
-      const [, , monthName, day, year] = dateMatch;
-      const monthMap: { [key: string]: number } = {
-        'January': 1, 'February': 2, 'March': 3, 'April': 4,
-        'May': 5, 'June': 6, 'July': 7, 'August': 8,
-        'September': 9, 'October': 10, 'November': 11, 'December': 12
-      };
-
-      const month = monthMap[monthName];
-      if (month) {
-        const formattedDate = `${String(month).padStart(2, '0')}/${String(day).padStart(2, '0')}/${year}`;
-
-        if (time && time.trim().length > 0) {
-          return `${formattedDate} · ${time}`;
-        }
-        return formattedDate;
-      }
-    }
-
-    // Fallback to original format if parsing fails
-    if (time && time.trim().length > 0) {
-      return `${date} · ${time}`;
-    }
-    return date;
-  };
 
   return (
-    <PageLayout title="Home" backButtonHidden className="-mt-6">
+    <PageLayout title="Home" className="-mt-6">
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1 -mx-5"
@@ -164,7 +101,7 @@ export default function App() {
             <Pressable
               onPress={() => {
                 router.navigate({
-                  pathname: "/webview-modal",
+                  pathname: "/webview",
                   params: {
                     url: "https://www.rhsmith.umd.edu/centers-initiatives/financial-wellness/about-us",
                     title: "Schedule a Meeting",
@@ -199,7 +136,7 @@ export default function App() {
                   key={idx}
                   onPress={() => {
                     router.push({
-                      pathname: '/webview-modal',
+                      pathname: '/webview',
                       params: {
                         url: event.url,
                         title: "Upcoming Event"

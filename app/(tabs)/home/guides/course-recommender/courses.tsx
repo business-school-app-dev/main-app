@@ -1,84 +1,99 @@
 import PageLayout from '@/components/layouts/page-layout';
+import TextInputField from '@/components/inputs/text-input-field';
 import { Heading } from '@/components/ui/heading';
 import { SearchIcon } from '@/components/ui/icon';
-import { Input, InputField, InputIcon, InputSlot } from '@/components/ui/input';
 import { Text } from '@/components/ui/text';
 import { VStack } from '@/components/ui/vstack';
+import { Spinner } from '@/components/ui/spinner';
 import { useLocalSearchParams } from 'expo-router';
-import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState, useEffect } from 'react';
 import { View } from 'react-native';
+import Course from '@/types/Course';
+import { PRIMARY } from '@/constants/colors';
 
-type Course = {
-  course_id: string;
-  name: string;
-  credits?: string | number;
-  department?: string;
-  description?: string;
-  semester?: string;
-  // older recommendation shape might have restrictions at top level
-  restrictions?: string | null;
-  // new "all courses" shape
-  relationships?: {
-    restrictions?: string | null;
-    [key: string]: any;
-  };
-  [key: string]: any;
-};
-
-const CourseOptionsScreen = () => {
+export default function CourseOptionsScreen() {
   const [searchText, setSearchText] = useState('');
-  const { recommendations, comfort_level, max_credits } =
-    useLocalSearchParams<{
-      recommendations?: string;
-      comfort_level?: string;
-      max_credits?: string;
-    }>();
+  const [fetchedCourses, setFetchedCourses] = useState<Course[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // safely parse the JSON string into an array
-  let courses_list: Course[] = [];
-  if (recommendations) {
-    try {
-      const parsed = JSON.parse(recommendations);
-      courses_list = Array.isArray(parsed) ? parsed : [];
-    } catch (e) {
-      console.error('Failed to parse recommendations param:', e);
-      courses_list = [];
-    }
-  }
+  const { comfort_level, max_credits } = useLocalSearchParams<{
+    comfort_level?: string;
+    max_credits?: string;
+  }>();
+
+  useEffect(() => {
+    const fetchRecommendations = async () => {
+      setLoading(true);
+      setError(null);
+
+      const comfort = comfort_level || 'n/a';
+      const credits = max_credits || 'n/a';
+      const endpoint = `${process.env.EXPO_PUBLIC_API_URL}/recommend?comfort=${comfort}&max_credits=${credits}`;
+
+      try {
+        const response = await fetch(endpoint);
+        const data = await response.json();
+
+        if (!response.ok) {
+          setError(data.message || `Failed to fetch: ${response.status}`);
+          setFetchedCourses([]);
+          return;
+        }
+
+        if (data.recommendations && Array.isArray(data.recommendations)) {
+          setFetchedCourses(data.recommendations);
+        } else {
+          setError("API returned data in an unexpected format.");
+          setFetchedCourses([]);
+        }
+
+      } catch (e) {
+        console.error('Network Error:', e);
+        setError("Network error: Could not connect to the server.");
+        setFetchedCourses([]);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchRecommendations();
+  }, [comfort_level, max_credits]); // Re-run when parameters change
 
   // 👇 filter courses based on search text
   const courses = useMemo(() => {
     if (!searchText.trim()) {
-      return courses_list;
+      return fetchedCourses; // Use fetchedCourses instead of courses_list
     }
 
     const lowerSearch = searchText.toLowerCase();
-    return courses_list.filter((course: Course) =>
+    return fetchedCourses.filter((course: Course) =>
       course.name?.toLowerCase().includes(lowerSearch) ||
       course.course_id?.toLowerCase().includes(lowerSearch) ||
       course.description?.toLowerCase().includes(lowerSearch)
     );
-  }, [courses_list, searchText]);
+  }, [fetchedCourses, searchText]);
 
-
-  const isAllCoursesMode = comfort_level === 'all';
+  // --- RENDER LOGIC ---
 
   return (
-    <PageLayout title="Recommended Courses">
-      <Input className="bg-zinc-200 border-outline-100 rounded-lg">
-        <InputSlot className="pl-3">
-          <InputIcon as={SearchIcon} />
-        </InputSlot>
-        <InputField
-          onChangeText={(text) => setSearchText(text.toLowerCase())}
-          placeholder="Search..."
-          selectionColor="#E11932"
-          className="text-md"
-        />
-      </Input>
-      <VStack space="md" className="mt-8 h-full w-full">
-        {courses.length === 0 ? (
-          <Text className="mx-auto my-auto text-gray-600">There are no courses available!</Text>
+    <PageLayout title="Recommended Courses" scrollable={!loading && !error && courses.length > 0} canGoBack>
+      <TextInputField
+        value={searchText}
+        onChangeText={(text) => setSearchText(text)}
+        placeholder="Search..."
+        icon={SearchIcon}
+      />
+
+      <VStack space="md" className={`${loading || error || courses.length === 0 ? "mt-0" : "mt-8"} h-full w-full`}>
+        {loading ? (
+          <View className="flex-1 justify-center items-center">
+            <Spinner size="large" color={PRIMARY} />
+          </View>
+        ) : error ? (
+          <Text className="mx-auto my-auto text-gray-600 text-center text-xl">{error}</Text>
+        ) : courses.length === 0 ? (
+          <Text className="mx-auto my-auto text-gray-600 text-center text-xl">There are no courses matching your criteria!</Text>
         ) : (
           courses.map((course: any) => (
             <View
@@ -109,5 +124,3 @@ const CourseOptionsScreen = () => {
     </PageLayout>
   );
 };
-
-export default CourseOptionsScreen;

@@ -1,5 +1,5 @@
 import React, { useRef, useState } from 'react';
-import { View, Text, SafeAreaView, ActivityIndicator, Share, Linking, Platform } from 'react-native';
+import { View, Text, SafeAreaView, Share, Linking } from 'react-native';
 import { Stack, useRouter, useLocalSearchParams } from 'expo-router';
 import { WebView } from 'react-native-webview';
 import IconButton from '@/components/inputs/icon-button';
@@ -15,6 +15,7 @@ import {
 } from '@/components/ui/actionsheet';
 import { PRIMARY } from '@/constants/colors';
 import { Spinner } from '@/components/ui/spinner';
+import CloseButton from '@/components/inputs/close-button';
 
 const WebViewModal = () => {
   const router = useRouter();
@@ -89,6 +90,7 @@ const WebViewModal = () => {
     <View className="pb-safe flex-1 bg-primary">
       <Navbar
         title={title || 'WebView'}
+        leftView={<CloseButton />}
         rightView={
           <IconButton
             iconName="ellipsis-horizontal"

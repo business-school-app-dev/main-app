@@ -357,6 +357,8 @@ const ActionsheetItemText = React.forwardRef<
         strikeThrough: strikeThrough as boolean,
         size,
       })}
+      numberOfLines={1}
+      ellipsizeMode="tail"
       ref={ref}
       {...props}
     />

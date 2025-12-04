@@ -4,8 +4,8 @@ import PageLayout from "@/components/layouts/page-layout";
 import { CreditCard, TrendingUp, Shield } from 'lucide-react-native';
 import { CREDIT_CARDS_CONTENT } from '@/constants/strings';
 import GuideCard from '@/components/views/guide-card';
-import GuideCardModal from '@/components/views/guide-card/modal';
 import { ICON_COLORS } from '@/constants/colors';
+import InfoModal from '@/components/views/info-modal';
 
 export default function CreditCardsScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -20,7 +20,7 @@ export default function CreditCardsScreen() {
   };
 
   return (
-    <PageLayout title="Credit Cards">
+    <PageLayout title="Credit Cards" canGoBack>
       {/* Guide Cards Grid */}
       <View className="gap-4 flex-1">
         <GuideCard
@@ -45,11 +45,12 @@ export default function CreditCardsScreen() {
           onPress={() => handleReadMore('Security Tips')}
         />
       </View>
-      <GuideCardModal
-        isModalVisible={isModalVisible}
-        setIsModalVisible={setIsModalVisible}
-        selectedTitle={selectedTitle}
-        selectedContent={selectedContent}
+      <InfoModal
+        isOpen={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        title={selectedTitle}
+        content={selectedContent}
+        scrollEnabled={true}
       />
     </PageLayout>
   );

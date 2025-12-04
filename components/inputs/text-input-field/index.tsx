@@ -1,17 +1,19 @@
 import React from 'react';
 import { VStack } from '@/components/ui/vstack';
 import { Text } from '@/components/ui/text';
-import { Input, InputField } from '@/components/ui/input';
+import { Input, InputField, InputSlot, InputIcon } from '@/components/ui/input';
 import { PRIMARY } from '@/constants/colors';
+import { LucideIcon } from 'lucide-react-native';
 
 interface TextInputFieldProps {
-  label: string;
+  label?: string;
   value: string;
   onChangeText: (text: string) => void;
   placeholder: string;
   keyboardType?: 'default' | 'numeric' | 'decimal-pad';
   suffix?: string;
   prefix?: string;
+  icon?: LucideIcon;
 }
 
 const TextInputField: React.FC<TextInputFieldProps> = ({
@@ -22,17 +24,25 @@ const TextInputField: React.FC<TextInputFieldProps> = ({
   keyboardType = 'default',
   suffix,
   prefix,
+  icon,
 }) => {
   return (
-    <VStack space="xs" className="mb-4">
-      <Text size="sm" className="text-gray-900 font-medium mb-1">
-        {label}
-      </Text>
+    <VStack space="xs">
+      {label ? (
+        <Text size="sm" className="text-gray-900 font-medium">
+          {label}
+        </Text>
+      ) : null}
       <Input
         variant="outline"
         size="lg"
         className="bg-white border-gray-300"
       >
+        {icon && (
+          <InputSlot className="pl-3">
+            <InputIcon as={icon} />
+          </InputSlot>
+        )}
         {prefix && (
           <Text className="text-typography-500 text-base pl-3">
             {prefix}

@@ -9,7 +9,7 @@ const icon = function (i: string): keyof typeof Ionicons.glyphMap {
   if (i === "UI Demo") {
     return "apps-outline";
   }
-  if (i === "Quiz") {
+  if (i === "Leaderboard") {
     return "trophy-outline";
   }
   if (i === "Loans") {

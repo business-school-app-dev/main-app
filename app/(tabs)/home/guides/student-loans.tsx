@@ -88,7 +88,7 @@ const LoanCalculatorContent = () => {
         Loan Details
       </Text>
       {/* Loan Inputs Section */}
-      <VStack space="md" className="my-6">
+      <VStack space="xl" className="my-6">
         <TextInputField
           label="Total Loan Amount"
           value={totalLoanText}

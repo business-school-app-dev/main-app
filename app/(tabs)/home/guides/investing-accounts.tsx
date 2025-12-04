@@ -4,8 +4,8 @@ import PageLayout from "@/components/layouts/page-layout";
 import { PiggyBank, TrendingUp, Wallet, LineChart, Building2, BarChart3, FolderOpen } from 'lucide-react-native';
 import { INVESTING_ACCOUNTS_CONTENT } from '@/constants/strings';
 import GuideCard from '@/components/views/guide-card';
-import GuideCardModal from '@/components/views/guide-card/modal';
 import { ICON_COLORS } from '@/constants/colors';
+import InfoModal from '@/components/views/info-modal';
 
 export default function InvestingLiteracyScreen() {
   const [isModalVisible, setIsModalVisible] = useState(false);
@@ -77,11 +77,12 @@ export default function InvestingLiteracyScreen() {
           onPress={() => handleReadMore('Investment Strategies')}
         />
       </View>
-      <GuideCardModal
-        isModalVisible={isModalVisible}
-        setIsModalVisible={setIsModalVisible}
-        selectedTitle={selectedTitle}
-        selectedContent={selectedContent}
+      <InfoModal
+        isOpen={isModalVisible}
+        onClose={() => setIsModalVisible(false)}
+        title={selectedTitle}
+        content={selectedContent}
+        scrollEnabled={true}
       />
     </PageLayout>
   );

@@ -150,12 +150,15 @@ export const createDebouncedSliderChange = (
 
         // Only update if this is still the latest request
         if (pendingParamsRef.current === updatedParams) {
-          // Update simulation data with new summary
+          // Update simulation data with new summary, preserving job_name
           const newSimulationData = {
             ...simulationData,
             summary: updatedData.summary,
             years: updatedParams.years,
-            params: updatedParams,
+            params: {
+              ...updatedParams,
+              job_name: simulationData.params?.job_name, // Preserve job_name from original data
+            },
           };
 
           setSimulationData(newSimulationData);

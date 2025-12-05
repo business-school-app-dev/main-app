@@ -32,7 +32,6 @@ import {
   createStartingSalaryHandler,
   createSavingsRateHandler,
   createYearsHandler,
-  getJobTitleById,
 } from '@/api/simulation';
 
 
@@ -72,9 +71,21 @@ export default function SimulationResult() {
       if (userResponses) {
         setUserResponses(userResponses);
 
-        // Fetch job title based on job ID
-        const title = await getJobTitleById(userResponses.careerCategory, userResponses.specificJob);
-        setJobTitle(title);
+        // Fetch job title from backend using career category and job ID
+        try {
+          const response = await fetch(
+            `${process.env.EXPO_PUBLIC_API_URL}/jobs/${userResponses.careerCategory}`
+          );
+          if (response.ok) {
+            const data = await response.json();
+            const job = data.jobs.find((j: any) => j.id === userResponses.specificJob);
+            if (job) {
+              setJobTitle(job.title);
+            }
+          }
+        } catch (error) {
+          console.error('Error fetching job title:', error);
+        }
       }
 
       if (simulationData) {
@@ -168,7 +179,7 @@ export default function SimulationResult() {
   const profile = [
     {
       icon: getCareerIcon(userResponses.careerCategory),
-      value: jobTitle,
+      value: jobTitle || 'Loading...',
       label: 'Job',
     },
     {

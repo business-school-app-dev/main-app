@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { Modal, ModalBackdrop, ModalContent, ModalHeader, ModalBody, ModalCloseButton } from '@/components/ui/modal';
 import { Heading } from '@/components/ui/heading';
 import { Text } from '@/components/ui/text';
@@ -13,6 +13,7 @@ interface InfoModalProps {
   scrollEnabled?: boolean;
   maxWidth?: string;
   maxHeight?: string;
+  footer?: ReactNode;
 }
 
 export default function InfoModal({
@@ -24,6 +25,7 @@ export default function InfoModal({
   scrollEnabled = false,
   maxWidth = 'max-w-[90%]',
   maxHeight = 'max-h-[80%]',
+  footer: footer,
 }: InfoModalProps) {
   const modalContentClass = `rounded-xl ${maxWidth} ${maxHeight}`.trim();
 
@@ -39,6 +41,7 @@ export default function InfoModal({
         </ModalHeader>
         <ModalBody scrollEnabled={scrollEnabled} showsVerticalScrollIndicator={false}>
           <Text className="text-base text-gray-700 leading-6">{content}</Text>
+          {footer && <>{footer}</>}
         </ModalBody>
       </ModalContent>
     </Modal>

@@ -1,8 +1,11 @@
-import { ScrollView, ImageBackground, View, TouchableOpacity, Platform } from "react-native";
+import { ScrollView, ImageBackground } from "react-native";
 import { Box } from "@/components/ui/box";
 import { Text } from "@/components/ui/text";
 import { Pressable } from "@/components/ui/pressable";
 import { Icon } from "@/components/ui/icon";
+import TextButton from "@/components/inputs/text-button";
+import IconButton from "@/components/inputs/icon-button";
+import InfoModal from "@/components/views/info-modal";
 import PageLayout from "@/components/layouts/page-layout";
 import {
   Calendar,
@@ -17,6 +20,7 @@ import { fetchEvents, EventItem, formatDateTime } from "@/api/events";
 
 export default function App() {
   const [events, setEvents] = useState<EventItem[]>([]);
+  const [showInfoModal, setShowInfoModal] = useState(false);
 
   // Fetch events from the backend API (Postgres-backed)
   useEffect(() => {
@@ -28,10 +32,41 @@ export default function App() {
     loadEvents();
   }, []);
 
+  const handleLinkPress = () => {
+    setShowInfoModal(false);
+    router.navigate({
+      pathname: "/webview",
+      params: {
+        url: "https://appdevclub.com/",
+        title: "App Dev Club",
+      },
+    });
+  };
 
+  const handleFinancialWellnessPress = () => {
+    setShowInfoModal(false);
+    router.navigate({
+      pathname: "/webview",
+      params: {
+        url: "https://www.rhsmith.umd.edu/centers-initiatives/financial-wellness",
+        title: "Financial Wellness Center",
+      },
+    });
+  };
 
   return (
-    <PageLayout title="Home" className="-mt-6">
+    <PageLayout
+      title="Home"
+      className="-mt-6"
+      rightView={
+        <IconButton
+          iconName="information-circle-outline"
+          onPress={() => setShowInfoModal(true)}
+          variant="transparent"
+          color="#FFFFFF"
+        />
+      }
+    >
       <ScrollView
         showsVerticalScrollIndicator={false}
         className="flex-1 -mx-5"
@@ -169,6 +204,29 @@ export default function App() {
           </ScrollView>
         </Box>
       </ScrollView>
+
+      {/* Info Modal */}
+      <InfoModal
+        isOpen={showInfoModal}
+        onClose={() => setShowInfoModal(false)}
+        title="About This App"
+        content="Made with ❤️ by App Dev Club in collaboration with the Financial Wellness Center at the University of Maryland, College Park. This app is designed to help students manage their finances effectively with resources and tools tailored for the UMD community."
+        size="md"
+        footer={
+          <Box className="gap-3 mt-4">
+            <TextButton
+              label="Visit App Dev Club"
+              onPress={handleLinkPress}
+              variant="primary"
+            />
+            <TextButton
+              label="Visit The Financial Wellness Center"
+              onPress={handleFinancialWellnessPress}
+              variant="primary"
+            />
+          </Box>
+        }
+      />
     </PageLayout>
   );
 }

@@ -115,6 +115,7 @@ const WebViewModal = () => {
             setCanGoForward(navState.canGoForward);
           }}
           className="flex-1"
+          decelerationRate="normal"
         />
         {isLoading && isFirstLoad && (
           <View className="absolute inset-0 items-center justify-center bg-white/50 z-50">

@@ -16,13 +16,14 @@
     },
     "production": {
       "autoIncrement": true
-    }
-  },
-  "submit": {
-    "production": {
-      "ios": {
-        "ascAppId": "6755318108"
-      }
-    }
+    },
+    "development-simulator": {}
   }
+  // "submit": {
+  //   "production": {
+  //     "ios": {
+  //       "ascAppId": "6755318108"
+  //     }
+  //   }
+  // }
 }

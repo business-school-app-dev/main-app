@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.umd-smith-business-school-app-team.umdollar",
+      "bundleIdentifier": "com.appdevclubllc.umdollar",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }
@@ -24,7 +24,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.umdsmithbusinessschoolappteam.umdollar"
+      "package": "com.appdevclubllc.umdollar"
     },
     "web": {
       "bundler": "metro",
@@ -54,9 +54,9 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "e52f1de9-996a-4005-af0c-8f5c5132ecb4"
+        "projectId": "0ccf0b02-784b-4ce8-b35c-a006999d64c8"
       }
     },
-    "owner": "umd-smith-business-school-app-team"
+    "owner": "appdevclubllc"
   }
 }

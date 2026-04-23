@@ -10,7 +10,7 @@
     "newArchEnabled": true,
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.umd-smith-business-school-app-team.umdollar",
+      "bundleIdentifier": "com.umd-rh-smith-business-school-app-team.umdollar",
       "infoPlist": {
         "ITSAppUsesNonExemptEncryption": false
       }

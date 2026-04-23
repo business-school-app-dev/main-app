@@ -54,6 +54,7 @@
     "extra": {
       "router": {},
       "eas": {
+	"projectId": "0ccf0b02-784b-4ce8-b35c-a006999d64c8"
       }
     },
     "owner": "umd-smith-business-school-app-team"

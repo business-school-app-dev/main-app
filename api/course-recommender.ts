@@ -21,7 +21,6 @@ export const getRecommendations = async (
   comfortLevel: string,
   credit: string
 ): Promise<RecommendationResponse> => {
-  console.log(`CREDIT: ${credit}, COMFORT LEVEL: ${comfortLevel}`);
   const url = `${
     process.env.EXPO_PUBLIC_API_URL
   }/recommend?comfort=${comfortLevel.toLowerCase()}&max_credits=${credit}`;
@@ -41,8 +40,6 @@ export const getRecommendations = async (
 };
 
 export const handleAllCourses = async () => {
-  console.log("Button pressed → allCourses running");
-
   // Navigate immediately with empty data
   router.navigate({
     pathname: "/home/guides/course-recommender/courses",

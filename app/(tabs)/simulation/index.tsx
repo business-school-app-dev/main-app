@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
+import { Alert } from 'react-native';
 import { View } from '@/components/ui/view';
 import { Text } from '@/components/ui/text';
 import FormLayout from '@/components/layouts/form-layout';
@@ -11,6 +12,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function SimulationSetup() {
   const [responses, setResponses] = useState<Partial<UserResponses>>({});
   const [jobOptions, setJobOptions] = useState<{ label: string; value: string | number }[]>([]);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   useEffect(() => {
     checkExistingSetup();
@@ -93,28 +95,20 @@ export default function SimulationSetup() {
   }));
 
   const handleSubmit = async () => {
-    if (isFormComplete) {
-      try {
-        // Save user responses
-        await AsyncStorage.setItem('@simulation_setup', JSON.stringify(responses));
+    if (!isFormComplete || isSubmitting) return;
 
-        // Navigate immediately
-        router.push('/(tabs)/simulation/result');
-
-        // Fetch simulation data in the background
-        fetchSimulationParams(responses as UserResponses)
-          .then(simulationData => {
-            // Save simulation data
-            AsyncStorage.setItem('@simulation_data', JSON.stringify(simulationData));
-          })
-          .catch(error => {
-            console.error('Error fetching simulation data:', error);
-          });
-      } catch (error) {
-        console.error('Error submitting simulation:', error);
-        // Navigate anyway
-        router.push('/(tabs)/simulation/result');
-      }
+    setIsSubmitting(true);
+    try {
+      const simulationData = await fetchSimulationParams(responses as UserResponses);
+      await AsyncStorage.multiSet([
+        ['@simulation_setup', JSON.stringify(responses)],
+        ['@simulation_data', JSON.stringify(simulationData)],
+      ]);
+      router.push('/(tabs)/simulation/result');
+    } catch {
+      Alert.alert('No Simulation Data', 'There is no simulation data for this.');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -134,9 +128,9 @@ export default function SimulationSetup() {
       helpContent="Experience your financial future! Select your career path, preferred job, location, and comfort level to see a personalized simulation of your financial journey. This tool helps you understand how different career choices impact your financial life."
       fields={fields}
       submitButton={{
-        label: 'View Simulation',
+        label: isSubmitting ? 'Loading Simulation...' : 'View Simulation',
         onPress: handleSubmit,
-        disabled: !isFormComplete,
+        disabled: !isFormComplete || isSubmitting,
       }}
     />
   );

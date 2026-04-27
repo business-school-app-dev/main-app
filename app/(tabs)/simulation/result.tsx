@@ -61,10 +61,12 @@ export default function SimulationResult() {
   const chartWidth = screenWidth - 80;
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const loadData = async () => {
       const { userResponses, simulationData, shouldRedirect } = await loadUserResponsesFromStorage();
 
-      if (shouldRedirect) {
+      if (shouldRedirect || controller.signal.aborted) {
         return;
       }
 
@@ -74,19 +76,22 @@ export default function SimulationResult() {
         // Fetch job title from backend using career category and job ID
         try {
           const response = await fetch(
-            `${process.env.EXPO_PUBLIC_API_URL}/jobs/${userResponses.careerCategory}`
+            `${process.env.EXPO_PUBLIC_API_URL}/jobs/${userResponses.careerCategory}`,
+            { signal: controller.signal }
           );
-          if (response.ok) {
+          if (response.ok && !controller.signal.aborted) {
             const data = await response.json();
             const job = data.jobs.find((j: any) => j.id === userResponses.specificJob);
-            if (job) {
+            if (job && !controller.signal.aborted) {
               setJobTitle(job.title);
             }
           }
-        } catch (error) {
-          console.error('Error fetching job title:', error);
+        } catch {
+          // Aborted on unmount or network error — leave jobTitle empty
         }
       }
+
+      if (controller.signal.aborted) return;
 
       if (simulationData) {
         setSimulationData(simulationData);
@@ -103,6 +108,8 @@ export default function SimulationResult() {
     };
 
     loadData();
+
+    return () => controller.abort();
   }, []);
 
   // Debounced handler for slider changes - calls the backend with updated params

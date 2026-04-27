@@ -29,25 +29,26 @@ const LoanCalculatorContent = () => {
   const [retirementContributionText, setRetirementContributionText] = useState("5");
   const [loanAllocationPercentage, setLoanAllocationPercentage] = useState(60);
 
-  // Parse string values to numbers for calculations
+  // Parse string values to numbers for calculations. Clamp to >= 0 so a
+  // negative loan / income / rate doesn't yield nonsensical projections.
   const totalLoan = useMemo(() => {
     const parsed = parseFloat(totalLoanText);
-    return isNaN(parsed) ? 0 : parsed;
+    return isNaN(parsed) ? 0 : Math.max(0, parsed);
   }, [totalLoanText]);
 
   const interestRate = useMemo(() => {
     const parsed = parseFloat(interestRateText);
-    return isNaN(parsed) ? 0 : parsed;
+    return isNaN(parsed) ? 0 : Math.max(0, parsed);
   }, [interestRateText]);
 
   const loanTerm = useMemo(() => {
     const parsed = parseFloat(loanTermText);
-    return isNaN(parsed) ? 0 : parsed;
+    return isNaN(parsed) ? 0 : Math.max(0, parsed);
   }, [loanTermText]);
 
   const monthlyIncome = useMemo(() => {
     const parsed = parseFloat(monthlyIncomeText);
-    return isNaN(parsed) ? 0 : parsed;
+    return isNaN(parsed) ? 0 : Math.max(0, parsed);
   }, [monthlyIncomeText]);
 
   const {

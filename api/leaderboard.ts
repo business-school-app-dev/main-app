@@ -40,7 +40,6 @@ export const fetchCurrentUser = async (
 
     if (!response.ok) {
       if (response.status === 404) {
-        console.log("User not found in database");
         return null;
       }
       throw new Error("Failed to fetch user stats");

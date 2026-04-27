@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { Alert } from "react-native";
 import { router } from "expo-router";
 import { UserResponses } from "@/types/Question";
 import { JobsResponse } from "@/types/Job";
@@ -58,8 +59,7 @@ export const getJobTitleById = async (
       return job ? job.title : String(jobId);
     }
     return String(jobId);
-  } catch (error) {
-    console.error("Error fetching job title:", error);
+  } catch {
     return String(jobId);
   }
 };
@@ -89,33 +89,49 @@ export const getLocationIcon = (location: string) => {
 
 // Load user responses and simulation data from storage
 export const loadUserResponses = async () => {
-  try {
-    const setupData = await AsyncStorage.getItem("@simulation_setup");
-    const simData = await AsyncStorage.getItem("@simulation_data");
+  const setupData = await AsyncStorage.getItem("@simulation_setup").catch(
+    () => null
+  );
+  const simData = await AsyncStorage.getItem("@simulation_data").catch(
+    () => null
+  );
 
-    if (!setupData) {
-      router.replace("/(tabs)/simulation");
-      return {
-        userResponses: null,
-        simulationData: null,
-        shouldRedirect: true,
-      };
-    }
-
-    const userResponses = JSON.parse(setupData);
-    let simulationData = null;
-
-    if (simData) {
-      simulationData = JSON.parse(simData);
-    } else {
-      console.error("No simulation data found");
-    }
-
-    return { userResponses, simulationData, shouldRedirect: false };
-  } catch (error) {
-    console.error("Error loading setup data:", error);
-    return { userResponses: null, simulationData: null, shouldRedirect: false };
+  if (!setupData) {
+    router.replace("/(tabs)/simulation");
+    return {
+      userResponses: null,
+      simulationData: null,
+      shouldRedirect: true,
+    };
   }
+
+  let userResponses;
+  try {
+    userResponses = JSON.parse(setupData);
+  } catch {
+    // Corrupted setup data — clear and send user back to setup
+    await AsyncStorage.multiRemove([
+      "@simulation_setup",
+      "@simulation_data",
+    ]).catch(() => {});
+    router.replace("/(tabs)/simulation");
+    return {
+      userResponses: null,
+      simulationData: null,
+      shouldRedirect: true,
+    };
+  }
+
+  let simulationData = null;
+  if (simData) {
+    try {
+      simulationData = JSON.parse(simData);
+    } catch {
+      await AsyncStorage.removeItem("@simulation_data").catch(() => {});
+    }
+  }
+
+  return { userResponses, simulationData, shouldRedirect: false };
 };
 
 // Debounced slider change handler
@@ -169,8 +185,13 @@ export const createDebouncedSliderChange = (
             JSON.stringify(newSimulationData)
           );
         }
-      } catch (error) {
-        console.error("Error updating simulation with sliders:", error);
+      } catch {
+        if (pendingParamsRef.current === updatedParams) {
+          Alert.alert(
+            "Update Failed",
+            "We couldn't update your simulation. Please try again."
+          );
+        }
       } finally {
         // Only clear loading if this was the latest request
         if (pendingParamsRef.current === updatedParams) {
@@ -265,11 +286,6 @@ export const generateChartData = (
 
   // Don't regenerate chart if years slider has changed but backend hasn't responded yet
   if (simulationData.years !== years) {
-    console.log("Waiting for backend to update:", {
-      sliderYears: years,
-      dataYears: simulationData.years,
-    });
-
     if (previousChartData) {
       return previousChartData;
     }
@@ -283,63 +299,28 @@ export const generateChartData = (
     };
   }
 
-  const labelInterval = years > 30 ? 10 : 5;
+  const rawMean = Number(simulationData.summary.mean);
+  const stdev = Number(simulationData.summary.stdev);
 
-  console.log("Chart generation:", {
-    years,
-    labelInterval,
-    willShowLabelsAt: Array.from(
-      { length: Math.ceil(years / labelInterval) + 1 },
-      (_, i) => i * labelInterval
-    ).filter((y) => y > 0 && y <= years),
-  });
-
-  const rawMean = simulationData.summary.mean;
-  const stdev = simulationData.summary.stdev;
-
-  console.log("Backend simulation data:", {
-    mean: rawMean,
-    stdev: stdev,
-    years: years,
-    rawPercentile75: rawMean + stdev * 0.674,
-    rawMedian: rawMean,
-    rawPercentile25: rawMean - stdev * 0.674,
-  });
-
-  const rawPercentile75 = rawMean + stdev * 0.674;
-  const rawMedian = rawMean;
-  const rawPercentile25 = rawMean - stdev * 0.674;
-
-  console.log("Raw values before adjustments:", {
-    rawPercentile75,
-    rawMedian,
-    rawPercentile25,
-  });
-
-  let percentile75, median, percentile25;
-
-  if (rawMean < -100000) {
-    percentile75 = stdev * 1.5;
-    median = stdev * 0.8;
-    percentile25 = stdev * 0.3;
-    console.warn(
-      "Backend returned very negative mean, using stdev-based estimates"
-    );
-  } else if (rawMean < 0) {
-    percentile75 = Math.abs(rawPercentile75);
-    median = Math.abs(rawMedian);
-    percentile25 = Math.abs(rawPercentile25);
-  } else {
-    percentile75 = Math.max(0, rawPercentile75);
-    median = Math.max(0, rawMedian);
-    percentile25 = Math.max(0, rawPercentile25);
+  if (!Number.isFinite(rawMean) || !Number.isFinite(stdev)) {
+    return {
+      chartData: [],
+      xAxisLabels: ["0", "5", "10", "15", "20", "25", "30", "35", "40"].filter(
+        (m) => Number(m) <= years
+      ),
+      stats: { median: 0, percentile25: 0, percentile75: 0 },
+      spacing: 40,
+      chartWidth: chartWidth,
+    };
   }
 
-  console.log("Adjusted percentiles:", {
-    percentile75,
-    median,
-    percentile25,
-  });
+  const safeStdev = Math.max(0, stdev);
+
+  // Always use mean ± 0.674σ, clamp at 0 so negative net worth doesn't invert
+  // the ordering of the percentiles via Math.abs.
+  const percentile75 = Math.max(0, rawMean + safeStdev * 0.674);
+  const median = Math.max(0, rawMean);
+  const percentile25 = Math.max(0, rawMean - safeStdev * 0.674);
 
   const targetValue = percentile75;
   const allMilestones = [0, 5, 10, 15, 20, 25, 30, 35, 40];
@@ -370,9 +351,6 @@ export const generateChartData = (
   const xAxisLabels = allMilestones
     .filter((m) => m <= years)
     .map((m) => m.toString());
-
-  console.log("Chart data length:", chartDatasets.length);
-  console.log("Selected years:", years);
 
   const availableWidth = chartWidth - 20 - 10 - 10;
   const calculatedSpacing =
@@ -458,7 +436,6 @@ export const loadJobs = async (
 
     // Validate response has jobs array
     if (!response || !response.jobs || !Array.isArray(response.jobs)) {
-      console.error("Invalid response structure:", response);
       return [];
     }
 
@@ -466,8 +443,7 @@ export const loadJobs = async (
       label: job.title,
       value: job.id, // Use career_id instead of job name
     }));
-  } catch (error) {
-    console.error("Error loading jobs:", error);
+  } catch {
     return [];
   }
 };
@@ -486,8 +462,7 @@ export const checkExistingSetup = async () => {
     }
 
     return { shouldRedirect: false, isReset: false };
-  } catch (error) {
-    console.error("Error loading setup data:", error);
+  } catch {
     return { shouldRedirect: false, isReset: false };
   }
 };
@@ -497,7 +472,6 @@ export const submitSimulationSetup = async (responses: UserResponses) => {
     await AsyncStorage.setItem("@simulation_setup", JSON.stringify(responses));
     return { success: true };
   } catch (error) {
-    console.error("Error saving setup data:", error);
     return { success: false, error };
   }
 };
@@ -555,7 +529,6 @@ export const submitSimulationForm = async (
       router.push("/(tabs)/simulation/result");
       return { success: true };
     } else {
-      console.error("Error saving setup data:", result.error);
       return { success: false, error: result.error };
     }
   }
@@ -565,108 +538,78 @@ export const submitSimulationForm = async (
 export async function fetchJobsByCategory(
   category: string
 ): Promise<JobsResponse> {
-  try {
-    const url = `${process.env.EXPO_PUBLIC_API_URL}/jobs/${category}`;
-    console.log("Fetching jobs from:", url);
+  const url = `${process.env.EXPO_PUBLIC_API_URL}/jobs/${category}`;
 
-    const response = await fetch(url);
+  const response = await fetch(url);
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-
-    const data = await response.json();
-    console.log("Received data:", data);
-
-    return data as JobsResponse;
-  } catch (error) {
-    console.error("Error fetching jobs:", error);
-    throw error;
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`);
   }
+
+  const data = await response.json();
+
+  return data as JobsResponse;
 }
 
 export async function fetchSimulationParams(
   userResponses: UserResponses
 ): Promise<any> {
-  try {
-    const url = `${process.env.EXPO_PUBLIC_API_URL}/simulation/run`;
-    console.log("Fetching simulation params from:", url);
+  const url = `${process.env.EXPO_PUBLIC_API_URL}/simulation/run`;
 
-    // Convert state abbreviation to full name
-    const locationFullName =
-      STATE_ABBR_TO_NAME[userResponses.location] || userResponses.location;
+  // Convert state abbreviation to full name
+  const locationFullName =
+    STATE_ABBR_TO_NAME[userResponses.location] || userResponses.location;
 
-    const requestBody = {
-      career_id: userResponses.specificJob,
-      location: locationFullName,
-      num_children: Number(userResponses.children), // Ensure it's a number
-      spending: userResponses.spending,
-    };
+  const requestBody = {
+    career_id: userResponses.specificJob,
+    location: locationFullName,
+    num_children: Number(userResponses.children), // Ensure it's a number
+    spending: userResponses.spending,
+  };
 
-    console.log("Request body:", requestBody);
-    console.log("User responses:", userResponses);
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(requestBody),
+  });
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(requestBody),
-    });
-
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error("API Error Response:", errorData);
-      throw new Error(
-        `HTTP error! status: ${response.status}, message: ${
-          errorData.error || "Unknown error"
-        }`
-      );
-    }
-
-    const data = await response.json();
-    console.log("Received simulation data:", data);
-
-    return data;
-  } catch (error) {
-    console.error("Error fetching simulation params:", error);
-    throw error;
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      `HTTP error! status: ${response.status}, message: ${
+        errorData.error || "Unknown error"
+      }`
+    );
   }
+
+  const data = await response.json();
+
+  return data;
 }
 
 export async function fetchSimulationWithSliders(params: any): Promise<any> {
-  try {
-    const url = `${process.env.EXPO_PUBLIC_API_URL}/simulation/sliders`;
-    console.log("Fetching simulation with sliders from:", url);
-    console.log("Full params object:", JSON.stringify(params, null, 2));
-    console.log("Years in params:", params.years);
-    console.log("Location in params:", params.location);
-    console.log("Starting salary in params:", params.starting_salary);
+  const url = `${process.env.EXPO_PUBLIC_API_URL}/simulation/sliders`;
 
-    const response = await fetch(url, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(params),
-    });
+  const response = await fetch(url, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(params),
+  });
 
-    if (!response.ok) {
-      const errorData = await response.json().catch(() => ({}));
-      console.error("API Error Response:", errorData);
-      throw new Error(
-        `HTTP error! status: ${response.status}, message: ${
-          errorData.error || "Unknown error"
-        }`
-      );
-    }
-
-    const data = await response.json();
-    console.log("Received slider simulation data:", data);
-
-    return data;
-  } catch (error) {
-    console.error("Error fetching simulation with sliders:", error);
-    throw error;
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(
+      `HTTP error! status: ${response.status}, message: ${
+        errorData.error || "Unknown error"
+      }`
+    );
   }
+
+  const data = await response.json();
+
+  return data;
 }

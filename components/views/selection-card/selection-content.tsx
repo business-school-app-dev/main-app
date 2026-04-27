@@ -43,10 +43,11 @@ export default function SelectionCardContent({
       textColor = 'text-red-900';
     }
   } else if (isSelected) {
-    // Selected state (both simulation and quiz)
+    // Selected state (both simulation and quiz). The red border + light red
+    // background already signal selection; keep label text dark for contrast.
     borderColor = 'border-primary-500';
     bgColor = 'bg-red-50';
-    textColor = 'text-primary-500';
+    textColor = 'text-gray-900';
   }
 
   return (

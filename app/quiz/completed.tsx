@@ -42,6 +42,9 @@ export default function QuizCompleted() {
     isError: false,
   });
 
+  // Single source of truth for the modal: success > error > submitting.
+  // Splitting these into multiple effects caused last-write-wins races
+  // when both `submitted` and `submitError` settled in the same cycle.
   useEffect(() => {
     if (submitted) {
       setModalState({
@@ -50,19 +53,22 @@ export default function QuizCompleted() {
         content: 'Your name has been added to the leaderboard!',
         isError: false,
       });
-    }
-  }, [submitted]);
-
-  useEffect(() => {
-    if (submitError) {
+    } else if (submitError) {
       setModalState({
         isOpen: true,
         title: 'Error',
         content: submitError,
         isError: true,
       });
+    } else if (isSubmitting) {
+      setModalState({
+        isOpen: true,
+        title: 'Submitting...',
+        content: 'Please wait while we submit your score.',
+        isError: false,
+      });
     }
-  }, [submitError]);
+  }, [submitted, submitError, isSubmitting]);
 
   const handleClose = () => {
     setModalState((prev) => ({ ...prev, isOpen: false, isError: false }));
@@ -109,15 +115,7 @@ export default function QuizCompleted() {
           {/* Action Button */}
           <TextButton
             label="Submit to Leaderboard"
-            onPress={async () => {
-              setModalState({
-                isOpen: true,
-                title: 'Submitting...',
-                content: 'Please wait while we submit your score.',
-                isError: false,
-              });
-              await handleSubmit();
-            }}
+            onPress={handleSubmit}
             variant="secondary"
             className={`mt-auto ${isSmallPhone ? 'mb-2' : 'mb-14'}`} size="lg"
             disabled={name.trim() === '' || isSubmitting}

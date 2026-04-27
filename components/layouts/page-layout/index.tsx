@@ -9,7 +9,7 @@ function PageLayout(props: NavbarProps & { children: ReactNode } & { className?:
   const { scrollable = true, onRefresh, refreshing = false, ...navbarProps } = props;
 
   return (
-    <SafeAreaView edges={["left", "right"]} className={"h-full w-full bg-background"}>
+    <SafeAreaView edges={["left", "right", "bottom"]} className={"h-full w-full bg-background"}>
       <Navbar {...navbarProps} />
       {scrollable ? (
         <ScrollView

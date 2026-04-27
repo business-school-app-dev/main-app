@@ -56,16 +56,12 @@ export default function Leaderboard() {
     setIsLoadingCurrentUser(true);
     const lastUsername = await AsyncStorage.getItem('lastQuizUsername');
 
-    console.log("Last Username:", lastUsername);
-
     if (!lastUsername) {
-      console.log("No saved username found");
       setIsLoadingCurrentUser(false);
       return;
     }
 
     const user = await fetchCurrentUser(lastUsername);
-    console.log("Fetched user:", user);
     setCurrentUser(user);
     setIsLoadingCurrentUser(false);
   };

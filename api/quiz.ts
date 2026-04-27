@@ -264,18 +264,26 @@ export function useQuizCompletion() {
   };
 
   const checkUserName = async (name: string) => {
+    // Fail-open: if the third-party profanity service is slow or down,
+    // allow the submission rather than blocking the user. Apple reviewers
+    // and real users should never be unable to submit because of an
+    // unrelated outage.
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 5000);
     try {
       const res = await fetch("https://vector.profanity.dev", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: name }),
+        signal: controller.signal,
       });
-
+      if (!res.ok) return true;
       const data = await res.json();
       return !data.isProfanity;
-    } catch (err) {
-      console.error("Error checking profanity:", err);
-      return false;
+    } catch {
+      return true;
+    } finally {
+      clearTimeout(timeout);
     }
   };
 

@@ -1,8 +1,8 @@
 import { Question } from "@/types/quiz";
-import { Animated } from "react-native";
-import { useMemo, useState, useCallback, useRef } from "react";
-import { useLocalSearchParams, router } from "expo-router";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router, useLocalSearchParams } from "expo-router";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { Animated } from "react-native";
 
 export type SubmittedAnswer = {
   questionId: number;
@@ -56,7 +56,7 @@ export const checkQuizCooldown = async (
   }
 };
 
-export const fetchQuestions = async (): Promise<Question[]> => {
+export const fetchQuestions = async (signal?: AbortSignal, retries = 3, delay = 1000): Promise<Question[]> => {
   try {
     const response = await fetch(
       `${process.env.EXPO_PUBLIC_API_URL}/challenges/questions`,
@@ -65,6 +65,7 @@ export const fetchQuestions = async (): Promise<Question[]> => {
         headers: {
           "Content-Type": "application/json",
         },
+        signal,
       }
     );
     if (!response.ok) {
@@ -83,9 +84,13 @@ export const fetchQuestions = async (): Promise<Question[]> => {
     } else {
       throw new Error("API returned unsuccessful response");
     }
-  } catch (err) {
-    console.error("Error fetching questions:", err);
-    throw new Error("Failed to load questions. Please try again.");
+  } catch (err: any) {
+    if (err.name === 'AbortError' || retries === 0) {
+      console.error("Error fetching questions:", err);
+      throw new Error(`API URL: ${process.env.EXPO_PUBLIC_API_URL}`);
+    }
+    await new Promise(resolve => setTimeout(resolve, delay));
+    return fetchQuestions(signal, retries - 1, delay * 2);
   }
 };
 
@@ -318,25 +323,33 @@ export function useQuizLogic() {
   const questionSlideAnim = useRef(new Animated.Value(0)).current;
 
   const loadQuestions = useCallback(async () => {
-    try {
-      setError(null);
-      setLoading(true);
-      setQuestions([]);
-      setCurrentQuestion(1);
-      setSelectedOption("");
-      setSelectedAnswer(null);
-      setShowResult(false);
-      setIsCorrect(false);
-      setUserAnswers([]);
+  try {
+    setError(null);
+    setLoading(true);
+    setQuestions([]);
+    setCurrentQuestion(1);
+    setSelectedOption("");
+    setSelectedAnswer(null);
+    setShowResult(false);
+    setIsCorrect(false);
+    setUserAnswers([]);
 
-      const fetchedQuestions = await fetchQuestions();
-      setQuestions(fetchedQuestions);
-    } catch (err: any) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+
+    const fetchedQuestions = await fetchQuestions(controller.signal);
+    clearTimeout(timeoutId);
+    setQuestions(fetchedQuestions);
+  } catch (err: any) {
+    if (err.name === 'AbortError') {
+      setError("Connection timed out. Please try again.");
+    } else {
       setError(err.message);
-    } finally {
-      setLoading(false);
     }
-  }, []);
+  } finally {
+    setLoading(false);
+  }
+}, []);
 
   const currentQ =
     questions[Math.min(currentQuestion - 1, questions.length - 1)];

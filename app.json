@@ -58,6 +58,12 @@
       }
     },
     "privacyUrl": "https://umdfwc.rhsmith.umd.edu/privacy",
-    "owner": "appdevclubllc"
+    "owner": "appdevclubllc",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/0ccf0b02-784b-4ce8-b35c-a006999d64c8"
+    }
   }
 }

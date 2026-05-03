@@ -1,10 +1,10 @@
 import { User } from "@/types/User";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { router } from "expo-router";
 import { Animated } from "react-native";
 import { checkQuizCooldown } from "./quiz";
-import { router } from "expo-router";
 
-export const fetchLeaderboard = async (): Promise<User[]> => {
+export const fetchLeaderboard = async (retries = 3, delay = 1000): Promise<User[]> => {
   try {
     const response = await fetch(`${process.env.EXPO_PUBLIC_API_URL}/topten`);
     if (!response.ok) {
@@ -12,39 +12,32 @@ export const fetchLeaderboard = async (): Promise<User[]> => {
     }
     const data = await response.json();
     if (data.success) {
-      const formattedData: User[] = data.users.map(
-        (user: any, index: number) => ({
-          rank: index + 1,
-          name: user.username,
-          score: user.score,
-        })
-      );
-      return formattedData;
+      return data.users.map((user: any, index: number) => ({
+        rank: index + 1,
+        name: user.username,
+        score: user.score,
+      }));
     }
     return [];
-  } catch (error) {
-    console.error("Error fetching leaderboard:", error);
-    return [];
+  } catch (error: any) {
+    if (retries === 0) {
+      console.error("Error fetching leaderboard:", error);
+      return [];
+    }
+    await new Promise(resolve => setTimeout(resolve, delay));
+    return fetchLeaderboard(retries - 1, delay * 2);
   }
 };
 
-export const fetchCurrentUser = async (
-  username: string
-): Promise<User | null> => {
+export const fetchCurrentUser = async (username: string, retries = 3, delay = 1000): Promise<User | null> => {
   try {
     const response = await fetch(
-      `${
-        process.env.EXPO_PUBLIC_API_URL
-      }/challenges/user-stats?username=${encodeURIComponent(username)}`
+      `${process.env.EXPO_PUBLIC_API_URL}/challenges/user-stats?username=${encodeURIComponent(username)}`
     );
-
     if (!response.ok) {
-      if (response.status === 404) {
-        return null;
-      }
+      if (response.status === 404) return null;
       throw new Error("Failed to fetch user stats");
     }
-
     const data = await response.json();
     if (data.success && data.user) {
       return {
@@ -54,9 +47,13 @@ export const fetchCurrentUser = async (
       };
     }
     return null;
-  } catch (error) {
-    console.error("Error fetching current user:", error);
-    return null;
+  } catch (error: any) {
+    if (retries === 0) {
+      console.error("Error fetching current user:", error);
+      return null;
+    }
+    await new Promise(resolve => setTimeout(resolve, delay));
+    return fetchCurrentUser(username, retries - 1, delay * 2);
   }
 };
 

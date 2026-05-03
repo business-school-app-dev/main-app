@@ -1,4 +1,3 @@
-import { Platform } from "react-native";
 
 export interface EventItem {
   title: string;
@@ -8,19 +7,23 @@ export interface EventItem {
   url: string;
 }
 
-export const fetchEvents = async (days: number): Promise<EventItem[]> => {
-  const res = await fetch(
-    `${process.env.EXPO_PUBLIC_API_URL}/scraping/events?days=${days}`
-  );
-
-  if (!res.ok) {
-    console.error("Failed to fetch events", res.status);
-    // Return empty array on failure to prevent app crash
-    return [];
+export const fetchEvents = async (days: number, retries = 3, delay = 500): Promise<EventItem[]> => {
+  try {
+    const url = `${process.env.EXPO_PUBLIC_API_URL}/scraping/events?days=${days}`;
+    const res = await fetch(url);
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    const data: EventItem[] = await res.json();
+    return data;
+  } catch (err: any) {
+    if (retries === 0) {
+      console.error("[EVENTS] Exception during fetch:", err);
+      return [];
+    }
+    await new Promise(resolve => setTimeout(resolve, delay));
+    return fetchEvents(days, retries - 1, delay * 2);
   }
-
-  const data: EventItem[] = await res.json();
-  return data;
 };
 
 export const formatDateTime = (date: string, time?: string | null) => {

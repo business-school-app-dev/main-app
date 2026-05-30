@@ -1,3 +1,12 @@
+// ============================================================================
+// QUIZ LOGIC MODULE
+// ============================================================================
+// This file handles all quiz-related API calls, state management, and animations
+// Key flows:
+//   1. checkQuizCooldown: Check if user can take quiz (daily limit)
+//   2. fetchQuestions: Get 3 daily questions from backend
+//   3. useQuizLogic: Manage quiz screen state and interactions
+//   4. useQuizCompletion: Handle leaderboard submission after quiz
 import { Question } from "@/types/quiz";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { router, useLocalSearchParams } from "expo-router";
@@ -64,6 +73,7 @@ export const fetchQuestions = async (signal?: AbortSignal, retries = 3, delay = 
         method: "GET",
         headers: {
           "Content-Type": "application/json",
+          "User-Agent": "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
         },
         signal,
       }
@@ -87,7 +97,9 @@ export const fetchQuestions = async (signal?: AbortSignal, retries = 3, delay = 
   } catch (err: any) {
     if (err.name === 'AbortError' || retries === 0) {
       console.error("Error fetching questions:", err);
-      throw new Error(`API URL: ${process.env.EXPO_PUBLIC_API_URL}`);
+      const apiUrl = process.env.EXPO_PUBLIC_API_URL || 'UNDEFINED';
+      const errorMsg = `Error loading questions.\n\nENV VAR CHECK:\nEXPO_PUBLIC_API_URL = ${apiUrl}`;
+      throw new Error(errorMsg);
     }
     await new Promise(resolve => setTimeout(resolve, delay));
     return fetchQuestions(signal, retries - 1, delay * 2);
@@ -335,7 +347,7 @@ export function useQuizLogic() {
     setUserAnswers([]);
 
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
+    const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout for TestFlight
 
     const fetchedQuestions = await fetchQuestions(controller.signal);
     clearTimeout(timeoutId);
@@ -344,6 +356,7 @@ export function useQuizLogic() {
     if (err.name === 'AbortError') {
       setError("Connection timed out. Please try again.");
     } else {
+      console.error("Quiz load error:", err);
       setError(err.message);
     }
   } finally {

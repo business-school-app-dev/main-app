@@ -7,7 +7,7 @@ export interface EventItem {
   url: string;
 }
 
-export const fetchEvents = async (days: number, retries = 3, delay = 500): Promise<EventItem[]> => {
+export const fetchEvents = async (days: number, retries = 3, delay = 1000): Promise<EventItem[]> => {
   try {
     const url = `${process.env.EXPO_PUBLIC_API_URL}/scraping/events?days=${days}`;
     const res = await fetch(url);
